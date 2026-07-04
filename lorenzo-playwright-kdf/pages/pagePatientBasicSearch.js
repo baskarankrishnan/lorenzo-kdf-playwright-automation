@@ -1,0 +1,26 @@
+﻿// pagePatientBasicSearch
+export const txt_Surname = "//input[@dikey='itxtSurname']";
+export const txt_Forename = "//input[@dikey='itxtForename']";
+export const cmb_Gender = "//label[text()='Gender']";
+export const lbl_Gender = "//input[@title='Enter a gender value']";
+export const txt_DOB = "//input[@class='DP_TB_Text']";
+export const btn_Find = "//button[@title='Click to Find']";
+export const cmb_identifiertype = "//img[@title='Select an  identifier type']";
+export const txt_Identifier = "//input[@title='Enter an identifier']";
+export const lbl_Identifier = "//label[@title='Identifier']";
+export const btn_OK = "//button[@title='Click to add the selected patient']";
+export const btn_OpProfileSFSimage = "//img[@tooltip='Please select an operation profile']";
+export const txt_OpProfileSFSOPProfilename = "//input[@title='Please enter a code for operation profile name']";
+export const btn_SFSFind = "//td[@title='Click to find']";
+export const tbl_SFSFirstRow = "//table[@id='TableResultGrid']//td[@tabindex='0']";
+export const btn_SFSOk = "//img[@title='Ok']";
+export const btn_Next = "//img[@title='Next']";
+export const cmb_Priority = "//table[@dikey='cbPriority']";
+export const btn_Finish = "//td[@title='Finish']";
+export const lbl_DOB = "//label[@dikey = 'ilblDOB']";
+export const txt_DOB_10 = "//table[@title = 'Enter a value for date of birth']/descendant::input";
+export const txt_DOB_11 = "//img[@title='Enter a gender value']";
+export const txt_DOB_12 = "//input[@class='DP_TB_Text']";
+export const txt_DOB_13 = "//img[@title='Enter a gender value']";
+export const txt_DOB_14 = "//input[@class='DP_TB_Text']";
+export const btn_Find_10 = "//button[@title='Click to Find']";

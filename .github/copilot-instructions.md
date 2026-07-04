@@ -1,0 +1,211 @@
+# Copilot Instructions — ORBIS PAS UKI Lorenzo KDF Framework
+
+## Project Context
+This workspace generates **Keyword Driven Framework (KDF)** test scripts for the **Lorenzo PAS UKI** application.
+Each test case produces:
+1. A `.json` KDF script → `kdf-generation/kdf-scripts/`
+2. An `.xlsx` Excel workbook → `excelFramework/testcases/<Module>/`
+
+---
+
+## KDF JSON Script Rules
+
+### Step Object — 11 Mandatory Fields
+```json
+{
+  "StepNo": 1,
+  "StepDescription": "Clear, action-oriented description",
+  "Page": "pageLogin",
+  "Element": "txt_Username",
+  "ElementText": "",
+  "ActionKeyword": "setTextBox",
+  "Property": "",
+  "Condition": "",
+  "TableColumnNames": "",
+  "Values": "",
+  "DatasetColumnName": "USERNAME"
+}
+```
+
+### Values vs DatasetColumnName — Mutual Exclusivity
+- If **Values** is filled → **DatasetColumnName** must be empty
+- If **DatasetColumnName** is filled → **Values** must be empty
+- **Exception:** Runtime variables (`_RandomSurname`, `_PASID`, `_NHSNUMBER`, `_USERNAME`, `_PASSWORD`) always use **Values** column only
+
+### Element Source — STRICT RULE
+**ONLY use elements that exist in:**
+`kdf-generation/kdf-samples/ElementRepository_Lorenzo_3.json`
+
+Never invent page names or element names. Always grep/search the repository first.
+
+### Dynamic Elements
+Elements with `<variable>` in xpath use **ElementText** for substitution:
+- `ElementText="Ward A"` → replaces `<variable>` in xpath at runtime
+
+---
+
+## Framework-Level Popup Handling
+
+### Conditional UI Elements (Popup Buttons)
+Elements that appear conditionally with delay (e.g., NHS allocation popup after PDS lookup) are auto-detected by framework:
+
+**Auto-Detection Pattern:**
+- Element name contains `"popup"` (case-insensitive) → Treated as conditional popup button
+- Example: `btn_PopUpYes`, `btn_PopUpNo`, `btn_PopUpCancel`
+
+**Framework Behavior:**
+- **Timeout**: 120 seconds (vs 30s standard) for delayed popups
+- **Soft-Fail**: If popup doesn't appear after 120s, step returns code=2 (skip), NOT code=1 (fail)
+- **No Excel Markers Needed**: Framework detects pattern automatically — no Optional/Transient required
+
+**Example Steps** (LSTP_IP_WF001):
+```
+Step 23: clickElement | pageFindandbook | btn_PopUpYes  | "Handle NHS allocation - click Yes"
+Step 24: clickElement | pageFindandbook | btn_PopUpNo   | "Handle NHS popup - click No"
+Step 25: clickElement | pageFindandbook | btn_Cancel    | "Cancel NHS allocation popup"
+```
+
+**Design Principle**: Framework robustness through pattern-based auto-detection, NOT Excel workarounds or hardcoded auto-dismiss logic.
+
+---
+
+### Sheet Order (left → right — ALWAYS this exact sequence)
+1. **TestExecution** — KDF steps (11 columns)
+2. **TestData** — dataset column headers row 1 + sample values row 2
+3. **ExecutionConfig** — test case metadata (Key | Value)
+4. **TestValues** — runtime variables (VariableName | Description | SampleValue)
+
+### ExecutionConfig — 19-Row Standard Schema
+| Row | Key | Notes |
+|-----|-----|-------|
+| 1 | Test Case ID | e.g. `LSTP_Theatres_WF001` |
+| 2 | Module | e.g. `Theatre Management` |
+| 3 | Sub-Module | e.g. `Theatre Booking and In-Theatre Workflow` |
+| 4 | Description | One-sentence summary of test coverage |
+| 5 | Complexity | Low / Medium / High / Very High |
+| 6 | Priority | P1 / P2 / P3 |
+| 7 | Estimated Duration | e.g. `20-25 minutes` |
+| 8 | Total Steps | Count of JSON steps |
+| 9 | Total Pages | Count of unique Page values in JSON |
+| 10 | Total Elements | Count of unique Element values in JSON |
+| 11 | Author | `KDF Generator` |
+| 12 | Created Date | `DD/MM/YYYY` |
+| 13 | Last Updated | `DD/MM/YYYY` |
+| 14 | Status | `Ready` |
+| 15 | Prerequisites | Comma-separated pre-conditions |
+| 16 | Test Data Variables | All DatasetColumnName values used (comma-separated) |
+| 17 | Assertions | Count of `verifyProperty` steps |
+| 18 | Pages Used | All unique Page values (comma-separated) |
+| 19 | Workflows Covered | High-level flow description joined by `+` |
+
+### ExecutionConfig — DO NOT include runtime/environment fields
+The following fields belong in separate environment config, NOT in ExecutionConfig:
+- ❌ Environment, Browser, ApplicationURL, Username, Password
+- ❌ ReportPath, ScreenshotPath, LogPath, MaxRetry, Timeout, Headless, ParallelWorkers
+
+### Header Styling (all sheets)
+- Header row color: `13882323` (amber/gold)
+- Header font: Bold
+
+### PowerShell Sheet Creation — Correct Order
+```powershell
+$ws1 = $wb.Sheets.Item(1); $ws1.Name = "TestExecution"   # existing sheet
+$ws2 = $wb.Sheets.Add([System.Reflection.Missing]::Value, $ws1); $ws2.Name = "TestData"
+$ws3 = $wb.Sheets.Add([System.Reflection.Missing]::Value, $ws2); $ws3.Name = "ExecutionConfig"
+$ws4 = $wb.Sheets.Add([System.Reflection.Missing]::Value, $ws3); $ws4.Name = "TestValues"
+# DO NOT call Move() — order is already correct
+```
+
+---
+
+## TestValues — Standard Runtime Variables
+| VariableName | Description | SampleValue |
+|---|---|---|
+| `_RandomSurname` | Auto-generated surname | AutoGenerated |
+| `_NHSNUMBER` | Captured from registration popup | Captured at runtime |
+| `_PASID` | PAS ID of registered patient | Captured at runtime |
+| `_USERNAME` | Login username | From config |
+| `_PASSWORD` | Login password | From config |
+
+---
+
+## File Naming Convention
+- JSON: `LSTP_<Module>_WF<NNN>.json`
+- Excel: `LSTP_<Module>_WF<NNN>.xlsx`
+- Folder: `excelFramework/testcases/<ModuleName>/`
+
+## Excel Output Path — IMPORTANT
+- Correct root: `C:\Users\bkrishnan6\ORBIS PAS UKI-LZO\lorenzo-playwright-kdf\excelFramework\testcases\<Module>\`
+- PS1 scripts in `kdf-generation\kdf-scripts\` must navigate **two levels up** from `$scriptDir` to reach the repo root:
+  ```powershell
+  $repoRoot = Split-Path -Parent (Split-Path -Parent $scriptDir)
+  $outDir   = Join-Path $repoRoot "excelFramework\testcases\<Module>"
+  ```
+- ❌ Do NOT use `Split-Path -Parent $scriptDir` alone — that lands in `kdf-generation\`, not the repo root.
+
+---
+
+## Known Issues & Troubleshooting
+
+### LSTP_IP_WF001 — NHS Popup Handling Investigation (May 8, 2026)
+**Status**: In progress — Investigating why NHS allocation popup doesn't appear during patient registration
+
+**Symptom**:
+- Step 22: Click "Finish now" (Registration) — ✅ PASSES
+- Step 23: Click btn_PopUpYes (NHS allocation) — ❌ FAILS after 120s timeout
+- Steps 24-25: Cascade failures (popup never appeared)
+
+**Framework Behavior** (Correct):
+- Popup button elements (contains "popup") auto-detected and given 120s patience
+- Soft-fail strategy returns code=2 (skip) instead of code=1 (fail) for missing popups
+- `continueOnFailure: true` preserves diagnostic visibility for full workflow view
+
+**Investigation Approach** (Option 2):
+1. Keep `continueOnFailure: true` — Needed for diagnosing workflow dependencies
+2. Focus on root cause: Why NHS popup doesn't appear after registration completion
+3. Add diagnostic logging to Step 22 completion and "Loading..." phase
+4. Verify selector `btn_PopUpYes` (`//button[@title='Yes']`) is correct
+5. Check if Lorenzo app behavior or workflow sequence has changed
+
+**Related Changes Made**:
+- Added 120s retry patience for popup buttons (framework-level, not Excel)
+- Added pageFindandbook to pageRegistry (fixes transient page detection)
+- Added visibility check in resolveElement (prevents clicking hidden elements)
+- Removed auto-dismiss workarounds (framework should NOT auto-dismiss)
+
+---
+
+## Completed Test Cases
+| File | Steps | Module |
+|------|-------|--------|
+| LSTP_User_Creation_WF001 | — | User Management |
+| LSTP_TaskMgmt_FloorPlan_WF001 | — | Task Management |
+| LSTP_Referral_WF001 | — | Referral |
+| LSTP_CPPView_WF001 | — | CPP View |
+| LSTP_IDM_WF001 | — | IDM (Patient Registration & Demographics) |
+| LSTP_CarePlan_WF001 | 152 | Structured Care |
+| LSTP_CaseLoad_WF001 | 116 | Case Load |
+| LSTP_Theatres_WF001 | 184 | Theatre Management |
+| LSTP_R&R_WF001 | 188 | Request & Result |
+| LSTP_Charts_WF001 | 127 | Charts |
+| LSTP_FluidBalance_WF001 | 129 | Fluid Balance |
+| LSTP_Observations_WF001 | 105 | Observations |
+| LSTP_NursingActivity_WF001 | 101 | Nursing Activity |
+| LSTP_Problems_WF001 | 153 | Problems |
+| LSTP_Daycare_WF001 | 135 | Daycare |
+| LSTP_ePMA_WF001 | 206 | ePMA |
+| LSTP_APE_WF001 | 178 | APE (Access Plan Entry) |
+| LSTP_EC_WF001 | 206 | EC (Emergency Care) |
+| LSTP_CaseNote_WF001 | 109 | CaseNote (Volume Management) |
+| LSTP_Contacts_WF001 | 142 | Contacts |
+| LSTP_IP_WF001 | 108 | IP (Inpatient) — **IN INVESTIGATION** (NHS popup issue) |
+| LSTP_OP_WF001 | 86 | OP (Outpatient) |
+| LSTP_WA_WF001 | 92 | WA (Ward Attendance) |
+| LSTP_Maternity_WF001 | 126 | Maternity |
+| LSTP_CDC_WF001 | 155 | CDC |
+| LSTP_HealthIssues_WF001 | 174 | Health Issues |
+| LSTP_C&G_WF001 | 103 | C&G (Coding and Grouping) |
+| LSTP_DI_WF001 | 116 | DI (Digital Integration) |
+| LSTP_MSI_WF001 | 112 | MSI (Managed Service Integration) |
+| LSTP_UserServices_WF001 | 27 | User Services (Multiple User Session Login) |
+| LSTP_Reports_WF001 | 39 | Reports (Reporting Services) — PLACEHOLDER |

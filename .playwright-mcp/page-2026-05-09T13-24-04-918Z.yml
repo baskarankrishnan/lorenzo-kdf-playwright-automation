@@ -1,0 +1,12 @@
+- table [ref=e3]:
+  - rowgroup [ref=e4]:
+    - row "Loading please wait..." [ref=e5]:
+      - cell "Loading please wait..." [ref=e6]:
+        - table [ref=e7]:
+          - rowgroup [ref=e8]:
+            - row "Loading please wait..." [ref=e9]:
+              - cell "Loading please wait..." [ref=e10]:
+                - table [ref=e11]:
+                  - rowgroup [ref=e12]:
+                    - row "Loading please wait..." [ref=e13]:
+                      - cell "Loading please wait..." [ref=e14]

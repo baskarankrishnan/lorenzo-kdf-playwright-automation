@@ -1,0 +1,36 @@
+{
+  "name": "coreframework",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test core/testrunners/testCaseRunner.spec.ts",
+    "planner": "npx playwright test core/testrunners/testSuiteRunner.spec.ts",
+    "unit": "cross-env UNIT_TEST=true npx playwright test core/testrunners/unitTestRunner.spec.ts --project=chromium",
+    "validate": "npx playwright test core/testrunners/validatePages.spec.ts",
+    "browser:edge": "start \"\" \"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\" --remote-debugging-port=9222 --user-data-dir=\"C:\\edge-profile\" --disable-web-security  --ignore-certificate-errors",
+    "browser:chrome": "start \"\" \"C:\\chrome-win\\chrome.exe\" --remote-debugging-port=9222 --user-data-dir=\"C:\\chromium-profile\" --disable-web-security --ignore-certificate-errors",
+    "record:dom": "npx ts-node kdf-generation/dom-recorder.ts",
+    "record:click": "npx ts-node kdf-generation/dom-recorder-click-v2.ts",
+    "record:click:v1": "npx ts-node kdf-generation/dom-recorder-click.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@types/deasync": "^0.1.5",
+    "@types/jquery": "^3.5.33",
+    "@types/node": "^24.10.1",
+    "@types/pg": "^8.16.0",
+    "ts-node": "^10.9.2"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^10.3.0",
+    "cross-env": "^7.0.3",
+    "deasync": "^0.1.31",
+    "dotenv": "^17.2.3",
+    "pg": "^8.16.3",
+    "xlsx": "^0.18.5"
+  }
+}

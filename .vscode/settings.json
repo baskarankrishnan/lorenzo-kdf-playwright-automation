@@ -1,0 +1,13 @@
+{
+  "html.validate.styles": false,
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "problems.decorations.enabled": false,
+  "html.lint.attributeIllegalPosition": false,
+  "html.lint.incompatibleDoctypes": false,
+  "html.lint.missingDoctype": false,
+  "html.lint.tagNameCase": false,
+  "html.lint.unrecognizedHtmlHint": false
+}

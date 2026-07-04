@@ -1,0 +1,12 @@
+- table [ref=e3]:
+  - rowgroup [ref=e4]:
+    - row "Reading client system details..." [ref=e5]:
+      - cell "Reading client system details..." [ref=e6]:
+        - table [ref=e7]:
+          - rowgroup [ref=e8]:
+            - row "Reading client system details..." [ref=e9]:
+              - cell "Reading client system details..." [ref=e10]:
+                - table [ref=e11]:
+                  - rowgroup [ref=e12]:
+                    - row "Reading client system details..." [ref=e13]:
+                      - cell "Reading client system details..." [ref=e14]

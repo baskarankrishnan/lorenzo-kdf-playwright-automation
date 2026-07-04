@@ -1,0 +1,22 @@
+﻿// pageDef_Users
+export const txt_ID = "//input[@id='it_C_itxtID']";
+export const txt_Iduser = "//input[@title='Enter the identifier']";
+export const btn_findnow = "//td[@title='Click to execute the selected search criteria']";
+export const btn_Ok = "//td[@title='Click to add the selected care providers(s)']";
+export const txt_ClinicalUnitName = "//input[@dikey='itxtSpecName']";
+export const btn_Find = "//td[@title='Click to find']";
+export const btn_Finish = "//td[@title='Finish']";
+export const chk_Selectpatienttask = "//img[@alt='Select the task recipients']";
+export const btn_OkTask = "//td[@title='Click to add the selected Careprovider(s)']";
+export const txt_CPSurname = "//input[@title = 'Enter the surname']";
+export const txt_CPForename = "//input[@title = 'Enter the forename']";
+export const btn_FindNow = "//td[@title = 'Click to execute the selected search criteria']";
+export const txt_ClinicalUnit = "//input[@title= 'Allows you to search on a Clinical unit name']";
+export const btn_Ok_10 = "//td[@title= 'Click to add the selected specialty(s)']";
+export const btn_Ok_11 = "//td[@title = 'Click to add the selected care providers(s)']";
+export const btn_Ok_12 = "//td[@title = 'Click to add the selected care providers(s)']";
+export const btn_Ok_13 = "//td[@title = 'Click to add the selected care providers(s)']";
+export const btn_Ok_14 = "//td[@title='Click to add the selected care providers(s)']";
+export const txt_SearchTemplateName = "//input[@dikey= 'itxtTemplateName]";
+export const txt_SelectTemplateName = "//td[@title='Click to select row']";
+export const btn_Ok_15 = "//td[@title='Click to choose the selected item']";

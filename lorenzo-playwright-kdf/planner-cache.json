@@ -1,0 +1,268 @@
+{
+  "ADM_Hospitalisation_Agenda": {
+    "module": "ADM",
+    "testCases": [
+      {
+        "testcaseId": "ADM_SC27_AdmissiontoHospital",
+        "jiraId": "",
+        "description": "",
+        "author": "Sridhar",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "ADM_Mapofbeds": {
+    "module": "ADMUlcer",
+    "testCases": [
+      {
+        "testcaseId": "ADM_SC_SpecialRecordsUlcer",
+        "jiraId": "",
+        "description": "",
+        "author": "VishuPriya",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "AHC_Dossier": {
+    "module": "AHC",
+    "testCases": [
+      {
+        "testcaseId": "0281_AHC_Create a Dossier",
+        "jiraId": "",
+        "description": "",
+        "author": "VishuPriya",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "AKI_Simple_Medical_Device": {
+    "module": "AKI",
+    "testCases": [
+      {
+        "testcaseId": "0211_AKI-PE03",
+        "jiraId": "",
+        "description": "",
+        "author": "VishuPriya",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "COD_Codification": {
+    "module": "COD",
+    "testCases": [
+      {
+        "testcaseId": "0259_COD_Search episodes by Pat",
+        "jiraId": "",
+        "description": "",
+        "author": "VishuPriya",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "DCAL_Dosage_Calculator": {
+    "module": "DCAL",
+    "testCases": [
+      {
+        "testcaseId": "215_DCAL-PB02",
+        "jiraId": "",
+        "description": "",
+        "author": "VishuPriya",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "DCH_DayCareHospital": {
+    "module": "DCH",
+    "testCases": [
+      {
+        "testcaseId": "0202_DCH_ScheduleTreatment",
+        "jiraId": "",
+        "description": "",
+        "author": "VishuPriya",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "EHR_ClinicalHistory": {
+    "module": "EHR",
+    "testCases": [
+      {
+        "testcaseId": "0194_EHR_GenericDIGES_Template",
+        "jiraId": "",
+        "description": "",
+        "author": "VishuPriya",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "MEDLI_Orders": {
+    "module": "MEDLI",
+    "testCases": [
+      {
+        "testcaseId": "0186_MEDLI_MergeOrders",
+        "jiraId": "",
+        "description": "",
+        "author": "VishuPriya",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "NC_Nursing_Care": {
+    "module": "NC",
+    "testCases": [
+      {
+        "testcaseId": "NC_SC78_NursecagendaNew",
+        "jiraId": "",
+        "description": "",
+        "author": "Kannan",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "OPD_Appointment_RequestMailbox": {
+    "module": "OPD",
+    "testCases": [
+      {
+        "testcaseId": "OPD_SC23_App_req_mailbox_02",
+        "jiraId": "",
+        "description": "",
+        "author": "VishuPriya",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "OPD_Appointment_Scheduling": {
+    "module": "OPD",
+    "testCases": [
+      {
+        "testcaseId": "OPD_SC37_ScheduleappointmI",
+        "jiraId": "",
+        "description": "",
+        "author": "VishuPriya",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "OPD_Outpatient_Agenda": {
+    "module": "OPD",
+    "testCases": [
+      {
+        "testcaseId": "OPD_SC8_Medical consultation",
+        "jiraId": "",
+        "description": "",
+        "author": "VishuPriya",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "PHAR_Trolleys": {
+    "module": "PHAR",
+    "testCases": [
+      {
+        "testcaseId": "0179_PHARM_ NewReturnsRecordAnd",
+        "jiraId": "",
+        "description": "",
+        "author": "VishuPriya",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "PM_Patient_Management": {
+    "module": "PM",
+    "testCases": [
+      {
+        "testcaseId": "PM_SC1_PatientRegistration",
+        "jiraId": "",
+        "description": "",
+        "author": "VishuPriya",
+        "isDDt": "No",
+        "ddtStartRow": "",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "Prescription": {
+    "module": "Prescription",
+    "testCases": [
+      {
+        "testcaseId": "0165_SHEET_AdministrateInfusion",
+        "jiraId": "",
+        "description": "",
+        "author": "VishuPriya",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "URG_Emergency_Agenda": {
+    "module": "URG",
+    "testCases": [
+      {
+        "testcaseId": "URG_SC56_Arrivalwithcare",
+        "jiraId": "",
+        "description": "",
+        "author": "VishuPriya",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "URG_Emergencymap": {
+    "module": "URG",
+    "testCases": [
+      {
+        "testcaseId": "URG_SC46_Attendingpatients",
+        "jiraId": "",
+        "description": "",
+        "author": "Kannan",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  },
+  "WL_WaitingList": {
+    "module": "WL",
+    "testCases": [
+      {
+        "testcaseId": "0205_WL_inclusionfromEHR",
+        "jiraId": "",
+        "description": "",
+        "author": "VishuPriya",
+        "isDDt": "Yes",
+        "ddtStartRow": "1",
+        "ddtEndRow": ""
+      }
+    ]
+  }
+}

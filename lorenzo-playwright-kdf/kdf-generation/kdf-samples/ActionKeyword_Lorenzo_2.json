@@ -1,0 +1,282 @@
+{
+  "txt": [
+    "clearTextBox",
+    "clickElement",
+    "dblClickElement",
+    "getAttribute",
+    "getText",
+    "mouseHoverAndGetText",
+    "rClickElement",
+    "sendKeys",
+    "setTextBox",
+    "selectTypeAhead",
+    "verifyProperty",
+    "verifyStyle",
+    "waitForElement",
+    "waitForProperty",
+    "setTextPASID",
+    "setTextBoxIon",
+    "setTextBoxKendo"
+  ],
+  "btn": [
+    "clickElement",
+    "dblClickElement",
+    "getAttribute",
+    "getText",
+    "mouseHoverAndGetText",
+    "rClickElement",
+    "sendKeys",
+    "verifyProperty",
+    "verifyStyle",
+    "waitForElement",
+    "waitForProperty"
+  ],
+  "lbl": [
+    "clickElement",
+    "dblClickElement",
+    "getAttribute",
+    "getText",
+    "mouseHoverAndGetText",
+    "rClickElement",
+    "sendKeys",
+    "verifyProperty",
+    "verifyStyle",
+    "waitForElement",
+    "waitForProperty",
+    "getTextAndStorePASID"
+  ],
+  "ico": [
+    "clickElement",
+    "comparePictures",
+    "dblClickElement",
+    "getAttribute",
+    "mouseHoverAndGetText",
+    "rClickElement",
+    "sendKeys",
+    "verifyProperty",
+    "verifyStyle",
+    "waitForElement",
+    "waitForProperty"
+  ],
+  "chk": [
+    "clickElement",
+    "dblClickElement",
+    "getAttribute",
+    "mouseHoverAndGetText",
+    "rClickElement",
+    "sendKeys",
+    "setCheckBox",
+    "verifyProperty",
+    "verifyStyle",
+    "waitForElement",
+    "waitForProperty"
+  ],
+  "tab": [
+    "clickElement",
+    "dblClickElement",
+    "getAttribute",
+    "mouseHoverAndGetText",
+    "rClickElement",
+    "sendKeys",
+    "verifyProperty",
+    "verifyStyle",
+    "waitForElement",
+    "waitForProperty"
+  ],
+  "rad": [
+    "clickElement",
+    "dblClickElement",
+    "getAttribute",
+    "mouseHoverAndGetText",
+    "sendKeys",
+    "verifyProperty",
+    "verifyStyle",
+    "waitForElement",
+    "waitForProperty"
+  ],
+  "tgl": [
+    "clickElement",
+    "dblClickElement",
+    "getAttribute",
+    "mouseHoverAndGetText",
+    "sendKeys",
+    "toggleElement",
+    "verifyProperty",
+    "verifyStyle",
+    "waitForElement",
+    "waitForProperty"
+  ],
+  "lst": [
+    "clickElement",
+    "selectListBox",
+    "sendKeys",
+    "verifyListBoxOptions",
+    "verifyValueInListBox",
+    "waitForElement",
+    "waitForProperty",
+    "selectDrugInMultiList"
+  ],
+  "cmb": [
+    "clearComboBox",
+    "selectComboBox",
+    "sendKeys",
+    "setComboBox",
+    "verifyComboBoxOptions",
+    "verifyProperty",
+    "verifyStyle",
+    "verifyValueInComboBox",
+    "waitForElement",
+    "waitForProperty",
+    "selectTypeAhead",
+    "selectComboByIndex"
+  ],
+  "dte": [
+    "clickElement",
+    "getAttribute",
+    "pickDateFromCalendar",
+    "rClickElement",
+    "sendKeys",
+    "verifyProperty",
+    "verifyStyle",
+    "waitForElement",
+    "waitForProperty",
+    "setTextBox"
+  ],
+  "pnl": [
+    "clickElement",
+    "collapsePanel",
+    "dblClickElement",
+    "expandPanel",
+    "getAttribute",
+    "rClickElement",
+    "sendKeys",
+    "verifyProperty",
+    "verifyStyle",
+    "waitForElement",
+    "waitForProperty"
+  ],
+  "tbl": [
+    "getAttribute",
+    "getCellAttribute",
+    "getCellData",
+    "selectRecordInTable",
+    "selectIPPegBoardEmptyRow",
+    "selectRecordInUgridTable",
+    "verifyAscendingSortUGrid",
+    "verifyColumnData",
+    "verifyDataHighlight",
+    "verifyDescendingSortUGrid",
+    "verifyRecordInTable",
+    "verifyRecordInUGridTable",
+    "waitForElement",
+    "waitForProperty",
+    "selectIPPegBoardByHeader",
+    "selectECPatByHeader"
+  ],
+  "lnk": [
+    "clickElement",
+    "dblClickElement",
+    "getAttribute",
+    "getText",
+    "rClickElement",
+    "sendKeys",
+    "verifyProperty",
+    "verifyStyle",
+    "waitForElement",
+    "waitForProperty"
+  ],
+  "sli": [
+    "clickElement"
+  ],
+  "til": [
+    "clickElement"
+  ],
+  "property": [
+    "checked",
+    "disabled",
+    "exists",
+    "focused",
+    "hidden",
+    "value"
+  ],
+  "condition": [
+    "contains",
+    "endsWith",
+    "equal",
+    "greaterThan",
+    "greaterThanOrEquals",
+    "in",
+    "lessThan",
+    "lessThanOrEquals",
+    "notContains",
+    "notEndsWith",
+    "notEqual",
+    "notIn",
+    "notStartsWith",
+    "startsWith"
+  ],
+  "keywordreqproperty": [
+    "waitForProperty",
+    "verifyProperty"
+  ],
+  "keywordreqcondition": [
+    "verifyProperty",
+    "verifyRecordInTable",
+    "verifyStyle",
+    "verifyValueInCombobox",
+    "verifyValueInListbox"
+  ],
+  "style": [
+    "background-color",
+    "border",
+    "color",
+    "ellipsis",
+    "font-weight",
+    "text-decoration"
+  ],
+  "keywordreqstyle": [
+    "verifyStyle"
+  ],
+  "tablecondition": [
+    "in",
+    "notIn"
+  ],
+  "keywordreqtablecondition": [
+    "verifyRecordInTable",
+    "verifyRecordInTable_Ugrid"
+  ],
+  "keywordnotreqelement": [
+    "login",
+    "logout",
+    "waitForDocumentReady",
+    "waitForSeconds",
+    "searchPatient_UPatientSearch",
+    "selectPatient_UPatientSearch",
+    "selectCaseRecord_UPatientSearch",
+    "searchAndSelectUPatient",
+    "createGeneralPrescription",
+    "waitForRoller",
+    "handleDialog",
+    "splitString"
+  ],
+  "keywordnotreqpage": [
+    "assertTextContains",
+    "assertTextEquals",
+    "concat",
+    "getCurrentDateTime",
+    "getFutureDateTime",
+    "getPastDateTime",
+    "getRandomValue",
+    "getSubstring",
+    "getUniqueValue",
+    "launchApp",
+    "launchUrl",
+    "postAPIQuery",
+    "setVariable",
+    "toLowerCase",
+    "toUppercase",
+    "trim",
+    "waitForRoller",
+    "selectTab"
+  ]
+}
