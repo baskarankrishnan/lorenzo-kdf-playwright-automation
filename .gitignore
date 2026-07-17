@@ -6,3 +6,7 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Generated report output + local notes
+/reports/
+/DUPLICATE_LOCATORS_TODO.md
