@@ -19,8 +19,9 @@ export const btn_OPStartedNOW = "//ion-button[normalize-space()='NOW']";
 export const txt_RecoveryWarning = "//ion-label[normalize-space()='warning']/ancestor::ion-card-header/following-sibling::ion-card-content//ion-input";
 export const btn_Close = "//ion-button[normalize-space()='Close']";
 export const txt_Reason = "//ion-label[normalize-space()='<variable>']/ancestor::ion-item[1]/ion-radio";
-export const btn_ReasonOK = "//ion-button[contains(@class,'save-button manage_ops_save ')]";
-export const btn_OkManagedelay = "//ion-button[contains(@class,'ok-btn')]";
+// DUPLICATE of btn_ReasonOK/btn_OkManagedelay (superseded by the generic-text definitions later in file) — commented.
+// export const btn_ReasonOK = "//ion-button[contains(@class,'save-button manage_ops_save ')]";
+// export const btn_OkManagedelay = "//ion-button[contains(@class,'ok-btn')]";
 export const icn_Anaesthsia = '//body//app-root//ion-segment-button[2]';
 export const icn_Operation = "//ion-segment-button[.//ion-label[normalize-space()='Operation']]";
 export const btn_Menuicon = "//ion-button[@id='hub-menu']";

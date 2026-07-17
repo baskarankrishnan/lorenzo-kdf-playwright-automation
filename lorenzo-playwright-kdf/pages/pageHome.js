@@ -17,16 +17,19 @@ export const txt_Yes = "//td[@title='Yes']";
 export const btn_Login = "//input[@id='btnSubmit']";
 export const lnk_Intray = "//span[normalize-space()='In-tray']";
 export const btn_Findrecord = "//span[normalize-space()='Find record']";
-export const tab_Mywork = "//td[@caption='Patients'][@key='TB_PATNT']";
+// DUPLICATE of tab_Mywork (superseded by the Theatres definition later in file; unused by tests) — commented.
+// export const tab_Mywork = "//td[@caption='Patients'][@key='TB_PATNT']";
 export const lbl_popup = "//p['Question - LORENZO']";
 export const btn_Yes = "//td[@title='Yes']";
 export const tab_Clinic = "(//span[@class='T_PL'][normalize-space()='Clinics'])[1]";
 export const txt_Clinicname = "//input[@dikey='itxtClinicname']";
 export const SelectSession = "//img[@alt='Click to select row' and @title='Click to select row']";
-export const btn_OK = "//button[@title='OK'][contains(@class, 'Command_Normal')]";
+// DUPLICATE of btn_OK (superseded by the caseload-section definition later in file; use btn_CliOK for the clinic OK) — commented.
+// export const btn_OK = "//button[@title='OK'][contains(@class, 'Command_Normal')]";
 export const btn_CliOK = "//td[contains(@title,'OK')]";
 export const btn_No = "//td//img[@title='No']";
-export const btn_OK = "//td[contains(@title,'OK')]";
+// DUPLICATE of btn_OK (identical to btn_CliOK above; superseded by the caseload-section definition later) — commented.
+// export const btn_OK = "//td[contains(@title,'OK')]";
 export const lnk_Book = "//span[@class='T_PL' and normalize-space(text())='Book']";
 export const lnk_ClinicsSubLink = "//span[normalize-space()='Edit Booking']";
 export const lnk_ManageAppointmentStatus = "//li[@id='itTT_C20_4']//span[contains(@class,'T_PL')][normalize-space()='Manage Appointment Status']";
@@ -59,13 +62,15 @@ export const txt_Yes_11 = "//td[@title='Yes']";
 export const btn_Logout_12 = "//img[@title='Exit']";
 export const txt_Yes_12 = "//td[@title='Yes']";
 export const lnk_EditBooking = "//li[@id='itTT_C20_67']//span[@class='T_PL'][normalize-space()='Edit booking']";
-export const lnk_AdmitTaskPane = "(//span[text()='Admit'])[1]";
+// DUPLICATE of lnk_AdmitTaskPane (superseded by the T_PL definition later in file) — commented.
+// export const lnk_AdmitTaskPane = "(//span[text()='Admit'])[1]";
 export const lbl_Wards = "//td[@id='pht_Wards']";
 export const chk_WardName = "//tr[.//span[normalize-space(text()) = '<variable>']]/td[@imgtype='CheckBox']//img";
 export const tbl_IPPegboardGrid = "//table//div[@id='g_JSCTLC4']";
 export const tab_InpatientHistory = "//td[@key='TB_PEGHISTORY']";
 export const lnk_ModifyAdmitTaskPane = "(//div[contains(@atei,'Inpatient')]//span[text()='Modify Admit'])[1]";
-export const btn_Finish = "//span[normalize-space()='Finish']";
+// DUPLICATE of btn_Finish (superseded by the coding-section definition later in file) — commented.
+// export const btn_Finish = "//span[normalize-space()='Finish']";
 export const lbl_Gender = "//label[text()='Gender']";
 export const cmb_Gender = "//input[@title='Enter a gender value']";
 export const ico_Gender = "//img[@title='Enter a gender value']";
@@ -126,7 +131,8 @@ export const ico_HeadingIn = "//p[contains(., 'Warning')]";
 export const lbl_ConfirmationTextss = "//div[@id='txtMessage']";
 export const ico_HeadingInfo = "//p['Information - LORENZO']";
 export const tbl_Verifystatus = "//td[@title='Volume dispatched']";
-export const lnk_AdmitTaskPane = "//li[@id='itTT_C20_11']";
+// DUPLICATE of lnk_AdmitTaskPane (superseded by the T_PL definition later in file) — commented.
+// export const lnk_AdmitTaskPane = "//li[@id='itTT_C20_11']";
 export const cmb_Entity = "//input[@id='icombobox_Text_C1']";
 export const txt_Identifierc = "//input[@id='it_C_C5']";
 export const btn_Findc = "//td[@title='Click to Find']";
@@ -140,7 +146,8 @@ export const btn_Close = "//a[@id='dialog_close_0']";
 export const rad_Codes = "//table[@id='iO_C_C12']//tr[@caption='Code']";
 export const cmb_Category = "//img[@id='icombobox_Image_C8']";
 export const cmb_Codingscheme = "//img[@id='icombobox_Image_C10']";
-export const cmb_Status = "//input[@id='icombobox_Text_C39']";
+// DUPLICATE of cmb_Status (brittle auto-id) — superseded by the @title='Select status' definition later in file; commented.
+// export const cmb_Status = "//input[@id='icombobox_Text_C39']";
 export const btn_Finish = "//span[.//span[normalize-space()='F'] and contains(normalize-space(.),'Finish')]";
 export const lnk_ReCode = "//span[normalize-space()='Recode']";
 export const btn_Finishnowrc = "//td[@title='Finish now']";
@@ -150,8 +157,9 @@ export const btn_Nextc = "//td[@title='Next']";
 export const txt_Codes = "//input[@dikey='txtCode']";
 export const img_But = "//img[@id='ic_I_C18']";
 export const txt_Surname = "//input[@dikey='itxtSurname']";
-export const cmb_Gender = "//label[text()='Gender']";
-export const lbl_Gender = "//input[@title='Enter a gender value']";
+// DUPLICATE + SWAPPED (cmb_Gender must be the input, lbl_Gender the label) — superseded by the correct definitions earlier in file; commented.
+// export const cmb_Gender = "//label[text()='Gender']";
+// export const lbl_Gender = "//input[@title='Enter a gender value']";
 export const txt_DOB = "//input[@class='DP_TB_Text']";
 export const btn_PatientSummaryView = "//nobr[normalize-space(.)='Summary']";
 export const txt_PatientTitle = "//label[@title='Admiral']";
@@ -185,7 +193,8 @@ export const btn_FindFR= "//img[@title='Click to Find']";
 export const btn_OKFR= "//button[@title='Click to add the selected patient']";
 export const lbl_AllPatients = "//div[text()='All patients']";
 
-export const btn_OK = "//button[@title='Click to add the selected patient']";
+// DUPLICATE of btn_OK (superseded by the caseload-section definition later; use btn_OKFR to add a patient) — commented.
+// export const btn_OK = "//button[@title='Click to add the selected patient']";
 export const btn_PopUpNo = "//td[@class='Cmd_TTE' and @title='No']";
 export const btn_DocTempCancel = "//td[@title = 'Cancel']"
 export const lnkTaskPaneCreateRef = "//li[@id='itTT_C20_0']";

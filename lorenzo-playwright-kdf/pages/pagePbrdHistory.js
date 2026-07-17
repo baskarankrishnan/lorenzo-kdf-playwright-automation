@@ -4,7 +4,8 @@ export const tbl_IPHistoryCurrentview = "//td[@caption='Current View']";
 export const tab_InpatientHistory = "//td[@key='TB_PEGHISTORY']";
 export const tbl_IPHistorySelectRowBktoAdmit = "//td[@headers='CtlParHeader0'][@align='left'][text()='Admitted']";
 export const tbl_IPHistorySelectRowAdmit = "//td[@class='G_DRO G_WB_BA G_CP' and text()='Admitted']";
-export const tbl_IPHistoryVerifystatus = "(//td[@icn='Event'])[1]";
+// DUPLICATE of tbl_IPHistoryVerifystatus (superseded by the @ival='Booked' definition later in file, which matches the test) — commented.
+// export const tbl_IPHistoryVerifystatus = "(//td[@icn='Event'])[1]";
 export const txt_ValidationstatusAdmit = "//td[@ival='Admitted']";
 export const  txt_Admissiondate = "(//td[@class='Adt_Activity_RowData' and @width='30%'])[8]";
 export const tbl_IPHistorySelectRowAdmittoM = "//td[@icn='Event' and text()='Admitted']";

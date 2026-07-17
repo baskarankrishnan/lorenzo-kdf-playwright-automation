@@ -1,6 +1,7 @@
 //pageIPBook
 //pageBookAppt
-export const txt_Identifier = "//input[@title='Enter an identifier']";
+// DUPLICATE of txt_Identifier (superseded by the id-based CPSFS definition later in file; unused by tests) — commented.
+// export const txt_Identifier = "//input[@title='Enter an identifier']";
 export const txt_Surname = "//input[@dikey='itxtSurname']";
 export const txt_Forename = "//input[@dikey='itxtForename']";
 export const lbl_Gender = "//label[text()='Gender']";
@@ -25,8 +26,9 @@ export const cmb_RefPriority = "//input[@title='Select referral priority']";
 export const cmb_RefType = "//input[@title='Select type of referral']";
 export const cmb_RefSource = "//input[@title='Select the appropriate source of referral being created']";
 export const icn_OrganisationSFS = "//img[@tooltip='Select referred by organisation']";
-export const btn_Find = "//td[@title='Click to find']";
-export const btn_Ok = "//td[@title='Click to add the selected health organisation(s)']";
+// DUPLICATE of btn_Find/btn_Ok (superseded by the CPSFS definitions later in file; unused by tests) — commented.
+// export const btn_Find = "//td[@title='Click to find']";
+// export const btn_Ok = "//td[@title='Click to add the selected health organisation(s)']";
 export const dte_ReferralCreationDateTime = "//input[@id='DP_VdtpRefCreationDate']";
 export const dte_ReferralReceivedDateTime = "//input[@id='DP_VdtpRefReceivedDate']";
 export const cmb_ReferredToType = "//input[@title='Select referred to type']";
@@ -34,7 +36,8 @@ export const ico_RefCareProviderSFS = "//img[contains(@onclick,'txtextReftoCP') 
 export const btn_ReferralFinishnow = "//h1[contains(text(),'Referral details')]/ancestor::table//tr[contains(@class,'TRSty3')]//button[@id='ic_C_C9']";
 export const btn_BookFinishnow = "//td[@title='Finish now']";
 export const btn_Finishnow_Dialog = "(//td[@title='Finish now'])[1]";
-export const dte_ReferralAcceptedDateTime = "//input[@class='DP_TB_Text']";
+// DUPLICATE of dte_ReferralAcceptedDateTime (superseded by trMngReferralDate definition later in file; unused by tests) — commented.
+// export const dte_ReferralAcceptedDateTime = "//input[@class='DP_TB_Text']";
 // pageBookReferralDetailsCPSFS
 export const txt_Identifier = "//input[@id='it_C_itxtID' and @title='Enter the identifier']";
 export const btn_Find = "//td[@class='Cmd_TTE' and @title='Click to execute the selected search criteria']";
@@ -45,7 +48,8 @@ export const cmb_SelectAction = "//table[@dikey='cboSelectaction']";
 export const ico_EpisodenameSFS = "//img[@title='Select the episode name']";
 export const btn_Finish = "//td[@title='Finish']";
 export const cmb_Selectaction = "//img[@title='Select the action to be performed on the referral']";
-export const icn_SFS = "//img[@title='Select the episode name']";
+// DUPLICATE of icn_SFS (superseded by the care-provider definition later in file; unused by tests) — commented.
+// export const icn_SFS = "//img[@title='Select the episode name']";
 export const btn_BookFinish = " //td[@title='Finish now']";
 export const dte_ReferralAcceptedDateTime = "//tr[@id='trMngReferralDate']//input[@type='text']";
 export const tbl_OPPegboardGrid = "//table//div[@id='g_JSCTLC7']";

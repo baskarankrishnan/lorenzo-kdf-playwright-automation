@@ -8,11 +8,13 @@ export const lbl_ManageOffer = "(//li[contains(@caption,'Manage offer')])[6]";
 export const lbl_ReportListView = "//td[@id='fTb_C20']";
 export const lbl_Selectrow = "//tr[@id='igRowC0_0']//img[@alt='Click to select row']";
 export const lbl_Available = "//td[@title='Available']";
-export const chk_SelectRow = "(//input[@type='checkbox'])[2]";
+// DUPLICATE of chk_SelectRow (superseded by the row-specific definition later in file; unused by tests) — commented.
+// export const chk_SelectRow = "(//input[@type='checkbox'])[2]";
 export const lnk_Volumemanagement = "//span[text()='Volume management']";
 export const lnkSubTaskPaneCreatevolume = "//span[normalize-space()='Create a volume']";
 export const btn_CancelDT = "//td[@title='Cancel']";
-export const btn_PatientName = "//th[.//span[@class='k-column-title' and normalize-space()='Patient name']]";
+// DUPLICATE of btn_PatientName (superseded by the img definition later in file; unused by tests) — commented.
+// export const btn_PatientName = "//th[.//span[@class='k-column-title' and normalize-space()='Patient name']]";
 export const lnk_Requestvolume = "//span[normalize-space()='Request volume']";
 export const btn_Add = "//td[normalize-space(.)='Add']";
 export const btn_Next = "//td[@title='Next']";

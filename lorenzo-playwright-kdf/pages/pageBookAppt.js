@@ -1,6 +1,7 @@
 // pageBook Appointment
 //pageBookAppt
-export const txt_Identifier = "//input[@title='Enter an identifier']";
+// DUPLICATE of txt_Identifier (superseded by the id-based CPSFS definition later in file; unused by tests) — commented.
+// export const txt_Identifier = "//input[@title='Enter an identifier']";
 export const txt_Surname = "//input[@dikey='itxtSurname']";
 export const txt_Forename = "//input[@dikey='itxtForename']";
 export const lbl_Gender = "//label[text()='Gender']";
@@ -26,16 +27,18 @@ export const cmb_RefPriority = "//input[@title='Select referral priority']";
 export const cmb_RefType = "//input[@title='Select type of referral']";
 export const cmb_RefSource = "//input[@title='Select the appropriate source of referral being created']";
 export const icn_OrganisationSFS = "//img[@tooltip='Select referred by organisation']";
-export const btn_Find = "//td[@title='Click to find']";
-export const btn_Ok = "//td[@title='Click to add the selected health organisation(s)']";
+// DUPLICATE of btn_Find/btn_Ok (superseded by the CPSFS definitions later in file; unused by tests) — commented.
+// export const btn_Find = "//td[@title='Click to find']";
+// export const btn_Ok = "//td[@title='Click to add the selected health organisation(s)']";
 export const dte_ReferralCreationDateTime = "//input[@id='DP_VdtpRefCreationDate']";
 export const dte_ReferralReceivedDateTime = "//input[@id='DP_VdtpRefReceivedDate']";
 export const cmb_ReferredToType = "//input[@title='Select referred to type']";
 export const ico_CareProviderSFS = "//img[contains(@onclick,'txtextReftoCP') and @title='Select referred to care provider']";
 export const btn_ReferralFinishnow = "(//span[normalize-space(text())='Finish now'])[1]";
-export const btn_Finishnow = "//td[@title='Finish now']";
+// DUPLICATE of btn_Finishnow/dte_ReferralAcceptedDateTime (superseded by definitions later in file; unused by tests) — commented.
+// export const btn_Finishnow = "//td[@title='Finish now']";
 export const btn_Finishnow_Dialog = "(//td[@title='Finish now'])[1]";
-export const dte_ReferralAcceptedDateTime = "//input[@class='DP_TB_Text']";
+// export const dte_ReferralAcceptedDateTime = "//input[@class='DP_TB_Text']";
 // pageBookReferralDetailsCPSFS
 export const txt_Identifier = "//input[@id='it_C_itxtID' and @title='Enter the identifier']";
 export const btn_Find = "//td[@class='Cmd_TTE' and @title='Click to execute the selected search criteria']";
