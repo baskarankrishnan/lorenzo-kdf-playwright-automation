@@ -3782,3 +3782,293 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
     };
   }
 }
+
+
+// --- Carried from member Sriharan ---
+export async function setAutoCompleteFill(
+
+  page: Page,
+
+  step: testStep
+
+): Promise<Outcome> {
+
+  try {
+
+    const baseSelector = getLocatorString(step);
+
+    await waitForRoller(page);
+
+ 
+
+    // ✅ Resolve value
+
+    let textToFill = '';
+
+    if (step.isDDT && step.datasetColumnNames) {
+
+      textToFill = step.datasetColumnNames;
+
+    } else if (step.value) {
+
+      textToFill = resolveTestVariables(step.value);
+
+    }
+
+ 
+
+    const finalText = String(textToFill).trim();
+
+    const element = await resolveElement(page, baseSelector, step);
+
+ 
+
+    // ✅ Step 1: Focus & type
+
+    await element.click();
+
+    await element.fill('');
+
+    await element.type(finalText, { delay: 120 });
+
+ 
+
+    // ✅ Step 2: Give dropdown time to populate
+
+    await page.waitForTimeout(700);  // critical for backend fetch
+
+ 
+
+    // ✅ Step 3: Use keyboard to select
+
+    await page.waitForTimeout(200);
+
+    await page.keyboard.press('Enter');
+
+ 
+
+    // ✅ Step 4: Validate selection worked
+
+    await page.waitForTimeout(500);
+
+    const actualValue = (await element.inputValue()).trim();
+
+ 
+
+    if (!actualValue) {
+
+      throw new Error(
+
+        `Autocomplete failed: value not selected after Enter`
+
+      );
+
+    }
+
+ 
+
+    return {
+
+      code: 0,
+
+      value: `Selected "${actualValue}" using keyboard autocomplete`
+
+    };
+
+ 
+
+  } catch (error) {
+
+    console.error(`❌ Autocomplete failed for ${step.page}.${step.element}`);
+
+ 
+
+    return {
+
+      code: 1,
+
+      value: `Autocomplete failed: ${
+
+        error instanceof Error ? error.message : String(error)
+
+      }`
+
+    };
+
+  }
+
+}
+
+
+// --- Carried from member Sriharan ---
+export async function selectComboValue(
+
+  page: Page,
+
+  step: testStep
+
+): Promise<Outcome> {
+
+  try {
+
+    // ✅ Step 1: Resolve and normalize value (string + number safe)
+
+    const rawValue = resolveTestVariables(step.value);
+
+    const targetValue = String(rawValue ?? "").trim();
+
+ 
+
+    if (!targetValue) {
+
+      throw new Error("Target value is empty or undefined");
+
+    }
+
+ 
+
+    console.log(`🎯 Target value: ${targetValue}`);
+
+ 
+
+    const input = await resolveElement(page, getLocatorString(step), step);
+
+ 
+
+    await waitForRoller(page);
+
+ 
+
+    await input.waitFor({ state: "visible", timeout: 10000 });
+
+ 
+
+    // ✅ Step 2: Open dropdown via keyboard
+
+    await input.click();
+
+    await input.press("ArrowDown");
+
+ 
+
+    let found = false;
+
+    let previousValue = "";
+
+    const maxAttempts = 50; // covers long dropdowns
+
+ 
+
+    // ✅ Step 3: Iterate through dropdown values
+
+    for (let i = 0; i < maxAttempts; i++) {
+
+ 
+
+      // ✅ Read currently selected value in combo
+
+      let currentValue = "";
+
+ 
+
+      try {
+
+        currentValue = await input.inputValue();  // works for input-based combo
+
+      } catch {
+
+        // fallback if not input
+
+        currentValue = await input.innerText();
+
+      }
+
+ 
+
+      currentValue = String(currentValue ?? "").trim();
+
+ 
+
+      console.log(`➡️ Current: ${currentValue}`);
+
+ 
+
+      // ✅ Exact match (string or number)
+
+      if (currentValue.toLowerCase() === targetValue.toLowerCase()) {
+
+        console.log(`✅ Match found: ${currentValue}`);
+
+ 
+
+        await input.press("Enter");   // select
+
+        found = true;
+
+        break;
+
+      }
+
+ 
+
+      // ✅ Prevent infinite loop (end of list)
+
+      if (currentValue === previousValue) {
+
+        console.log("⚠️ Reached end of dropdown list");
+
+        break;
+
+      }
+
+ 
+
+      previousValue = currentValue;
+
+ 
+
+      // ✅ Move to next value
+
+      await input.press("ArrowDown");
+
+      await page.waitForTimeout(120);
+
+    }
+
+ 
+
+    if (!found) {
+
+      throw new Error(`Value "${targetValue}" not found in dropdown`);
+
+    }
+
+ 
+
+    return {
+
+      code: 0,
+
+      value: `✅ Selected combo value: ${targetValue}`
+
+    };
+
+ 
+
+  } catch (error) {
+
+    return {
+
+      code: 1,
+
+      value: `❌ Failed: ${
+
+        error instanceof Error ? error.message : String(error)
+
+      }`
+
+    };
+
+  }
+
+}

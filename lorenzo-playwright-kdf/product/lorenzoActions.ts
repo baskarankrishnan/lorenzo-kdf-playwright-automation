@@ -5415,3 +5415,743 @@ console.log(`Stored split result in global variable: ${finalVarName} = "${result
 
 
 
+
+
+// --- Carried from member Sriharan ---
+export async function selectSlotByCurrentTimeDC(
+
+  page: Page,
+
+  step: testStep
+
+): Promise<{ code: number; value: string }> {
+
+ 
+
+  try {
+
+ 
+
+    // ✅ STEP 1: Resolve time
+
+    let now = new Date();
+
+ 
+
+    if (step.value && /^\d{1,2}:\d{2}$/.test(String(step.value).trim())) {
+
+      const [h, m] = String(step.value).trim().split(":").map(Number);
+
+      now.setHours(h, m, 0, 0);
+
+      console.log(`🕐 Using override time: ${step.value}`);
+
+    }
+
+ 
+
+    // ✅ STEP 2: Round to 15 mins
+
+    const interval = 15;
+
+    const remainder = now.getMinutes() % interval;
+
+ 
+
+    if (remainder !== 0) {
+
+      now.setMinutes(now.getMinutes() + (interval - remainder));
+
+    }
+
+ 
+
+    now.setSeconds(0, 0);
+
+ 
+
+    const targetMinutes = now.getHours() * 60 + now.getMinutes();
+
+ 
+
+    const targetTime =
+
+      `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+
+ 
+
+    console.log(`🎯 Target: ${targetTime}`);
+
+ 
+
+    // ✅ STEP 3: Detect context (page or frame)
+
+    let ctx: any = null;
+
+ 
+
+    const pageCount = await page.locator("//td[@icn='StartTime']").count();
+
+ 
+
+    if (pageCount > 10) {
+
+      ctx = page;
+
+      console.log("✅ Grid found on MAIN page");
+
+    } else {
+
+      for (const f of page.frames()) {
+
+        try {
+
+          if ((await f.locator("//td[@icn='StartTime']").count()) > 10) {
+
+            ctx = f;
+
+            console.log("✅ Grid found in FRAME");
+
+            break;
+
+          }
+
+        } catch {}
+
+      }
+
+    }
+
+ 
+
+    if (!ctx) {
+
+      throw new Error("Slot grid not found");
+
+    }
+
+ 
+
+    // ✅ STEP 4: Locators
+
+    const startCells = ctx.locator("//td[@icn='StartTime']");
+
+    const statusCells = ctx.locator("//td[@icn='AppointmentStatus']");
+
+    const clickCells = ctx.locator("//td[.//img[@title='Click to select row']]");
+
+ 
+
+    const total = await startCells.count();
+
+    const statusCount = await statusCells.count();
+
+    const clickCount = await clickCells.count();
+
+ 
+
+    console.log(`✅ Slots: ${total}`);
+
+ 
+
+    let selectedIndex = -1;
+
+ 
+
+    // ✅ ✅ STEP 5: MAIN LOOP (OPTIMIZED ✅)
+
+    for (let i = 0; i < total; i++) {
+
+ 
+
+      const startCell = startCells.nth(i);
+
+ 
+
+      // ✅ Get time from title or text
+
+      let raw = await startCell.getAttribute("title");
+
+      if (!raw) raw = await startCell.innerText();
+
+ 
+
+      const time = (raw || "").replace(/\s+/g, "").trim();
+
+ 
+
+      if (!time || !time.includes(":")) continue;
+
+ 
+
+      const [h, m] = time.split(":").map(Number);
+
+      if (isNaN(h) || isNaN(m)) continue;
+
+ 
+
+      const minutes = h * 60 + m;
+
+ 
+
+      // ✅ Skip past slots
+
+      if (minutes < targetMinutes) continue;
+
+ 
+
+      // ✅ Get visual position
+
+      const startBox = await startCell.boundingBox();
+
+      if (!startBox) continue;
+
+ 
+
+      // ✅ Match status via Y alignment
+
+      let matchedStatus = "";
+
+ 
+
+      for (let j = 0; j < statusCount; j++) {
+
+ 
+
+        const statusCell = statusCells.nth(j);
+
+        const statusBox = await statusCell.boundingBox();
+
+ 
+
+        if (!statusBox) continue;
+
+ 
+
+        if (Math.abs(statusBox.y - startBox.y) < 5) {
+
+          matchedStatus =
+
+            (await statusCell.getAttribute("title")) ||
+
+            await statusCell.innerText();
+
+          break;
+
+        }
+
+      }
+
+ 
+
+      const status = (matchedStatus || "").trim();
+
+ 
+
+      console.log(`➡️ ${time} | Status: ${status}`);
+
+ 
+
+      // ✅ ✅ FIRST AVAILABLE SLOT → STOP ✅
+
+      if (status === "Available") {
+
+        selectedIndex = i;
+
+        break;  // 🔥 performance optimization
+
+      }
+
+    }
+
+ 
+
+    if (selectedIndex === -1) {
+
+      throw new Error("No available slots found after target time");
+
+    }
+
+ 
+
+    // ✅ STEP 6: Get selected time
+
+    let selectedTime =
+
+      await startCells.nth(selectedIndex).getAttribute("title");
+
+ 
+
+    if (!selectedTime) {
+
+      selectedTime = await startCells.nth(selectedIndex).innerText();
+
+    }
+
+ 
+
+    console.log(`✅ Selected slot: ${selectedTime}`);
+
+ 
+
+    // ✅ STEP 7: Click using visual mapping ✅
+
+    const startElement = startCells.nth(selectedIndex);
+
+    const startBox = await startElement.boundingBox();
+
+ 
+
+    if (!startBox) {
+
+      throw new Error("Unable to locate slot position");
+
+    }
+
+ 
+
+    let bestClickIndex = -1;
+
+    let bestDistance = Number.MAX_SAFE_INTEGER;
+
+ 
+
+    for (let i = 0; i < clickCount; i++) {
+
+ 
+
+      const clickBox = await clickCells.nth(i).boundingBox();
+
+      if (!clickBox) continue;
+
+ 
+
+      const distance = Math.abs(clickBox.y - startBox.y);
+
+ 
+
+      if (distance < bestDistance) {
+
+        bestDistance = distance;
+
+        bestClickIndex = i;
+
+      }
+
+    }
+
+ 
+
+    if (bestClickIndex === -1) {
+
+      throw new Error("No matching checkbox found");
+
+    }
+
+ 
+
+    console.log("✅ Clicking slot");
+
+ 
+
+    const clickCell = clickCells.nth(bestClickIndex);
+
+ 
+
+    await clickCell.scrollIntoViewIfNeeded();
+
+    await clickCell.click();
+
+ 
+
+    return {
+
+      code: 0,
+
+      value: (selectedTime || "").trim()
+
+    };
+
+ 
+
+  } catch (error) {
+
+ 
+
+    const msg = error instanceof Error ? error.message : String(error);
+
+ 
+
+    console.error(`❌ Error: ${msg}`);
+
+ 
+
+    return {
+
+      code: 1,
+
+      value: `Failed to select time slot: ${msg}`
+
+    };
+
+  }
+
+}
+
+
+// --- Carried from member Sriharan ---
+export async function selectBookedSlotByPatientId(
+
+  page: Page,
+
+  step: testStep
+
+): Promise<{ code: number; value: string }> {
+
+ 
+
+  try {
+
+ 
+
+    // ✅ ✅ STEP 0: SIMULATED RUNTIME VARIABLE STORE ✅
+
+    // 🔁 Replace this with your actual framework store if available
+
+    const runtimeData: Record<string, string> = (globalThis as any).testData || {
+
+      _PASID: "PASID-052913"  // 👉 example fallback
+
+    };
+
+ 
+
+    // ✅ ✅ VARIABLE RESOLVER ✅
+
+    const resolveValue = (val: string) => {
+
+      if (!val) return "";
+
+ 
+
+      if (val.startsWith("_")) {
+
+        const resolved = runtimeData[val];
+
+        console.log(`🔁 Resolving ${val} → ${resolved}`);
+
+        return resolved || val;   // fallback if missing
+
+      }
+
+ 
+
+      return val;
+
+    };
+
+ 
+
+    // ✅ Normalize function
+
+    const normalize = (val: string) =>
+
+      (val || "")
+
+        .replace(/\u00A0/g, "")      // NBSP
+
+        .replace(/\s+/g, "")         // remove spaces/newlines
+
+        .replace(/–|—|‑/g, "-")      // normalize dashes
+
+        .trim();
+
+ 
+
+    // ✅ STEP 1: Resolve input value
+
+    const rawInput = String(step.value || "").trim();
+
+    console.log(`📌 Raw input: "${rawInput}"`);
+
+ 
+
+    const resolvedValue = resolveValue(rawInput);
+
+    const expected = normalize(resolvedValue);
+
+ 
+
+    console.log(`🎯 Final PASID to match: ${expected}`);
+
+ 
+
+    // ✅ STEP 2: Detect context (page or frame)
+
+    let ctx: any = null;
+
+ 
+
+    const pageCount = await page.locator("//td[@icn='PatientInfo.PatientIdentifier']").count();
+
+ 
+
+    if (pageCount > 10) {
+
+      ctx = page;
+
+      console.log("✅ Grid found on MAIN page");
+
+    } else {
+
+      for (const f of page.frames()) {
+
+        try {
+
+          const count = await f.locator("//td[@icn='PatientInfo.PatientIdentifier']").count();
+
+          if (count > 10) {
+
+            ctx = f;
+
+            console.log("✅ Grid found in FRAME");
+
+            break;
+
+          }
+
+        } catch {}
+
+      }
+
+    }
+
+ 
+
+    if (!ctx) {
+
+      throw new Error("Grid not found");
+
+    }
+
+ 
+
+    // ✅ STEP 3: Locators
+
+    const patientCells = ctx.locator("//td[@icn='PatientInfo.PatientIdentifier']");
+
+    const clickCells = ctx.locator("//td[.//img[@title='Click to select row']]");
+
+    const startCells = ctx.locator("//td[@icn='StartTime']");
+
+ 
+
+    const total = await patientCells.count();
+
+    console.log(`✅ Total rows: ${total}`);
+
+ 
+
+    let targetBox: any = null;
+
+ 
+
+    // ✅ ✅ STEP 4: FIND PASID (ONLY THIS MATTERS ✅)
+
+    for (let i = 0; i < total; i++) {
+
+ 
+
+      let raw =
+
+        (await patientCells.nth(i).getAttribute("title")) ||
+
+        await patientCells.nth(i).innerText();
+
+ 
+
+      const id = normalize(raw);
+
+ 
+
+      console.log(`➡️ Checking PatientID: "${id}"`);
+
+ 
+
+      if (id === expected) {
+
+        console.log(`✅ MATCH FOUND`);
+
+        targetBox = await patientCells.nth(i).boundingBox();
+
+ 
+
+        if (!targetBox) {
+
+          throw new Error("Could not determine row position");
+
+        }
+
+ 
+
+        break;
+
+      }
+
+    }
+
+ 
+
+    if (!targetBox) {
+
+      throw new Error(`Patient ID ${resolvedValue} not found`);
+
+    }
+
+ 
+
+    // ✅ STEP 5: (Optional) derive time only for logging
+
+    let selectedTime = "";
+
+ 
+
+    const startCount = await startCells.count();
+
+ 
+
+    let bestTimeDistance = Number.MAX_SAFE_INTEGER;
+
+ 
+
+    for (let i = 0; i < startCount; i++) {
+
+ 
+
+      const box = await startCells.nth(i).boundingBox();
+
+      if (!box) continue;
+
+ 
+
+      const delta = Math.abs(box.y - targetBox.y);
+
+ 
+
+      if (delta < bestTimeDistance) {
+
+        bestTimeDistance = delta;
+
+ 
+
+        selectedTime =
+
+          (await startCells.nth(i).getAttribute("title")) ||
+
+          await startCells.nth(i).innerText();
+
+      }
+
+    }
+
+ 
+
+    console.log(`✅ Slot time (visual match): ${selectedTime}`);
+
+ 
+
+    // ✅ ✅ STEP 6: CLICK CORRECT ROW ✅
+
+    const clickCount = await clickCells.count();
+
+ 
+
+    let bestClickIndex = -1;
+
+    let bestDistance = Number.MAX_SAFE_INTEGER;
+
+ 
+
+    for (let i = 0; i < clickCount; i++) {
+
+ 
+
+      const box = await clickCells.nth(i).boundingBox();
+
+      if (!box) continue;
+
+ 
+
+      const delta = box.y - targetBox.y;
+
+ 
+
+      // ✅ ❗ IMPORTANT FIX (NO ABOVE ROW)
+
+      if (delta < -2) continue;
+
+ 
+
+      if (delta < bestDistance) {
+
+        bestDistance = delta;
+
+        bestClickIndex = i;
+
+      }
+
+    }
+
+ 
+
+    if (bestClickIndex === -1) {
+
+      throw new Error("Matching checkbox not found");
+
+    }
+
+ 
+
+    console.log("✅ Clicking correct booked slot ✅");
+
+ 
+
+    await clickCells.nth(bestClickIndex).scrollIntoViewIfNeeded();
+
+    await clickCells.nth(bestClickIndex).click();
+
+ 
+
+    return {
+
+      code: 0,
+
+      value: (selectedTime || "").trim()
+
+    };
+
+ 
+
+  } catch (error) {
+
+ 
+
+    const msg = error instanceof Error ? error.message : String(error);
+
+ 
+
+    console.error(`❌ Error: ${msg}`);
+
+ 
+
+    return {
+
+      code: 1,
+
+      value: `Failed to select booked slot: ${msg}`
+
+    };
+
+  }
+
+}

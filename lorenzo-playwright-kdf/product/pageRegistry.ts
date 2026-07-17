@@ -236,6 +236,30 @@ export const PAGE_REGISTRY: Record<string, PageDefinition> = {
         url: 'AppWizardPage.aspx',
         title: 'NewReportLORENZO',
     },
+    'pageReinstateRequest': {
+        url: 'AppWizardPage.aspx',
+        title: 'pageRe-instaterequestLORENZO',
+    },
+    'pageRepeatrequest': {
+        url: 'APPMAINPAGE.ASPX',
+        title: 'pageRepeatrequestLORENZO',
+    },
+    'pageCurrentpregnancy': {
+        url: '/EPR/AppDialog.aspx?TITLE=Manage%20current%20pregnancy%',
+        title: 'Manage current pregnancy record - LORENZO',
+    },
+    'pageLabourandDelivery': {
+        url: '/EPR/AppDialog.aspx?TITLE=Manage%20labour%20and%20delivery%20summary%20-%20LORENZO&__PageName=AppWizardPage.aspx',
+        title: 'Manage labour and delivery summary - LORENZO',
+    },
+    'pageCreatedocument': {
+        url: '/EPR/AppTransfer.aspx?%3f__PageName=AppWizardPage.aspx',
+        title: 'Create document - LORENZO',
+    },
+    'pageManageAppointmentstatus': {
+        url: '/WebClient_SSO/Daycare/WZForms/DcsmMngAppmntStatus.aspx?WF_InstanceID=3aa3e8f8-fb43-4331-b963-bead7a2008ee',
+        title: 'Manage appointment status - LORENZO',
+    },
 }
     // 'pageSearchPatient': {
     //     url: '/EPR/APPMAINPAGE',

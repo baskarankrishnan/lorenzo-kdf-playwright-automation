@@ -103,6 +103,14 @@ export function getActionKeywordFunction(actionKeyword: string): Function | unde
             return ElementActions.jsclickByText;
         case 'selecttablerowbyvalue':
             return ElementActions.selectTableRowByValue;
+        case 'setautocompletefill':
+            return ElementActions.setAutoCompleteFill;
+        case 'selectcombovalue':
+            return ElementActions.selectComboValue;
+        case 'selectslotbycurrenttimedc':
+            return LZOActions.selectSlotByCurrentTimeDC;
+        case 'selectbookedslotbypatientid':
+            return LZOActions.selectBookedSlotByPatientId;
 
         // ASSERTION ACTIONS
         case 'verifyproperty':
