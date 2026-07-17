@@ -15,6 +15,10 @@ export const btn_ReferralFinishnow = "(//span[normalize-space(text())='Finish no
 export const btn_Finishnow = "//td[@title='Finish now']";
 export const btn_Finishnow_Dialog = "(//td[@title='Finish now'])[1]";
 export const dte_ReferralAcceptedDateTime = "//input[@class='DP_TB_Text']";
+export const txt_Identifiercpi = "//input[@title='Enter the identifier']";
+export const btn_Findcp = "//td[@class='Cmd_TTE' and contains(.,'Find Now')]";
+export const btn_Okcp = "//td[@class='Cmd_TTE' and normalize-space(.)='Ok']";
+
 
 
 

@@ -13,3 +13,5 @@ export const txt_validatepatientleave = "//td[normalize-space()='Informal Patien
 export const txt_validatepatientleaveretrun = "//td[normalize-space()='Patient leave return']";
 export const lnkSubTaskPaneInpatient = "//span[normalize-space()='Medical discharge']";
 export const tbl_IPPegboardGrid = "//table//div[@id='g_JSCTLC4']";
+
+

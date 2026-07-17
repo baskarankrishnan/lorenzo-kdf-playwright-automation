@@ -41,14 +41,7 @@ export const btn_EPRTab = "//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_14']";
 export const tab_Maternity = "//td[normalize-space()='Maternity']";
 export const btn_AccessplanningEPL = "//td[normalize-space()='Access Planning']";
 export const lbl_createAccessPlanEntrySCL = "(//li[contains(@caption,'Create access plan entry')])[2]";
-export const btn_AddOk = "//td[@title ='Ok']";
-export const chk_Managereferral = "//td[@title = 'Manage referral']/label";
-export const btn_AddCancel = "//td[@title ='Cancel']";
-export const icn_CareEvents = "//td[@frametitle= 'Care Events View']";
-export const btn_Groupby = "//img[@title = 'Select a group-by item']";
-export const btn_ExpandEvents = "//img[@alt = 'Click to expand row']";
-export const lbl_CareEventsDetails = "//td[@icn= 'Details']";
-export const btn_Selectrow = "//img[@title= 'Click to select row']";
-export const btn_GroupbyEvents = "//td[@title= 'Events']";
-export const btn_GroupbyEncounter = "(//td[@title= 'Encounter'])[2]";
-export const lbl_EncStatus = "(//td[@icn= 'StatusDescription'])[2]";
+export const btn_Referral = "//td[@caption='Re&ferrals']";
+export const btn_AccessplanningEPL = "//td[normalize-space()='Access Planning']";
+export const lbl_createAccessPlanEntrySCL = "(//li[contains(@caption,'Create access plan entry')])[2]";
+

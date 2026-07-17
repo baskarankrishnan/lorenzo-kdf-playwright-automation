@@ -24,3 +24,4 @@ export const txt_DOB_12 = "//input[@class='DP_TB_Text']";
 export const txt_DOB_13 = "//img[@title='Enter a gender value']";
 export const txt_DOB_14 = "//input[@class='DP_TB_Text']";
 export const btn_Find_10 = "//button[@title='Click to Find']";
+

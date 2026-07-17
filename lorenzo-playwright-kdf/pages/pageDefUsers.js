@@ -4,7 +4,7 @@ export const txt_Iduser = "//input[@title='Enter the identifier']";
 export const btn_findnow = "//td[@title='Click to execute the selected search criteria']";
 export const btn_Ok = "//td[@title='Click to add the selected care providers(s)']";
 export const txt_ClinicalUnitName = "//input[@dikey='itxtSpecName']";
-export const btn_Find = "//td[@title='Click to find']";
+export const btn_Find = "//td[@class='Cmd_TTE' and @title='Click to Find']";
 export const btn_Finish = "//td[@title='Finish']";
 export const chk_Selectpatienttask = "//img[@alt='Select the task recipients']";
 export const btn_OkTask = "//td[@title='Click to add the selected Careprovider(s)']";
@@ -19,4 +19,5 @@ export const btn_Ok_13 = "//td[@title = 'Click to add the selected care provider
 export const btn_Ok_14 = "//td[@title='Click to add the selected care providers(s)']";
 export const txt_SearchTemplateName = "//input[@dikey= 'itxtTemplateName]";
 export const txt_SelectTemplateName = "//td[@title='Click to select row']";
-export const btn_Ok_15 = "//td[@title='Click to choose the selected item']";
+export const txt_Identifier = "//input[@dikey='itxtIdentifier']";
+export const btn_Ok_15 = "//td[@title='Click to add the selected Service Point' and normalize-space()='Ok']";

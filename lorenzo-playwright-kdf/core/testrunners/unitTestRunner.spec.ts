@@ -9,15 +9,16 @@ import { getActionKeywordFunction } from '../../product/actionregistry';
 import { resolveTestVariables, resolveDatasetVariable } from '../actionkeywords/dataActions';
 import { BrowserFocusTracker, resolvePageForStep } from '../actionkeywords/browserActions';
 import { getPageDefinition } from '../../product/pageRegistry';
+import { clearScreenDown } from "node:readline";
 
 // ✅ Unit test specific configuration for step filtering
 const RunMode = {
-    testCaseId: 'LSTP_TaskMgmt_FloorPlan_WF001',
+    testCaseId: 'LSTP_APE_WF001',
     mode: 'RANGE', // 'RANGE' | 'SINGLE' | 'ALL'
     stepRange: {
         start: 1,
-        end: 100,
-    },
+        end: 178        ,},
+
     singleStep: 59,
     options: {
         continueOnFailure: false,
@@ -27,10 +28,10 @@ const RunMode = {
 
 // ✅ Hardcoded Test Case Configuration
 const TEST_CONFIG = {
-    module: 'TaskMgmt_FloorPlan',
-    excelName: 'LSTP_TaskMgmt_FloorPlan_WF001',
+    module: 'IP',
+    excelName: 'LSTP_APE_WF001',
     testcaseId: RunMode.testCaseId,
-    jiraId: 'LSTP_TaskMgmt_FloorPlan_WF001',
+    jiraId: 'LSTP_APE_WF001',
     description: 'End-to-end inpatient workflow',
     author: 'KDF Generator',
     isDDT: 'yes',
