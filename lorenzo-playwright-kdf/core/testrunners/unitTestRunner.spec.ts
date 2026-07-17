@@ -270,31 +270,30 @@ test.describe('Unit Test Case Runner', () => {
                         step.elementText = resolveTestVariables(step.elementText, '  ');
                     }
 
-                    // ✅ Handle DDT — supports both external DS_ dataset files and
-                    //    embedded TestData sheet in the same workbook (4-sheet format)
+                    // ✅ Handle DDT — resolve DatasetColumnName from the embedded TestData
+                    //    sheet (4-sheet workbook); fall back to external DS_ file if configured.
                     step.isDDT = false;
-                    if (TEST_CONFIG.isDDT?.toLowerCase() === 'yes') {
-                        if (step.datasetColumnNames && typeof step.datasetColumnNames === 'string') {
+                    if (step.datasetColumnNames && typeof step.datasetColumnNames === 'string' && step.datasetColumnNames.trim() !== '') {
+                        const colName = step.datasetColumnNames.trim();
+                        // Try embedded TestData sheet first (row 1 = first data row)
+                        const inlineData = fileUtils.readTestDataFromExcel(
+                            TEST_CONFIG.module,
+                            TEST_CONFIG.excelName,
+                            Number(TEST_CONFIG.ddtStartRow) || 1
+                        );
+                        if (inlineData[colName] !== undefined) {
                             step.isDDT = true;
-                            // Try embedded TestData sheet first
-                            const inlineData = fileUtils.readTestDataFromExcel(
+                            step.datasetColumnNames = String(inlineData[colName]);
+                        } else if (TEST_CONFIG.isDDT?.toLowerCase() === 'yes') {
+                            // Fall back to external DS_ dataset file
+                            step.isDDT = true;
+                            step.datasetColumnNames = resolveDatasetVariable(
+                                step.datasetColumnNames,
                                 TEST_CONFIG.module,
                                 TEST_CONFIG.excelName,
-                                Number(TEST_CONFIG.ddtStartRow)
+                                TEST_CONFIG.testcaseId,
+                                Number(TEST_CONFIG.ddtStartRow) || 1
                             );
-                            const colName = step.datasetColumnNames.trim();
-                            if (inlineData[colName] !== undefined) {
-                                step.datasetColumnNames = String(inlineData[colName]);
-                            } else {
-                                // Fall back to external DS_ dataset file
-                                step.datasetColumnNames = resolveDatasetVariable(
-                                    step.datasetColumnNames,
-                                    TEST_CONFIG.module,
-                                    TEST_CONFIG.excelName,
-                                    TEST_CONFIG.testcaseId,
-                                    Number(TEST_CONFIG.ddtStartRow)
-                                );
-                            }
                         }
                     }
 

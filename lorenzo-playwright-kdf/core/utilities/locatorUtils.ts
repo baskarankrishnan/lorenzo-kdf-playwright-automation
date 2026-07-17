@@ -12,7 +12,16 @@ export function getLocatorString(step: testStep): string {
     if (!page || !element) {
         throw new Error('Page and Element parameters are required to find a locator entry.');
     }
-    const pageLocators = repository[page];
+    let pageLocators = repository[page];
+    if (!pageLocators) {
+        // Case-insensitive fallback: page files may be named `PageXxx.js` (capital P)
+        // while test data references `pageXxx`. The repository is keyed by filename, so
+        // the casing can differ. Page names never collide by case only, so this is safe.
+        const matchKey = Object.keys(repository).find(k => k.toLowerCase() === page.toLowerCase());
+        if (matchKey) {
+            pageLocators = repository[matchKey];
+        }
+    }
     if (!pageLocators) {
         throw new Error(`Page "${page}" not found in locator repository.`);
     }

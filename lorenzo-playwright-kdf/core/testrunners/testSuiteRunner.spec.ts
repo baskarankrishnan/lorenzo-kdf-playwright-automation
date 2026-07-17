@@ -137,6 +137,13 @@ test.describe('Test Suite Execution', () => {
                     }
                     executionContext.setCurrentContext(contextKey);
 
+                    // Load the TestData sheet embedded in the test case workbook so that any
+                    // step with a DatasetColumnName resolves its value from it (row 1 = first
+                    // data row). This replaces the need for external DS_<excel>.xlsx files.
+                    const testDataMap = (module && excelName)
+                        ? fileUtils.readTestDataFromExcel(module, excelName, 1)
+                        : {};
+
                     // ✅ Initialize focus tracker
                     const focusTracker = new BrowserFocusTracker(page);
 
@@ -215,8 +222,14 @@ test.describe('Test Suite Execution', () => {
                                     }
 
                                     step.isDDT = false;
-                                    if (isDDt?.toLowerCase() == "yes") {
-                                        if (step.datasetColumnNames && typeof step.datasetColumnNames === 'string') {
+                                    if (step.datasetColumnNames && typeof step.datasetColumnNames === 'string' && step.datasetColumnNames.trim() !== '') {
+                                        const dsCol = step.datasetColumnNames.trim();
+                                        if (Object.prototype.hasOwnProperty.call(testDataMap, dsCol)) {
+                                            // Resolve the value from the TestData sheet in this workbook.
+                                            step.isDDT = true;
+                                            step.datasetColumnNames = testDataMap[dsCol];
+                                        } else if (isDDt?.toLowerCase() == "yes") {
+                                            // Legacy fallback: external DS_<excel>.xlsx dataset file.
                                             step.isDDT = true;
                                             step.datasetColumnNames = resolveDatasetVariable(step.datasetColumnNames, module, excelName, testcaseId, Number(ddtStartRow));
                                         }

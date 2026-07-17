@@ -81,6 +81,9 @@ test.describe('Test Case Runner', () => {
         }
         executionContext.setCurrentContext(contextKey);
 
+        // Load embedded TestData sheet for DatasetColumnName resolution (row 1 = first data row).
+        const testDataMap = fileUtils.readTestDataFromExcel(TEST_CONFIG.module, TEST_CONFIG.excelName, 1);
+
         // ✅ Initialize focus tracker
         const focusTracker = new BrowserFocusTracker(page);
 
@@ -117,10 +120,15 @@ test.describe('Test Case Runner', () => {
                         step.elementText = resolveTestVariables(step.elementText, '  ');
                     }
 
-                    // ✅ Handle DDT
+                    // ✅ Handle DDT — resolve DatasetColumnName from the embedded TestData
+                    //    sheet (4-sheet workbook); fall back to external DS_ file if configured.
                     step.isDDT = false;
-                    if (TEST_CONFIG.isDDT?.toLowerCase() === 'yes') {
-                        if (step.datasetColumnNames && typeof step.datasetColumnNames === 'string') {
+                    if (step.datasetColumnNames && typeof step.datasetColumnNames === 'string' && step.datasetColumnNames.trim() !== '') {
+                        const dsCol = step.datasetColumnNames.trim();
+                        if (Object.prototype.hasOwnProperty.call(testDataMap, dsCol)) {
+                            step.isDDT = true;
+                            step.datasetColumnNames = testDataMap[dsCol];
+                        } else if (TEST_CONFIG.isDDT?.toLowerCase() === 'yes') {
                             step.isDDT = true;
                             step.datasetColumnNames = resolveDatasetVariable(
                                 step.datasetColumnNames,
@@ -128,6 +136,9 @@ test.describe('Test Case Runner', () => {
                                 TEST_CONFIG.excelName,
                                 TEST_CONFIG.testcaseId,
                                 Number(TEST_CONFIG.ddtStartRow)
+                            );
+                        }
+                    }
                             );
                         }
                     }
