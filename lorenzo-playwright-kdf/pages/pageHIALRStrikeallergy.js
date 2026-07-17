@@ -34,7 +34,6 @@ export const btn_Finish = "//td[@title='Finish']";
 export const cmb_PrimaryContact = "//img[@title='Select Primary Contact type']";
 export const lnk_Registrationtemporary = "//span[normalize-space()='Registration - temporary']";
 //pageHIALRStrikeallergy
-export const btn_Finish = "//td[@title='Finish']";
 export const cmb_ReasonToStrikeout = "//input[@id='icombobox_Text_C8']";
 export const chk_Confirm = "//td[@title = 'Check to confirm']/img";
 export const lbl_Allergen = "//label[@dikey = 'lblAllergenData']";

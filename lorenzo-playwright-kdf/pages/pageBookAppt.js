@@ -16,7 +16,6 @@ export const txt_City = "//input[@title= 'Enter City']";
 export const cmb_Country = "//input[@title= 'Enter Country']";
 export const btn_PatFinishnow = "//table[contains(@class, 'Cmd_DisB')]/descendant::td[@title = 'Finish now']";
 export const btn_PopUpYes = "//td[@class='Cmd_TTE'][@title='Yes']";
-export const btn_PopUpNo = "//td[@class='Cmd_TTE'][@title='No']";
 export const btn_Cancel = "//td[@title = 'Cancel']"
 export const cmb_ApptType = "//input[@title = 'Appointment Type']";
 export const cmb_OpPriority = "//input[@title = 'Priority']";
@@ -27,7 +26,6 @@ export const cmb_RefPriority = "//input[@title='Select referral priority']";
 export const cmb_RefType = "//input[@title='Select type of referral']";
 export const cmb_RefSource = "//input[@title='Select the appropriate source of referral being created']";
 export const icn_OrganisationSFS = "//img[@tooltip='Select referred by organisation']";
-export const txt_Identifier = "//input[@title='Enter an identifier']";
 export const btn_Find = "//td[@title='Click to find']";
 export const btn_Ok = "//td[@title='Click to add the selected health organisation(s)']";
 export const dte_ReferralCreationDateTime = "//input[@id='DP_VdtpRefCreationDate']";

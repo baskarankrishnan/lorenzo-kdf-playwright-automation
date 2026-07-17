@@ -66,7 +66,6 @@ export const btn_OKmanageoutcome = "//ion-button[normalize-space()='OK']"
 export const lbl_Eventoutcome = "//ion-label[normalize-space()='Event outcome']"
 export const txt_Clicktext ="//ion-label[contains(normalize-space(),'Planned time')]";
 export const btn_managedelay1 = '(//ion-radio[contains(@class,"radio-justify-space-between")])[3]';
-export const tbl_Hubicon = "(//div[@title='<variable>']/ancestor::tr[@kendogridlogicalrow]/td/div[@part='calenderIcon'])[1]";
 
 
 

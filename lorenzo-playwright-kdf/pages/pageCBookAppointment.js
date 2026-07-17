@@ -5,7 +5,6 @@ export const Cmb_Priority = "//img[@id='icombobox_Image_C33' and @title='Priorit
 export const lnk_CreatereferralOP = "td[title='Create referral/episode']";
 export const btn_Finishnow = "//td[@title='Finish now']";
 export const cmb_Specialty = "cmb_Specialty";
-export const lnk_CreatereferralOP = "td[title='Create referral/episode']";
 export const btn_Finishnowop = "//title[contains(text(),'Create referral - LORENZO')]/ancestor::html//td[@title='Finish now']";
 export const cmb_RefSpecialty = "//input[@id='icombobox_Text_cboReftoSPL']";
 export const cmb_RefTreatmentFunction = "//input[@id='icombobox_Text_cboReftoTRM']";

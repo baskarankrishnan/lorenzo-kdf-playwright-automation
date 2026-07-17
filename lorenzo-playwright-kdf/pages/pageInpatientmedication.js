@@ -46,4 +46,3 @@ export const lbl_DruRound = "//kendo-label[@name='lblDruRound']";
 export const txt_MedicationSearch4 = "//kendo-textbox//input[contains(@class,'k-input-inner')]";
 export const txt_Drugcatelogue4 = "(//kendo-gridlayout-item[@ng-reflect-col='2']//div[@title='Select item' and contains(@class,'link-Icon')])[1]";
 export const rad_BeginsWith = "//iradiobutton//span//kendo-label[@title='Begins with']";
-export const lnk_searchdrug = "//button[normalize-space()='Search drug catalogue']";

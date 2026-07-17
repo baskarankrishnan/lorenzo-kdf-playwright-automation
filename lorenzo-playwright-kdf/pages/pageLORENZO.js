@@ -31,11 +31,9 @@ export const btn_Finishnowrc = "//td[@title='Finish now']";
 export const img_Codeset = "//img[@id='imgCode']";
 export const chk_Selectcheckbox = "//input[@type='checkbox' and @data-role='checkbox' and @aria-label='Select row']";
 export const lnk_Updatecode = "//span[normalize-space()='Update code']";
-export const lbl_modifyAccessPlanEntrySCL = "//span[normalize-space()='Modify access plan entry']";
 export const lbl_closeAccessPlanEntrySCL = "//li[@title='Close access plan entry']";
 export const cmb_Requestedby = "//input[@name='icombobox_Text_C22']";
 export const cmb_Reason = "//input[@name='icombobox_Text_C24']";
-export const lbl_ManageOffer = "(//li[contains(@caption,'Manage offer')])[6]";
 
 
 

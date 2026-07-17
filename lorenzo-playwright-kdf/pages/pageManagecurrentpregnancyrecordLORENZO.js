@@ -22,7 +22,6 @@ export const txt_Gravida = "//input[@title='Please enter the number of pregnanci
 export const txt_Gravida1 = "//input[@title='Please enter the number of live births']";
 export const txt_Parity="//input[@title='Please enter the number of non-viable births']";
 export const cmb_Pregnancyrisk = "//img[@title='Please select the pregnancy risk']";
-export const cmb_FolicacidTaken ="//table[@id='C2_C28']//input[@type='text']";
 export const tab_Additionaldetails ="//div[@id='ifS_C0']//td[@caption='Additional details']";
 export const cmb_Pregnancyfirstconclstacttype ="//img[@title='Select the first contact type for this pregnancy']";
 export const rad_Medicalcondtions = "//img[@id='iO_I_C9_1']";

@@ -26,9 +26,6 @@ export const SelectSession = "//img[@alt='Click to select row' and @title='Click
 export const btn_OK = "//button[@title='OK'][contains(@class, 'Command_Normal')]";
 export const btn_CliOK = "//td[contains(@title,'OK')]";
 export const btn_No = "//td//img[@title='No']";
-export const tab_Clinic = "(//span[@class='T_PL'][normalize-space()='Clinics'])[1]";
-export const txt_Clinicname = "//input[@dikey='itxtClinicname']";
-export const SelectSession = "//img[@alt='Click to select row' and @title='Click to select row']";
 export const btn_OK = "//td[contains(@title,'OK')]";
 export const lnk_Book = "//span[@class='T_PL' and normalize-space(text())='Book']";
 export const lnk_ClinicsSubLink = "//span[normalize-space()='Edit Booking']";
@@ -72,7 +69,6 @@ export const btn_Finish = "//span[normalize-space()='Finish']";
 export const lbl_Gender = "//label[text()='Gender']";
 export const cmb_Gender = "//input[@title='Enter a gender value']";
 export const ico_Gender = "//img[@title='Enter a gender value']";
-export const btn_Find = "//button[@title='Click to Find']";
 export const btn_Next = "//td[@title='Next']";
 export const btn_PopUpNo = "//td[@class='Cmd_TTE'][@title='No']";
 export const txt_Forename = "//input[@dikey='itxtForename']";
@@ -127,11 +123,8 @@ export const ico_HeadInfo = "//p[text()='Select document templates - LORENZO']";
 export const btn_CancelDT = "//td[@title='Cancel']";
 export const ico_HeadingIn = "//p[contains(., 'Warning')]";
 export const lbl_ConfirmationTextss = "//div[@id='txtMessage']";
-export const btn_PopUpNo = "//td[@class='Cmd_TTE'][@title='No']";
 export const ico_HeadingInfo = "//p['Information - LORENZO']";
 export const tbl_Verifystatus = "//td[@title='Volume dispatched']";
-export const lnk_ManageAppointmentStatus = "//li[@id='itTT_C20_4']//span[contains(@class,'T_PL')][normalize-space()='Manage Appointment Status']";
-export const lnk_EditBooking = "//li[@id='itTT_C20_67']//span[@class='T_PL'][normalize-space()='Edit booking']";
 export const lnk_AdmitTaskPane = "//li[@id='itTT_C20_11']";
 export const cmb_Entity = "//input[@id='icombobox_Text_C1']";
 export const txt_Identifierc = "//input[@id='it_C_C5']";
@@ -151,14 +144,11 @@ export const btn_Finish = "//span[.//span[normalize-space()='F'] and contains(no
 export const lnk_ReCode = "//span[normalize-space()='Recode']";
 export const btn_Finishnowrc = "//td[@title='Finish now']";
 export const img_Codeset = "//img[@id='imgCode']";
-export const chk_Selectcheckbox = "//input[@type='checkbox' and @data-role='checkbox' and @aria-label='Select row']";
 export const lnk_Updatecode = "//span[normalize-space()='Update code']";
 export const btn_Nextc = "//td[@title='Next']";
 export const txt_Codes = "//input[@dikey='txtCode']";
 export const img_But = "//img[@id='ic_I_C18']";
-export const lnkTaskPanePatient = "//span[normalize-space()='Find record']";
 export const txt_Surname = "//input[@dikey='itxtSurname']";
-export const txt_Forename = "//input[@dikey='itxtForename']";
 export const cmb_Gender = "//label[text()='Gender']";
 export const lbl_Gender = "//input[@title='Enter a gender value']";
 export const txt_DOB = "//input[@class='DP_TB_Text']";
@@ -169,11 +159,9 @@ export const txt_PatientForename = "//label[@dikey='lblForenameValue']";
 export const txt_PatientTelHome = "//label[@dikey='lblTeleHomeValue']";
 export const txt_PatientTelMobile = "//label[@dikey='lblTeleMobileValue']";
 export const txt_PatientEmail = "//label[@dikey='lblEmailAddrValue']";
-export const lnk_Summary = "//nobr[normalize-space(.)='Summary']";
 export const lnk_WardAttendance = "//nobr[text()='Ward attendance']";
 export const tbl_WardAttendance = "//div[@id='g_JSCTLC0'][contains(@class, 'k-grid')]";
 export const lnk_BookWardAttendance = "(//span[text()='Book ward attendance'])[2]";
-export const btn_Yes = "//td[@title='Yes']";
 export const status_Event = "//span[@class='k-column-title'][text()='Event']";
 export const lnk_EditBookingWA = "//span[normalize-space()='Edit booking']";
 export const btn_Slider = "//div[@id='divSplitter']";
@@ -197,16 +185,12 @@ export const btn_OKFR= "//button[@title='Click to add the selected patient']";
 export const lbl_AllPatients = "//div[text()='All patients']";
 
 export const btn_OK = "//button[@title='Click to add the selected patient']";
-export const btn_PopUpOk = "//td[@class='Cmd_TTE'][@title='Ok']";
 export const btn_PopUpNo = "//td[@class='Cmd_TTE' and @title='No']";
 export const btn_DocTempCancel = "//td[@title = 'Cancel']"
-export const lbl_PatientBookBanner = "(//td[@class='CxtBar_TD6'])[1]";
 export const lnkTaskPaneCreateRef = "//li[@id='itTT_C20_0']";
 export const chk_Managereferral = "//td[@text='Manage referral']";
 export const btn_AdRefMng_ok = "//button[.//td[normalize-space(.)='Ok']]";
 export const btn_AdRefMng_Cancel = "//button[.//td[normalize-space(.)='Cancel']]";
-export const btn_Yes = "//td[@title='Yes']";
-export const tab_Patients = "//td[@caption='Patients'][@key='TB_PATNT']";
 export const tbl_SelectRow = "//tr[@id='igRowC6_0']//img[@onkeydown='C6.RCKeyDown(0)']";
 export const tbl_RequestStatus = "//span[normalize-space()='Request Status']";
 export const btn_PromptYes = "//img[@id='ic_I_C0' and @title='Yes']";
@@ -289,12 +273,8 @@ export const lbl_CareplanStatus2 = "//td[contains(text(),'Careplan template02')]
 export const tab_Overview = "//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_1']";
 
 // Task link from EPR
-export const lnkTaskPaneCreateRef = "//li[@id='itTT_C20_0']";
 
 //Additional Options - Lorenzo
-export const chk_Managereferral = "//td[@text='Manage referral']";
-export const btn_AdRefMng_ok = "//button[.//td[normalize-space(.)='Ok']]";
-export const btn_AdRefMng_Cancel = "//button[.//td[normalize-space(.)='Cancel']]";
 export const tgl_FilterBY = "//td[@title='Filter by ']";
 export const txt_ValueSelect = "//td[@ival='Show all referrals']"
 export const lnk_TaskPaneModifyReferral ="//li[@caption='Modify referral']";
@@ -302,7 +282,6 @@ export const lnk_TaskPaneManageReferral = "//li[@caption='Manage referral']";
 export const lnk_TaskPaneCloseReferral = "//li[@caption='Close referral']";
 export const lnk_TaskPaneReOpenReferral = "//li[@caption='Reopen referral']";
 export const lbl_ReferralStatus = "//td[@icna = 'ReferralStatus']";
-export const btn_ClinicFind = "//td[@title='Find']";
 export const btn_Clinicok ="//td[@title='OK']";
 export const img_ExternalLink = "//img[@title ='External Link']"
 export const btn_Encounter = "//button[@title ='encounter']"
@@ -310,9 +289,6 @@ export const img_ExternalLinkHeader = "//td[@id = 'tdDIHeader']/img[@title = 'Ex
 export const img_DIDetachWindow = "//td[@id = 'tdDIExternal']/img[@title = 'Detach window']"
 
 //Additional Options - Lorenzo
-export const chk_Managereferral = "//td[@text='Manage referral']";
-export const btn_AdRefMng_ok = "//button[.//td[normalize-space(.)='Ok']]";
-export const btn_AdRefMng_Cancel = "//button[.//td[normalize-space(.)='Cancel']]";
 export const lnkSubTaskPaneCaseloadmanagement = "//span[text()='Caseload management']";
 
 //Caseload management
@@ -332,7 +308,6 @@ export const lnkSubTaskPaneInTray = "//span[normalize-space()='In-tray']";
 export const lbl_Mycaseload = "//td[@id='pht_SlPMyCaseLoad']";
 export const ico_HO = "//img[contains(@id,'ImgPlusORMinusHO490000017354_child')]";
 export const ico_Mycaseload = "//img[contains(@id,'C0_ImgPlusORMinusMYCLPRF_child')]"
-export const ico_Mycaseload = "//img[contains(@id,'C0_ImgPlusORMinusMYCLPRF_child')]";
 export const btn_PerformTask ="//button[@id='btnPerformTask']";
 export const cmb_Transferaction = "//input[@id='icombobox_Text_C33']";
 export const  btn_Update = "//td[@title='Click here to update']";

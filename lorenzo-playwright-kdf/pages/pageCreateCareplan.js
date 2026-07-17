@@ -13,4 +13,3 @@ export const chk_NeedExpand = "//img[contains(@src,'collapsed')]";
 export const cmb_ElementType = "//input[@title='Select element type']";
 export const txt_Search = "//input[@title='Enter to search element(s)']";
 export const img_AddGoal = "//img[@class='psimg']";
-export const btn_FinishNow = "//td[@title='Finish now']";

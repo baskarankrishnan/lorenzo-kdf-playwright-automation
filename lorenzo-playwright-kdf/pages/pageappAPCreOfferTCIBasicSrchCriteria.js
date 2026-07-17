@@ -8,5 +8,4 @@ export const txt_ExpectedLengthOfStay = "//input[@name='iupdownbox_Value_C28']";
 export const btn_Find = "//td[@title='Click to Find']";
 export const txt_Identifier = "//input[@dikey='itxtIdentifier']";
 export const btn_Ok = "//td[@title='Click to add the selected Service Point']";
-export const txt_ExpectedLengthOfStay = "//input[@name='iupdownbox_Value_C28']";
 export const txt_Explenofdays = "//input[@title='Please Enter Expected Length of Stay UOM']";

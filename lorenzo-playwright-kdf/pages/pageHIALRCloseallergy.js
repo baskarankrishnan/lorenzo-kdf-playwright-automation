@@ -27,4 +27,3 @@ export const btn_Find_10 = "//button[@title='Click to Find']";
 //pageHIALRCloseallergy
 export const lbl_Allergen = "//label[@dikey = 'lblAllergenData']";
 export const cmb_ReasonToClose = "//input[@id='icombobox_Text_C10']";
-export const btn_Finish = "//td[@title='Finish']";

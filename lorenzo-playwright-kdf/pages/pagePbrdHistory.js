@@ -22,5 +22,3 @@ export const txt_Discharge = "//td[@ival='Discharged']";
 export const tbl_IPHistoryByHeader = "//tr[@id='g_TRColHdrC0']/ancestor::table[1]";
 export const tbl_IPHistoryVerifystatus = "//td[@ival='Booked']";
 export const tbl_IPHistorySelectRow= "//td[img[@alt='Click to select row']]";
-export const tbl_tbl_IPHistoryVerifystatus = "//td[@ival='Booked']";
-export const tbl_IPHistoryCurrentview = "//td[@caption='Current View']";

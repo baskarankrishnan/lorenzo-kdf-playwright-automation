@@ -8,8 +8,6 @@ export const cmb_Status = "//input[@id='icombobox_Text_C39']";
 export const btnFinish = "//span[.//span[normalize-space()='F'] and contains(normalize-space(.),'Finish')]";
 export const lnk_Updatecode =  "//span[normalize-space()='Update code']";
 export const btn_Next = "//td[@title='Next']";
-export const cmb_Category = "//img[@id='icombobox_Image_C8']";
-export const cmb_Codingscheme = "//img[@id='icombobox_Image_C10']";
 export const cmb_Status = "//img[@id='icombobox_Image_C39']";
 export const btn_Finish = "//span[.//span[normalize-space()='F'] and contains(normalize-space(.),'Finish')]";
 export const img_Codeset = "//img[@id='imgCode']";
