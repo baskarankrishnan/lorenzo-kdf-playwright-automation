@@ -8,3 +8,4 @@ export const cmb_BedCategory = "//select[option[normalize-space()='Critical care
 export const cmb_Location = "//select[option[normalize-space()='Bone marrow ward Bay Ward']]";
 export const cmb_ReasonforTransfer = "//input[@title='Select reason for Transfer']";
 export const btn_FinishNowCP = "//td[@title='Finish now']";
+export const cmb_WardLocation = "//input[@title='Select a location']";

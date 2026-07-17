@@ -1,4 +1,4 @@
-﻿// pagePatientBasicSearch
+﻿// pagePatientBasicSearch  
 export const txt_Surname = "//input[@dikey='itxtSurname']";
 export const txt_Forename = "//input[@dikey='itxtForename']";
 export const cmb_Gender = "//label[text()='Gender']";

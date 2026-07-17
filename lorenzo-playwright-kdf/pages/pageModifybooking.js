@@ -10,3 +10,6 @@ export const cmb_Modificationreason = "//input[@id='icombobox_Text_C4' and conta
 export const btn_Finish = "//td[@title='Finish']";
 export const consent_popup = "//div[contains(text(), 'please review the consent for the patient')]";
 export const btn_Consentok = "//td[@title='Ok']";
+export const cmb_modifyPriority = "//input[@title='Please select a priority']";
+export const btn_Yesinfo ="//td[normalize-space()='Yes']"
+export const lbl_PatientBookBanner = "(//td[@class='CxtBar_TD6'])[1]";

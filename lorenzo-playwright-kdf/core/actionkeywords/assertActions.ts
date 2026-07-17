@@ -9,6 +9,18 @@ export async function verifyProperty(page: Page, step: testStep): Promise<Outcom
     let actualValue: any;
     let expectedValue: any = step.value;
 
+    const booleanLikeProperties = new Set(['exists', 'checked', 'disabled', 'enabled', 'focused', 'hidden', 'visible']);
+    const property = step.property?.toLowerCase();
+
+    // Some generated steps set expected state in Condition rather than Values.
+    // Only boolean-like properties should use Condition as the expected value.
+    if ((expectedValue === null || expectedValue === undefined || String(expectedValue).trim() === '')
+      && step.condition
+      && property
+      && booleanLikeProperties.has(property)) {
+      expectedValue = resolveTestVariables(step.condition);
+    }
+
     if (expectedValue && typeof expectedValue === 'string') {
       expectedValue = resolveTestVariables(expectedValue);
     }
@@ -25,7 +37,6 @@ export async function verifyProperty(page: Page, step: testStep): Promise<Outcom
       }
     }
 
-    const property = step.property?.toLowerCase();
     if (!property) {
       throw new Error(`Property is required for verifyProperty action`);
     }
@@ -34,28 +45,59 @@ export async function verifyProperty(page: Page, step: testStep): Promise<Outcom
 
     switch (property) {
       case 'exists': {
-        let elementExists = true;
-        let isVisible = false;
-        try {
-          const locator = await resolveElement(page, baseSelector, step);
-          isVisible = await locator.isVisible();
-        } catch (e) {
-          elementExists = false;
+        const expectedTrue = expectedValue === true || String(expectedValue).toLowerCase() === 'true';
+        const timeoutMs = 5000;
+        const pollIntervalMs = 200;
+        const startTime = Date.now();
+        let lastError: Error | null = null;
+
+        while (Date.now() - startTime < timeoutMs) {
+          let elementExists = true;
+          let isVisible = false;
+          try {
+            const locator = await resolveElement(page, baseSelector, step, 2000);
+            isVisible = await locator.isVisible().catch(() => false);
+          } catch (e) {
+            elementExists = false;
+            lastError = e instanceof Error ? e : new Error(String(e));
+          }
+
+          if (expectedTrue) {
+            if (elementExists && isVisible) {
+              return {
+                code: 0,
+                value: `Successfully verified property 'exists' for element: ${step.page}.${step.element}`
+              };
+            }
+            if (elementExists && !isVisible) {
+              lastError = new Error(`exists property expected true but element is not visible`);
+            } else {
+              lastError = new Error(`exists property expected true but element not found`);
+            }
+          } else {
+            if (!elementExists || !isVisible) {
+              return {
+                code: 0,
+                value: `Successfully verified property 'exists' for element: ${step.page}.${step.element}`
+              };
+            }
+          }
+
+          if (Date.now() - startTime + pollIntervalMs >= timeoutMs) {
+            break;
+          }
+
+          await new Promise(resolve => setTimeout(resolve, pollIntervalMs));
         }
 
-        if (expectedValue === true || String(expectedValue).toLowerCase() === 'true') {
-          if (!elementExists) {
-            throw new Error(`exists property expected true but element not found`);
-          }
-          if (!isVisible) {
-            throw new Error(`exists property expected true but element is not visible`);
-          }
-        } else {
-          if (elementExists && isVisible) {
-            throw new Error(`exists property expected false but element is present and visible`);
-          }
+        if (expectedTrue) {
+          throw lastError || new Error(`exists property expected true but element not found`);
         }
-        break;
+
+        throw new Error(
+          `exists property expected false but element is present and visible` +
+          ` (${step.page}.${step.element} selector=${baseSelector})`
+        );
       }
 
       case 'checked': {

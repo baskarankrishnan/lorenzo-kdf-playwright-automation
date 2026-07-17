@@ -1,4 +1,4 @@
-// pageBookTheatre
+// pageTheatreBookSession
 export const txt_Identifier = "//input[@title='Enter an identifier']";
 export const lbl_Identifier = "//label[@title='Identifier']";
 export const btn_Find = "//img[@title='Click to Find']";

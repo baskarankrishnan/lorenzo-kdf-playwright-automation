@@ -1,4 +1,5 @@
-﻿// pagePrint Note
+﻿// pagePrint Note -Not used anywhere
+
 export const btn_Searchmedication = "//span[@title='Search']";
 export const txt_MedicationSearch = "//kendo-textbox//input[contains(@class,'k-input-inner')]";
 export const lnk_searchdrug = "//button[normalize-space()='Search drug catalogue']";

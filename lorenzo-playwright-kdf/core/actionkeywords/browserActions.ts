@@ -385,6 +385,54 @@ export async function waitForSeconds(page: Page, step: testStep): Promise<Outcom
     }
 }
 
+export async function expandSliderPanel(page: Page, step: testStep): Promise<Outcome> {
+    try {
+        const panelSelector = (step.element && step.element.trim()) || "//div[@id='divDetails']";
+        const panel = page.locator(panelSelector).first();
+
+        if (await panel.count() === 0) {
+            console.error(`  ❌ Slider panel not found: ${panelSelector}`);
+            return {
+                code: 1,
+                value: `Slider panel not found: ${panelSelector}`
+            };
+        }
+
+        const toggle = panel.locator('.collapser, [data-toggle], [aria-expanded]').first();
+        const target = (await toggle.count()) ? toggle : panel;
+
+        const isCollapsed = await target.evaluate(el => {
+            const className = String(el.className || '');
+            const ariaExpanded = el.getAttribute('aria-expanded');
+            return ariaExpanded === 'false' || className.includes('collapsed');
+        }).catch(() => false);
+
+        if (!isCollapsed) {
+            console.log(`  ✅ Slider panel already expanded: ${panelSelector}`);
+            return {
+                code: 0,
+                value: `Slider panel already expanded: ${panelSelector}`
+            };
+        }
+
+        await target.scrollIntoViewIfNeeded();
+        await target.click();
+        await panel.waitFor({ state: 'visible', timeout: 10000 });
+
+        console.log(`  ✅ Expanded slider panel: ${panelSelector}`);
+        return {
+            code: 0,
+            value: `Expanded slider panel: ${panelSelector}`
+        };
+    } catch (error) {
+        console.error(`  ❌ Failed to expand slider panel`);
+        return {
+            code: 1,
+            value: `Failed to expand slider panel: ${error instanceof Error ? error.message : String(error)}`
+        };
+    }
+}
+
 /**
  * Close browser tab(s) with multiple options
  * Supports: close current tab, close all, close by title/URL pattern
@@ -1566,89 +1614,5 @@ export async function waitForCondition(page: Page, step: testStep): Promise<Outc
     } catch (error) {
         console.error(`  ❌ Condition wait failed`);
         return { code: 1, value: `Condition wait failed: ${error instanceof Error ? error.message : String(error)}` };
-    }
-}
-
-
-const { chromium } = require('@playwright/test');
-
-
-export async function getEdgeBrowser(): Promise<{
-  browser: Browser;
-  context: BrowserContext;
-  page: Page;
-}> {
-  const EDGE_PATH =
-    'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
-
-  console.log('🚀 Launching fresh Edge browser...');
-
-  const browser = await chromium.launch({
-    executablePath: EDGE_PATH,
-    headless: false,
-    args: [
-      '--disable-web-security',
-      '--ignore-certificate-errors',
-      '--start-maximized',
-      '--no-first-run',
-      '--no-default-browser-check'
-    ]
-  });
-
-  const context = await browser.newContext({
-    ignoreHTTPSErrors: true,
-    viewport: { width: 1920, height: 1080 },
-    bypassCSP: true,
-    javaScriptEnabled: true,
-    acceptDownloads: true
-  });
-
-  const page = await context.newPage();
-
-  const appUrl = process.env.URL || process.env.APP_URL;
-
-  if (appUrl) {
-    console.log(`🌐 Navigating to: ${appUrl}`);
-
-    await page.goto(appUrl, {
-      waitUntil: 'domcontentloaded'
-    });
-
-    await page.waitForLoadState('networkidle').catch(() => {});
-  }
-
-  console.log('✅ Fresh Edge session ready');
-
-  return {
-    browser,
-    context,
-    page
-  };
-}
-export async function navigateToApp(page : Page) {
-    if (page.url() === 'about:blank') {
-        const appUrl = process.env.URL || process.env.APP_URL || '';
-
-        if (appUrl) {
-            console.log(`🌐 Auto-navigating to app URL: ${appUrl}`);
-
-            await page.goto(appUrl, {
-                waitUntil: 'domcontentloaded'
-            });
-
-            await page
-                .waitForLoadState('networkidle', {
-                    timeout: 30000
-                })
-                .catch(() => {});
-
-            console.log('✅ Application loaded successfully');
-        } else {
-            console.warn(
-                '⚠️ Page is blank and no URL configured in .env (URL or APP_URL).'
-            );
-        }
-    } else {
-        console.log(`✅ Page already loaded: ${page.url()}`);
     }
 }

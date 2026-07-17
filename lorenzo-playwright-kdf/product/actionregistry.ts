@@ -44,15 +44,29 @@ export function getActionKeywordFunction(actionKeyword: string): Function | unde
             return LZOActions.getTextAndStorePASID;
         case 'splitstring':
             return LZOActions.splitString;
-        case 'selectippegboardbyheader':
+            case 'selectippegboardbyheader':
             return LZOActions.selectIPPegBoardByHeader;
-        case 'selectslotbycurrenttimeop':
-            return LZOActions.selectSlotByCurrentTimeOP;
-        case 'selectslotbycurrenttimedc':
-            return LZOActions.selectSlotByCurrentTimeDC;
-        case 'selectbookedslotbypatientid':
-            return LZOActions.selectBookedSlotByPatientId;
-            
+          case 'settextboxkendo':
+            return LZOActions.setTextBoxKendo;
+          case 'setscheduletimekendo':
+            return LZOActions.setScheduleTimeKendo;
+          case 'selectdruginmultilist':
+            return LZOActions.selectDrugInMultiList;
+            case 'selectkendocombobox':
+            return LZOActions.selectKendoComboBox;
+             case 'setscheduletimekendo':
+            return LZOActions.setScheduleTimeKendo;
+            case 'settextboxdose':
+            return LZOActions.setTextboxDose;
+           case 'selectkendorecordgrid':
+            return LZOActions.selectKendoRecordGrid;
+           case 'selectmedicationchart':
+            return LZOActions.selectMedicationChart;
+               case 'selectprescriptionchart':
+                return LZOActions.selectPrescriptionChart;
+            case 'selectiphistorybyheader':
+                return LZOActions.selectIPHistoryByHeader;
+
 
         // ELEMENT ACTIONS
         case 'waitforelement':
@@ -77,6 +91,8 @@ export function getActionKeywordFunction(actionKeyword: string): Function | unde
             return ElementActions.rClickElement;
         case 'verifyrecordintable':
             return LZOActions.verifyRecordInTable;
+        case 'verifymedicationchart':
+            return LZOActions.verifyMedicationChart;
         case 'clickandhandlealert':
             return ElementActions.clickAndHandleAlert;
         case 'setcombobox':
@@ -85,26 +101,8 @@ export function getActionKeywordFunction(actionKeyword: string): Function | unde
             return ElementActions.sleep;
         case 'jsclickbytext':
             return ElementActions.jsclickByText;
-        case 'setautocompletefield':
-            return ElementActions.setAutoCompleteField;    
-        case 'clicktab':
-            return ElementActions.clickTab;
-        case 'selectcombovalue':
-            return ElementActions.selectComboValue;
-        case 'selecttablerowbyvalue':
-            return ElementActions.selectTableRowByValue;    
-        case 'comparevariables':
-            return ElementActions.compareVariables;
-        case 'dragsplitterauto':
-            return ElementActions.dragSplitterAuto;
-        case 'selecttablerowbypasidusingstructure':
-            return ElementActions.selectTableRowByPasIdUsingStructure;
-        case 'clickifpresent':
-            return ElementActions.ClickIfPresent;  
-        case 'clickbubblebypasid':
-            return ElementActions.clickBubbleByPASID;
-        case 'selecttablerowbyintray':
-            return ElementActions.selectTableRowByIntray;
+          case 'jsclickbytext':
+            return ElementActions.jsclickByText;  
 
         // ASSERTION ACTIONS
         case 'verifyproperty':
@@ -149,14 +147,14 @@ export function getActionKeywordFunction(actionKeyword: string): Function | unde
             return BrowserActions.waitForRoller;
         case 'waitforseconds':
             return BrowserActions.waitForSeconds;
+        case 'expandsliderpanel':
+            return BrowserActions.expandSliderPanel;
         case 'closebrowsertab':
             return BrowserActions.closeBrowserTab;
         case 'refreshcurrentpage':
             return BrowserActions.refreshCurrentPage;
         case 'maximizebrowser':
             return BrowserActions.maximizeBrowser;
-        case 'getedgebrowser':
-            return BrowserActions.getEdgeBrowser;
 
 
         default:

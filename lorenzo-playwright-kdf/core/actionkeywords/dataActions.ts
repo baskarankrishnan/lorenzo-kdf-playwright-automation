@@ -120,10 +120,29 @@ export async function setVariable(page: Page, step: testStep): Promise<Outcome> 
 
 export async function getCurrentDateTime(page: Page, step: testStep): Promise<Outcome> {
     try {
-        const [expFormat, key] = step.value.split('|').map(s => s.trim());
+        const parts = step.value.split('|').map(s => s.trim()).filter(Boolean);
 
-        const result = getCurrentTimeStamp(expFormat);
-        const finalKey = key.startsWith('_') ? key : `_${key}`;
+        let result: string;
+        let finalKey: string;
+
+        if (parts.length === 2) {
+            const [expFormat, key] = parts;
+            result = getCurrentTimeStamp(expFormat);
+            finalKey = key.startsWith('_') ? key : `_${key}`;
+        } else if (parts.length === 3) {
+            const [baseDate, offset, expFormat] = parts;
+            const adjustedDate = adjustDate(baseDate, offset, true);
+            result = formatDateTime(adjustedDate, expFormat);
+            finalKey = '_Currentdate';
+        } else if (parts.length === 4) {
+            const [baseDate, offset, expFormat, key] = parts;
+            const adjustedDate = adjustDate(baseDate, offset, true);
+            result = formatDateTime(adjustedDate, expFormat);
+            finalKey = key.startsWith('_') ? key : `_${key}`;
+        } else {
+            throw new Error('Invalid parameters for getCurrentDateTime. Expected format: expFormat|varName or baseDate|offset|expFormat[|varName]');
+        }
+
         executionContext.addVariable(finalKey, result);
 
         console.log(`  📅 Current date/time stored in ${finalKey}: ${result}`);
