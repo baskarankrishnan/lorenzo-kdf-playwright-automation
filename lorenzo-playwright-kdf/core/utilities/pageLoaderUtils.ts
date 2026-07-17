@@ -43,6 +43,9 @@ export async function readLocatorRepositoryFromPages(pagesDir: string = './pages
                 // Read file content
                 const fileContent = fs.readFileSync(filePath, 'utf-8');
 
+                // Ignore fully commented-out lines (`// ...`) so a commented export is treated as disabled
+                const activeContent = fileContent.split(/\r?\n/).filter(l => !l.trimStart().startsWith('//')).join('\n');
+
                 // Extract all exports using improved regex
                 // Handle double-quoted strings (may contain single quotes) and single-quoted strings (may contain double quotes)
                 const exportRegex = /export\s+const\s+(\w+)\s*=\s*[\s\n]*(?:"([^"]*)"|'([^']*)')/gs;
@@ -50,7 +53,7 @@ export async function readLocatorRepositoryFromPages(pagesDir: string = './pages
                 repository[pageName] = {};
                 let match;
 
-                while ((match = exportRegex.exec(fileContent)) !== null) {
+                while ((match = exportRegex.exec(activeContent)) !== null) {
                     const exportName = match[1];
                     const exportValue = (match[2] ?? match[3]).trim(); // match[2] = double-quoted, match[3] = single-quoted
 
@@ -94,12 +97,15 @@ export async function loadSinglePageLocators(filePath: string): Promise<{[key: s
 
     try {
         const fileContent = fs.readFileSync(path.resolve(filePath), 'utf-8');
-        
+
+        // Ignore fully commented-out lines (`// ...`) so a commented export is treated as disabled
+        const activeContent = fileContent.split(/\r?\n/).filter(l => !l.trimStart().startsWith('//')).join('\n');
+
         // Extract all exports using improved regex
         const exportRegex = /export\s+const\s+(\w+)\s*=\s*[\s\n]*["']([^"']*?)["']/gs;
         let match;
 
-        while ((match = exportRegex.exec(fileContent)) !== null) {
+        while ((match = exportRegex.exec(activeContent)) !== null) {
             const exportName = match[1];
             const exportValue = match[2].trim();
 

@@ -12,7 +12,8 @@ export const cmb_BedCategory = "//input[@title='Select bed category']";
 export const tbl_PatBanner = "//td[contains(@class, 'CxtBar_BTD2')]";
 export const btn_CloseFavourites = "//a[@id='dialog_close_0' or @title='Close']";
 export const btn_Finish = "//td[@title='Finish']";
-export const cmb_intendedManagement = "//input[@id='icombobox_Text_C26']";
+// DUPLICATE of line 5 (id-based, brittle auto-id) — commented; keeping the title-based definition above.
+// export const cmb_intendedManagement = "//input[@id='icombobox_Text_C26']";
 export const btn_Next = "//td[@title='Next']";
 export const btn_Finishnow = "//td[@title='Finish now']";
 
