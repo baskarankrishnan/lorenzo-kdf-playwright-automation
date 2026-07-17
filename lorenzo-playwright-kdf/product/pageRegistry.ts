@@ -215,7 +215,27 @@ export const PAGE_REGISTRY: Record<string, PageDefinition> = {
         'PagePrescriptionchart':{
             url: 'webclient_sso/EPR/AppTransfer.aspx?%3f__PageName=AppWizardPage.aspx',
             title: 'Prescription chart - LORENZO'
-      },  
+      },
+    'pagefmMngAppStatDepart': {
+        url: 'webclient_sso/EPR/APPMAINPAGE.ASPX',
+        title: 'LORENZO',
+    },
+    'pageDialongOKCancelPopup': {
+        url: 'WebClient_SSO/iMsgDialog.aspx?',
+        title: 'LORENZO',
+    },
+    'pageCBasicSearchCodingEntity': {
+        url: 'webclient_sso/EPR/AppTransfer.aspx?',
+        title: 'PatientSearchSFS',
+    },
+    'pageSearchClinic': {
+        url: '/outpatient/Views/searchclinicresults.aspx?',
+        title: 'LORENZO',
+    },
+    'pageNewReport': {
+        url: 'AppWizardPage.aspx',
+        title: 'NewReportLORENZO',
+    },
 }
     // 'pageSearchPatient': {
     //     url: '/EPR/APPMAINPAGE',
