@@ -11,12 +11,14 @@ export const lst_pregnancyconfirmedby = "//div[@title='Please select the appropr
 export const dte_LMP = "//td[@id='DP_IHC15']//input";
 export const cmb_BasisforagreedEDD = "//table[@id='C2_C43']//input[@type='text']";
 export const cmb_Reasonforlatebooking = "//table[@id='C2_C57']//input[@type='text']";
-export const txt_Gravida = "//input[@id='iupdownbox_Value_C59']";
-export const txt_Gravida1 = "//input[@id='iupdownbox_Value_C60']";
-export const txt_Parity="//input[@id='iupdownbox_Value_C62']";
-export const cmb_Pregnancyrisk = "//input[@id='C2T_C64']";
+// DUPLICATE (brittle auto-id) — superseded by @title definition below; commented.
+// export const txt_Gravida = "//input[@id='iupdownbox_Value_C59']";
+// export const txt_Gravida1 = "//input[@id='iupdownbox_Value_C60']";
+// export const txt_Parity="//input[@id='iupdownbox_Value_C62']";
+// export const cmb_Pregnancyrisk = "//input[@id='C2T_C64']";
 export const cmb_FolicacidTaken ="//table[@id='C2_C28']//input[@type='text']";
-export const tab_Additionaldetails ="//td[@id='fTb_C01']";
+// DUPLICATE (brittle auto-id) — superseded by @caption definition below; commented.
+// export const tab_Additionaldetails ="//td[@id='fTb_C01']";
 export const cmb_Pregnancyfirstcontacttype ="//input[@id='C2T_C4']";
 export const txt_Gravida = "//input[@title='Please enter the number of pregnancies']";
 export const txt_Gravida1 = "//input[@title='Please enter the number of live births']";

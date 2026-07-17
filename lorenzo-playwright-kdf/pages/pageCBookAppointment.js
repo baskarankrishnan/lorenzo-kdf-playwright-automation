@@ -4,7 +4,8 @@ export const cmb_AppointmentType = "//img[@id='icombobox_Image_C26' and @title='
 export const Cmb_Priority = "//img[@id='icombobox_Image_C33' and @title='Priority' and contains(@onclick,'ImageClick')]";
 export const lnk_CreatereferralOP = "td[title='Create referral/episode']";
 export const btn_Finishnow = "//td[@title='Finish now']";
-export const cmb_Specialty = "cmb_Specialty";
+// DUPLICATE (broken placeholder value) — superseded by id definition below; commented.
+// export const cmb_Specialty = "cmb_Specialty";
 export const btn_Finishnowop = "//title[contains(text(),'Create referral - LORENZO')]/ancestor::html//td[@title='Finish now']";
 export const cmb_RefSpecialty = "//input[@id='icombobox_Text_cboReftoSPL']";
 export const cmb_RefTreatmentFunction = "//input[@id='icombobox_Text_cboReftoTRM']";
