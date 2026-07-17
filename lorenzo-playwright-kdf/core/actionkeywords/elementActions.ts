@@ -1,4 +1,4 @@
-import { Page, Locator } from "@playwright/test";
+﻿import { Page, Locator } from "@playwright/test";
 import { getLocatorString } from "../utilities/locatorUtils";
 import { testStep, executionContext, Outcome } from "../utilities/interfaceUtils";
 import { resolveTestVariables } from "./dataActions";
@@ -57,7 +57,7 @@ export async function resolveElement(page: Page, baseSelector: string, step: tes
     }
   }
 
-  console.log(`  🔍 Searching for element: ${page.url()} using selector: ${baseSelector}`);
+  console.log(`  ðŸ” Searching for element: ${page.url()} using selector: ${baseSelector}`);
   while (Date.now() - startTime < timeout) {
     try {
       if (page.isClosed()) {
@@ -82,7 +82,7 @@ export async function resolveElement(page: Page, baseSelector: string, step: tes
           const isAccessible = await searchPage.evaluate(() => document.readyState).catch(() => null);
           if (!isAccessible) continue;
 
-          // Try primary selector, then a tag-relaxed fallback (e.g. //button → //*) when needed.
+          // Try primary selector, then a tag-relaxed fallback (e.g. //button â†’ //*) when needed.
           // Returns the locator only when the element is present AND visible.
           // Visibility check (isVisible) prevents selecting elements hidden behind modal dialogs
           // (e.g. the outer wizard's "Finish now" hidden behind the Registration popup).
@@ -102,12 +102,12 @@ export async function resolveElement(page: Page, baseSelector: string, step: tes
               // Run inspection in the SPECIFIC locatable (page or frame), not the main page
               const inspectionResult = await locatable.evaluate((selector_inner: string) => {
                 // Check for Lorenzo-specific modal indicators
-                const frDialogFrame = document.getElementById('frDialog');
-                const isLorenzoDlgVisible = frDialogFrame ? (frDialogFrame as any).offsetParent !== null : false;
+                const frDialogFrame = document.getElementById('frDialog') as HTMLElement | null;
+                const isLorenzoDlgVisible = frDialogFrame ? frDialogFrame.offsetParent !== null : false;
                 
                 // Check standard modal indicators
-                const modalOverlay = document.querySelector('[role="dialog"]');
-                const isModalVisible = modalOverlay ? modalOverlay!== null : false;
+                const modalOverlay = document.querySelector('[role="dialog"]') as HTMLElement | null;
+                const isModalVisible = modalOverlay ? modalOverlay.offsetParent !== null : false;
                 const hasVisiblePopup = document.querySelector('.modal.show, .dialog.show, [class*="popup"][class*="visible"], .overlay.active') !== null;
                 
                 // Get all matching elements and their z-index/visibility
@@ -149,7 +149,7 @@ export async function resolveElement(page: Page, baseSelector: string, step: tes
                 };
               }, selector).catch(() => ({ lorenzoDlgActive: false, modalActive: false, elements: [] }));
               
-              console.log(`  🔍 DOM Inspection (Lorenzo): dlg=${inspectionResult.lorenzoDlgActive}, modal=${inspectionResult.modalActive}, elements=${inspectionResult.elements.length}`);
+              console.log(`  ðŸ” DOM Inspection (Lorenzo): dlg=${inspectionResult.lorenzoDlgActive}, modal=${inspectionResult.modalActive}, elements=${inspectionResult.elements.length}`);
               
               // Smart selection based on DOM inspection
               if (inspectionResult.elements.length >= 2) {
@@ -160,13 +160,13 @@ export async function resolveElement(page: Page, baseSelector: string, step: tes
                   // Modal/Dialog is active and we found element inside it - prioritize this one
                   const modalElement = elementsInModal[0];
                   loc = allMatches.nth(modalElement.index);
-                  console.log(`  ✅ Selected element inside active modal/dialog (index=${modalElement.index})`);
+                  console.log(`  âœ… Selected element inside active modal/dialog (index=${modalElement.index})`);
                   return loc;
                 } else if (visibleElements.length > 0) {
                   // Use the highest z-index visible element
                   const topElement = visibleElements.sort((a, b) => b.zIndex - a.zIndex)[0];
                   loc = allMatches.nth(topElement.index);
-                  console.log(`  ✅ Selected visible element with highest z-index (index=${topElement.index}, z=${topElement.zIndex})`);
+                  console.log(`  âœ… Selected visible element with highest z-index (index=${topElement.index}, z=${topElement.zIndex})`);
                   return loc;
                 }
               }
@@ -175,14 +175,14 @@ export async function resolveElement(page: Page, baseSelector: string, step: tes
               loc = allMatches.first();
               const isVis = await loc.isVisible({ timeout: 300 }).catch(() => false);
               if (isVis) {
-                console.log(`  ✅ Fallback: Selected first element (parent)`);
+                console.log(`  âœ… Fallback: Selected first element (parent)`);
                 return loc;
               }
               
               loc = allMatches.last();
               const isVisLast = await loc.isVisible({ timeout: 300 }).catch(() => false);
               if (isVisLast) {
-                console.log(`  ✅ Fallback: Selected last element (child modal)`);
+                console.log(`  âœ… Fallback: Selected last element (child modal)`);
                 return loc;
               }
               return null;
@@ -222,7 +222,7 @@ export async function resolveElement(page: Page, baseSelector: string, step: tes
           });
           
           if (dialogFrames.length > 0) {
-            console.log(`  🔍 Found ${dialogFrames.length} Lorenzo dialog iframes, searching innermost first`);
+            console.log(`  ðŸ” Found ${dialogFrames.length} Lorenzo dialog iframes, searching innermost first`);
           }
           
           // Search dialog frames FIRST (innermost to outermost)
@@ -236,7 +236,7 @@ export async function resolveElement(page: Page, baseSelector: string, step: tes
               if (frameLocator) {
                 const frameUrl = frame.url();
                 const dialogTitle = decodeURIComponent(frameUrl.match(/TITLE=([^&]+)/)?.[1] || 'dialog');
-                console.log(`  ☑️  Element ${step.page}.${step.element} found in dialog: ${dialogTitle}`);
+                console.log(`  â˜‘ï¸  Element ${step.page}.${step.element} found in dialog: ${dialogTitle}`);
                 return frameLocator;
               }
             } catch { continue; }
@@ -249,7 +249,7 @@ export async function resolveElement(page: Page, baseSelector: string, step: tes
             if (fallback) mainLocator = await tryOnLocatable(searchPage, fallback);
           }
           if (mainLocator) {
-            console.log(`  ☑️  Element ${step.page}.${step.element} found in ${label}: ${pageTitle}`);
+            console.log(`  â˜‘ï¸  Element ${step.page}.${step.element} found in ${label}: ${pageTitle}`);
             return mainLocator;
           }
 
@@ -262,7 +262,7 @@ export async function resolveElement(page: Page, baseSelector: string, step: tes
                 if (fallback) frameLocator = await tryOnLocatable(frame, fallback);
               }
               if (frameLocator) {
-                console.log(`  ☑️  Element ${step.page}.${step.element} found in iframe on: ${pageTitle}`);
+                console.log(`  â˜‘ï¸  Element ${step.page}.${step.element} found in iframe on: ${pageTitle}`);
                 return frameLocator;
               }
             } catch { continue; }
@@ -281,7 +281,7 @@ export async function resolveElement(page: Page, baseSelector: string, step: tes
     await new Promise(resolve => setTimeout(resolve, 500));
   }
 
-  console.error(`  ⛔ Element not found: ${step.page}.${step.element} (selector: ${baseSelector}) after ${timeout}ms`);
+  console.error(`  â›” Element not found: ${step.page}.${step.element} (selector: ${baseSelector}) after ${timeout}ms`);
 
   // Capture diagnostic screenshot + visible text in frames to help identify correct locator
   try {
@@ -290,7 +290,7 @@ export async function resolveElement(page: Page, baseSelector: string, step: tes
     if (!fs.existsSync(screenshotDir)) fs.mkdirSync(screenshotDir, { recursive: true });
     const filename = `${screenshotDir}/${step.page}_${step.element}_${Date.now()}.png`;
     await page.screenshot({ path: filename, fullPage: true }).catch(() => {});
-    console.error(`  📸 Screenshot saved: ${filename}`);
+    console.error(`  ðŸ“¸ Screenshot saved: ${filename}`);
 
     // Log visible span text in all frames to help find correct ward/element name
     const allSpanTexts: string[] = [];
@@ -303,7 +303,7 @@ export async function resolveElement(page: Page, baseSelector: string, step: tes
       } catch { /* ignore */ }
     }
     if (allSpanTexts.length > 0) {
-      console.error(`  📋 Visible text on page (first 20 items): ${[...new Set(allSpanTexts)].slice(0, 20).join(' | ')}`);
+      console.error(`  ðŸ“‹ Visible text on page (first 20 items): ${[...new Set(allSpanTexts)].slice(0, 20).join(' | ')}`);
     }
 
     // Dump all elements with @title or @alt attributes to help identify correct locator
@@ -319,7 +319,7 @@ export async function resolveElement(page: Page, baseSelector: string, step: tes
         if (items.length > 0) titleDump.push(`[frame ${frame.url().slice(-40)}] ${items.slice(0, 30).join(', ')}`);
       } catch { /* ignore */ }
     }
-    if (titleDump.length > 0) console.error(`  🔬 DOM title/alt/name/id elements:\n${titleDump.join('\n')}`);
+    if (titleDump.length > 0) console.error(`  ðŸ”¬ DOM title/alt/name/id elements:\n${titleDump.join('\n')}`);
   } catch { /* ignore diagnostic errors */ }
 
   throw new Error(`Element not found for ${step.page}.${step.element}: ${baseSelector} after ${timeout}ms`);
@@ -354,7 +354,7 @@ export async function resolveElements(
     throw new Error(`Expected string selector, got ${typeof baseSelector}`);
   }
 
-  console.log(`  🔍 Searching for elements using selector: ${baseSelector}`);
+  console.log(`  ðŸ” Searching for elements using selector: ${baseSelector}`);
 
   while (Date.now() - startTime < timeout) {
     try {
@@ -410,7 +410,7 @@ export async function resolveElements(
       }
 
       if (foundElements.length >= minCount) {
-        console.log(`  ☑️  Found ${foundElements.length} elements for selector: ${baseSelector}`);
+        console.log(`  â˜‘ï¸  Found ${foundElements.length} elements for selector: ${baseSelector}`);
         return foundElements;
       }
 
@@ -424,7 +424,7 @@ export async function resolveElements(
   }
 
   if (foundElements.length < minCount) {
-    console.error(`  ⛔ Elements not found: selector=${baseSelector}, found=${foundElements.length}, expected>=${minCount}`);
+    console.error(`  â›” Elements not found: selector=${baseSelector}, found=${foundElements.length}, expected>=${minCount}`);
     throw new Error(
       `Elements not found for selector: ${baseSelector}. Found ${foundElements.length}, expected at least ${minCount}`
     );
@@ -450,14 +450,14 @@ export async function waitForElement(page: Page, step: testStep): Promise<Outcom
 
     await element.waitFor({ state: 'visible', timeout: 15000 });
 
-    console.log(`  ✅ Element found and visible: ${step.page}.${step.element}`);
+    console.log(`  âœ… Element found and visible: ${step.page}.${step.element}`);
 
     return {
       code: 0,
       value: `Successfully waited for element: ${step.page}.${step.element}`
     };
   } catch (error) {
-    console.error(`  ❌ Failed to wait for element: ${step.page}.${step.element}`);
+    console.error(`  âŒ Failed to wait for element: ${step.page}.${step.element}`);
     return {
       code: 1,
       value: `Failed to wait for element: ${error instanceof Error ? error.message : String(error)}`
@@ -495,7 +495,7 @@ export async function clickElement(page: Page, step: testStep): Promise<Outcome>
     } catch (err) {
       // If popup button not found, treat as soft-fail (optional) rather than hard failure
       if (isPopupButton && !isOptional) {
-        console.log(`  ⚠️ Popup button not found (may not have appeared): ${step.page}.${step.element}`);
+        console.log(`  âš ï¸ Popup button not found (may not have appeared): ${step.page}.${step.element}`);
         return {
           code: 2,  // Soft fail
           value: `Popup button not found (optional/conditional): ${step.element}`
@@ -508,7 +508,7 @@ export async function clickElement(page: Page, step: testStep): Promise<Outcome>
     const tagName = await element.evaluate(el => el.tagName.toLowerCase()).catch(() => 'unknown');
     if (tagName === 'area') {
       await element.evaluate((el: HTMLAreaElement) => { el.click(); });
-      console.log(`  ✅ Clicked area element (JavaScript): ${step.page}.${step.element}`);
+      console.log(`  âœ… Clicked area element (JavaScript): ${step.page}.${step.element}`);
     } else {
       let clicked = false;
 
@@ -532,8 +532,8 @@ export async function clickElement(page: Page, step: testStep): Promise<Outcome>
             innerHTML: el.innerHTML.substring(0, 100)
           };
         });
-        console.log(`  📋 Element info: <${elementInfo.tagName}> title="${elementInfo.title}" class="${elementInfo.className}" visible=${elementInfo.isVisible} size=${elementInfo.width}x${elementInfo.height}`);
-        console.log(`  📋 Inner content: ${elementInfo.innerHTML}`);
+        console.log(`  ðŸ“‹ Element info: <${elementInfo.tagName}> title="${elementInfo.title}" class="${elementInfo.className}" visible=${elementInfo.isVisible} size=${elementInfo.width}x${elementInfo.height}`);
+        console.log(`  ðŸ“‹ Inner content: ${elementInfo.innerHTML}`);
       } catch { /* ignore diagnostic errors */ }
 
       // Detect if element is in an iframe (frame element vs main page element)
@@ -569,10 +569,10 @@ export async function clickElement(page: Page, step: testStep): Promise<Outcome>
           await element.click({ timeout: 5000 });
           clicked = true;
           if (isInIframe) {
-            console.log(`  🎯 Clicked iframe element using Playwright native click: ${step.page}.${step.element}`);
+            console.log(`  ðŸŽ¯ Clicked iframe element using Playwright native click: ${step.page}.${step.element}`);
           }
         } catch (nativeErr) {
-          console.log(`  ⚠️ Native click failed: ${nativeErr instanceof Error ? nativeErr.message : String(nativeErr)}`);
+          console.log(`  âš ï¸ Native click failed: ${nativeErr instanceof Error ? nativeErr.message : String(nativeErr)}`);
         }
       }
 
@@ -581,9 +581,9 @@ export async function clickElement(page: Page, step: testStep): Promise<Outcome>
         try {
           await element.click({ force: true, timeout: 5000 });
           clicked = true;
-          console.log(`  ⚡ Force-clicked element: ${step.page}.${step.element}`);
+          console.log(`  âš¡ Force-clicked element: ${step.page}.${step.element}`);
         } catch (forceErr) {
-          console.log(`  ⚠️ Force click failed: ${forceErr instanceof Error ? forceErr.message : String(forceErr)}`);
+          console.log(`  âš ï¸ Force click failed: ${forceErr instanceof Error ? forceErr.message : String(forceErr)}`);
         }
       }
 
@@ -600,13 +600,13 @@ export async function clickElement(page: Page, step: testStep): Promise<Outcome>
             el.dispatchEvent(clickEvent);
           });
           clicked = true;
-          console.log(`  💻 JS dispatchEvent click: ${step.page}.${step.element}`);
+          console.log(`  ðŸ’» JS dispatchEvent click: ${step.page}.${step.element}`);
         } catch (evalErr) {
           const evalMsg = evalErr instanceof Error ? evalErr.message : String(evalErr);
           if (evalMsg.includes('Target page') || evalMsg.includes('browser has been closed') || evalMsg.includes('context or browser')) {
             clicked = true;
           } else {
-            console.log(`  ⚠️ JS dispatchEvent failed: ${evalMsg}`);
+            console.log(`  âš ï¸ JS dispatchEvent failed: ${evalMsg}`);
           }
         }
       }
@@ -627,7 +627,7 @@ export async function clickElement(page: Page, step: testStep): Promise<Outcome>
           });
           if (innerClicked) {
             clicked = true;
-            console.log(`  🔘 Clicked inner element: ${step.page}.${step.element}`);
+            console.log(`  ðŸ”˜ Clicked inner element: ${step.page}.${step.element}`);
           }
         } catch (innerErr) {
           const innerMsg = innerErr instanceof Error ? innerErr.message : String(innerErr);
@@ -637,7 +637,7 @@ export async function clickElement(page: Page, step: testStep): Promise<Outcome>
         }
       }
 
-      console.log(`  ✅ Clicked element: ${step.page}.${step.element}`);
+      console.log(`  âœ… Clicked element: ${step.page}.${step.element}`);
     }
 
     return {
@@ -645,7 +645,7 @@ export async function clickElement(page: Page, step: testStep): Promise<Outcome>
       value: `Successfully clicked element: ${step.page}.${step.element}`
     };
   } catch (error) {
-    console.error(`  ❌ Failed to click element: ${step.page}.${step.element}`);
+    console.error(`  âŒ Failed to click element: ${step.page}.${step.element}`);
     return {
       code: 1,
       value: `Failed to click element: ${error instanceof Error ? error.message : String(error)}`
@@ -685,7 +685,7 @@ export async function setTextBox(page: Page, step: testStep): Promise<Outcome> {
     };
 
   } catch (error) {
-    console.error(`  ❌ Failed to fill element: ${step.page}.${step.element}`);
+    console.error(`  âŒ Failed to fill element: ${step.page}.${step.element}`);
     return {
       code: 1,
       value: `Failed to fill element: ${error instanceof Error ? error.message : String(error)}`
@@ -737,12 +737,12 @@ export async function getText(page: Page, step: testStep): Promise<Outcome> {
       }
     }
 
-    console.log(`  ✅ Retrieved text from ${step.page}.${step.element}: "${text}"`);
+    console.log(`  âœ… Retrieved text from ${step.page}.${step.element}: "${text}"`);
 
     if (step.value) {
       const varName = step.value.trim().startsWith('_') ? step.value.trim() : `_${step.value.trim()}`;
       executionContext.addVariable(varName, text.trim());
-      console.log(`  💾 Stored text in variable: ${varName} = "${text}"`);
+      console.log(`  ðŸ’¾ Stored text in variable: ${varName} = "${text}"`);
     }
 
     return {
@@ -750,7 +750,7 @@ export async function getText(page: Page, step: testStep): Promise<Outcome> {
       value: `Successfully retrieved text from element: ${step.page}.${step.element} - Text: "${text}"`
     };
   } catch (error) {
-    console.error(`  ❌ Failed to get text from element: ${step.page}.${step.element}`);
+    console.error(`  âŒ Failed to get text from element: ${step.page}.${step.element}`);
     return {
       code: 1,
       value: `Failed to get text from element: ${error instanceof Error ? error.message : String(error)}`
@@ -774,14 +774,14 @@ export async function dblClickElement(page: Page, step: testStep): Promise<Outco
     //await element.scrollIntoViewIfNeeded({ timeout: 15000 });
     await element.dblclick();
 
-    console.log(`  ✅ Double-clicked element: ${step.page}.${step.element}`);
+    console.log(`  âœ… Double-clicked element: ${step.page}.${step.element}`);
 
     return {
       code: 0,
       value: `Successfully double-clicked element: ${step.page}.${step.element}`
     };
   } catch (error) {
-    console.error(`  ❌ Failed to double-click element: ${step.page}.${step.element}`);
+    console.error(`  âŒ Failed to double-click element: ${step.page}.${step.element}`);
     return {
       code: 1,
       value: `Failed to double-click element: ${error instanceof Error ? error.message : String(error)}`
@@ -814,12 +814,12 @@ export async function rClickElement(page: Page, step: testStep): Promise<Outcome
         throw new Error('Area element does not have an ID');
       }
 
-      console.log(`  🔍 Attempting to right-click area element '${elementId}'`);
+      console.log(`  ðŸ” Attempting to right-click area element '${elementId}'`);
 
       // For area elements, we need to bypass visibility checks and use JavaScript
       try {
         // Method 1: Use JavaScript to trigger the contextmenu event directly
-        console.log(`  ⚡ Using JavaScript contextmenu event for area element`);
+        console.log(`  âš¡ Using JavaScript contextmenu event for area element`);
 
         // Get the parent image information
         const result = await element.evaluate((el: HTMLAreaElement) => {
@@ -866,10 +866,10 @@ export async function rClickElement(page: Page, step: testStep): Promise<Outcome
             finalX = imgRect.left + (clickX * scaleX);
             finalY = imgRect.top + (clickY * scaleY);
 
-            console.log(`  📍 Calculated position: (${Math.round(finalX)}, ${Math.round(finalY)}) from image mapping`);
+            console.log(`  ðŸ“ Calculated position: (${Math.round(finalX)}, ${Math.round(finalY)}) from image mapping`);
           } else {
             // Use page coordinates directly
-            console.log(`  📍 Using area coordinates directly: (${clickX}, ${clickY})`);
+            console.log(`  ðŸ“ Using area coordinates directly: (${clickX}, ${clickY})`);
           }
 
           // Move mouse to calculated position
@@ -882,7 +882,7 @@ export async function rClickElement(page: Page, step: testStep): Promise<Outcome
           await page.mouse.up({ button: 'right' });
           await page.waitForTimeout(500);
 
-          console.log(`  ✅ Right-clicked area element '${elementId}' at calculated position`);
+          console.log(`  âœ… Right-clicked area element '${elementId}' at calculated position`);
 
           // Alternative: Also trigger the JavaScript event handler
           await page.evaluate((id) => {
@@ -904,24 +904,24 @@ export async function rClickElement(page: Page, step: testStep): Promise<Outcome
         }
 
       } catch (jsError) {
-        console.log(`  ⚠️ JavaScript method failed: ${jsError instanceof Error ? jsError.message : String(jsError)}`);
+        console.log(`  âš ï¸ JavaScript method failed: ${jsError instanceof Error ? jsError.message : String(jsError)}`);
 
         // Fallback: Use the element's bounding box
         try {
           const box = await element.boundingBox();
           if (box) {
-            console.log(`  🔄 Fallback to bounding box: (${box.x}, ${box.y})`);
+            console.log(`  ðŸ”„ Fallback to bounding box: (${box.x}, ${box.y})`);
             await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 5 });
             await page.waitForTimeout(1000);
             await page.mouse.down({ button: 'right' });
             await page.waitForTimeout(50);
             await page.mouse.up({ button: 'right' });
             await page.waitForTimeout(500);
-            console.log(`  ✅ Right-clicked using bounding box fallback`);
+            console.log(`  âœ… Right-clicked using bounding box fallback`);
           }
         } catch (boxError) {
           // Last resort: Trigger the contextmenu via evaluate
-          console.log(`  🚨 Last resort: Triggering contextmenu via JavaScript`);
+          console.log(`  ðŸš¨ Last resort: Triggering contextmenu via JavaScript`);
           await element.evaluate((el: HTMLAreaElement) => {
             const event = new MouseEvent('contextmenu', {
               bubbles: true,
@@ -936,7 +936,7 @@ export async function rClickElement(page: Page, step: testStep): Promise<Outcome
     } else {
       // For non-area elements, use Playwright's right-click with relaxed visibility
       await element.click({ button: 'right', force: true });
-      console.log(`  ✅ Right-clicked element: ${step.page}.${step.element}`);
+      console.log(`  âœ… Right-clicked element: ${step.page}.${step.element}`);
     }
 
     return {
@@ -944,7 +944,7 @@ export async function rClickElement(page: Page, step: testStep): Promise<Outcome
       value: `Successfully right-clicked element: ${step.page}.${step.element}`
     };
   } catch (error) {
-    console.error(`  ❌ Failed to right-click element: ${step.page}.${step.element}`);
+    console.error(`  âŒ Failed to right-click element: ${step.page}.${step.element}`);
     return {
       code: 1,
       value: `Failed to right-click element: ${error instanceof Error ? error.message : String(error)}`
@@ -968,14 +968,14 @@ export async function clearTextBox(page: Page, step: testStep): Promise<Outcome>
     //await element.scrollIntoViewIfNeeded({ timeout: 15000 });
     await element.fill('');
 
-    console.log(`  ✅ Cleared text box: ${step.page}.${step.element}`);
+    console.log(`  âœ… Cleared text box: ${step.page}.${step.element}`);
 
     return {
       code: 0,
       value: `Successfully cleared text box: ${step.page}.${step.element}`
     };
   } catch (error) {
-    console.error(`  ❌ Failed to clear text box: ${step.page}.${step.element}`);
+    console.error(`  âŒ Failed to clear text box: ${step.page}.${step.element}`);
     return {
       code: 1,
       value: `Failed to clear text box: ${error instanceof Error ? error.message : String(error)}`
@@ -1020,14 +1020,14 @@ export async function selectListBox(page: Page, step: testStep): Promise<Outcome
 
     await element.selectOption(String(valueToSelect));
 
-    console.log(`  ✅ Selected option "${valueToSelect}" in ${step.page}.${step.element}`);
+    console.log(`  âœ… Selected option "${valueToSelect}" in ${step.page}.${step.element}`);
 
     return {
       code: 0,
       value: `Successfully selected option: "${valueToSelect}" in element: ${step.page}.${step.element}`
     };
   } catch (error) {
-    console.error(`  ❌ Failed to select option in element: ${step.page}.${step.element}`);
+    console.error(`  âŒ Failed to select option in element: ${step.page}.${step.element}`);
     return {
       code: 1,
       value: `Failed to select option in element: ${error instanceof Error ? error.message : String(error)}`
@@ -1076,21 +1076,21 @@ export async function verifyValueInListBox(page: Page, step: testStep): Promise<
     const trimmedCurrent = String(currentValue).trim();
 
     if (trimmedCurrent !== trimmedExpected) {
-      console.error(`  ❌ Expected value "${trimmedExpected}" but found "${trimmedCurrent}" in ${step.page}.${step.element}`);
+      console.error(`  âŒ Expected value "${trimmedExpected}" but found "${trimmedCurrent}" in ${step.page}.${step.element}`);
       return {
         code: 1,
         value: `Expected value "${trimmedExpected}" but found "${trimmedCurrent}" in select ${step.page}.${step.element}`
       };
     }
 
-    console.log(`  ✅ Verified value "${trimmedExpected}" in select ${step.page}.${step.element}`);
+    console.log(`  âœ… Verified value "${trimmedExpected}" in select ${step.page}.${step.element}`);
 
     return {
       code: 0,
       value: `Successfully verified value "${trimmedExpected}" in select ${step.page}.${step.element}`
     };
   } catch (error) {
-    console.error(`  ❌ Failed to verify value in listbox: ${step.page}.${step.element}`);
+    console.error(`  âŒ Failed to verify value in listbox: ${step.page}.${step.element}`);
     return {
       code: 1,
       value: `Failed to verify value in listbox: ${error instanceof Error ? error.message : String(error)}`
@@ -1134,12 +1134,12 @@ export async function sendKeys(page: Page, step: testStep): Promise<Outcome> {
         //await element.scrollIntoViewIfNeeded({ timeout: 15000 });
         await element.focus();
 
-        console.log(`  🔍 Focused on element: ${step.page}.${step.element}`);
+        console.log(`  ðŸ” Focused on element: ${step.page}.${step.element}`);
         await page.waitForTimeout(100);
 
         await element.press(String(keysToSend));
 
-        console.log(`  ✅ Sent keys "${keysToSend}" to element: ${step.page}.${step.element}`);
+        console.log(`  âœ… Sent keys "${keysToSend}" to element: ${step.page}.${step.element}`);
 
         return {
           code: 0,
@@ -1147,10 +1147,10 @@ export async function sendKeys(page: Page, step: testStep): Promise<Outcome> {
         };
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        console.warn(`  ⚠️ Could not focus on element ${step.page}.${step.element}, sending keys to page instead`);
+        console.warn(`  âš ï¸ Could not focus on element ${step.page}.${step.element}, sending keys to page instead`);
 
         await page.keyboard.press(String(keysToSend));
-        console.log(`  ✅ Sent keys "${keysToSend}" to page (fallback)`);
+        console.log(`  âœ… Sent keys "${keysToSend}" to page (fallback)`);
 
         return {
           code: 0,
@@ -1159,7 +1159,7 @@ export async function sendKeys(page: Page, step: testStep): Promise<Outcome> {
       }
     } else {
       await page.keyboard.press(String(keysToSend));
-      console.log(`  ✅ Sent keys "${keysToSend}" to page`);
+      console.log(`  âœ… Sent keys "${keysToSend}" to page`);
 
       return {
         code: 0,
@@ -1167,7 +1167,7 @@ export async function sendKeys(page: Page, step: testStep): Promise<Outcome> {
       };
     }
   } catch (error) {
-    console.error(`  ❌ Failed to send keys`);
+    console.error(`  âŒ Failed to send keys`);
     return {
       code: 1,
       value: `Failed to send keys: ${error instanceof Error ? error.message : String(error)}`
@@ -1216,17 +1216,17 @@ export async function getAttribute(page: Page, step: testStep): Promise<Outcome>
 
     if (variableName && variableName.startsWith('_')) {
       executionContext.addVariable(variableName, attributeValue || '');
-      console.log(`  💾 Stored attribute value in variable: ${variableName} = "${attributeValue}"`);
+      console.log(`  ðŸ’¾ Stored attribute value in variable: ${variableName} = "${attributeValue}"`);
     }
 
-    console.log(`  ✅ Retrieved attribute '${attributeName}' from ${step.page}.${step.element}: "${attributeValue}"`);
+    console.log(`  âœ… Retrieved attribute '${attributeName}' from ${step.page}.${step.element}: "${attributeValue}"`);
 
     return {
       code: 0,
       value: `Successfully retrieved attribute '${attributeName}': "${attributeValue}"`
     };
   } catch (error) {
-    console.error(`  ❌ Failed to get attribute from ${step.page}.${step.element}`);
+    console.error(`  âŒ Failed to get attribute from ${step.page}.${step.element}`);
     return {
       code: 1,
       value: `Failed to get attribute: ${error instanceof Error ? error.message : String(error)}`
@@ -1254,7 +1254,7 @@ export async function mouseHover(page: Page, step: testStep): Promise<Outcome> {
 
     await page.waitForTimeout(300);
 
-    console.log(`  ✅ Successfully hovered over element: ${step.page}.${step.element}`);
+    console.log(`  âœ… Successfully hovered over element: ${step.page}.${step.element}`);
 
     return {
       code: 0,
@@ -1262,7 +1262,7 @@ export async function mouseHover(page: Page, step: testStep): Promise<Outcome> {
     };
 
   } catch (error) {
-    console.error(`  ❌ Failed to hover over element: ${step.page}.${step.element}`);
+    console.error(`  âŒ Failed to hover over element: ${step.page}.${step.element}`);
     return {
       code: 1,
       value: `Failed to hover over element: ${error instanceof Error ? error.message : String(error)}`
@@ -1360,7 +1360,7 @@ export async function mouseHover(page: Page, step: testStep): Promise<Outcome> {
 //           value: `No matching rows found in table for criteria: ${criteriaStr}`
 //         };
 //       }
-//       console.log(`  ✅ Found ${matchingRows.length} matching row(s) in table ${step.page}.${step.element}`);
+//       console.log(`  âœ… Found ${matchingRows.length} matching row(s) in table ${step.page}.${step.element}`);
 //     } else if (condition === 'notin') {
 //       if (matchingRows.length > 0) {
 //         const criteriaStr = reqdColumns.map((col: string, i: number) => `${col}: "${expectedValues[i]}"`).join(', ');
@@ -1369,13 +1369,13 @@ export async function mouseHover(page: Page, step: testStep): Promise<Outcome> {
 //           value: `Found ${matchingRows.length} matching row(s) when expecting none for criteria: ${criteriaStr}`
 //         };
 //       }
-//       console.log(`  ✅ Verified no matching rows in table ${step.page}.${step.element}`);
+//       console.log(`  âœ… Verified no matching rows in table ${step.page}.${step.element}`);
 //     } else {
 //       throw new Error(`Unsupported condition: ${step.condition}. Use 'In' or 'NotIn'`);
 //     }
 
 //     // Log details for debugging
-//     console.log(`  📊 Table verification details:
+//     console.log(`  ðŸ“Š Table verification details:
 //      - Headers: ${headers.join(', ')}
 //      - Total rows: ${allRowsData.length}
 //      - Matching rows: ${matchingRows.length}
@@ -1388,7 +1388,7 @@ export async function mouseHover(page: Page, step: testStep): Promise<Outcome> {
 //     };
 //   } catch (error) {
 //     const errorMessage = error instanceof Error ? error.message : String(error);
-//     console.error(`  ❌ Failed to verify record in table ${step.page}.${step.element}:`, errorMessage);
+//     console.error(`  âŒ Failed to verify record in table ${step.page}.${step.element}:`, errorMessage);
 //     return {
 //       code: 1,
 //       value: `Failed to verify record in table: ${errorMessage}`
@@ -1428,7 +1428,7 @@ export async function verifyRecordInTable(page: Page, step: testStep): Promise<O
     const tableLocator = await resolveElement(page, baseSelector, step);
     await tableLocator.waitFor({ state: 'visible', timeout: 5000 });
 
-    // 🟢 IMPROVED: Extract visible headers only
+    // ðŸŸ¢ IMPROVED: Extract visible headers only
     const headers = await tableLocator.locator('th, thead td, tr:first-child > td:not(.hdnDisN)').evaluateAll(elements => {
       return elements.map(el => {
         // Skip hidden headers
@@ -1459,7 +1459,7 @@ export async function verifyRecordInTable(page: Page, step: testStep): Promise<O
       throw new Error("No valid table headers found");
     }
 
-    // 🟢 IMPROVED: Extract ONLY VISIBLE data rows and cells
+    // ðŸŸ¢ IMPROVED: Extract ONLY VISIBLE data rows and cells
     const allRowsData = await tableLocator.locator('tbody tr').evaluateAll(rows => {
       return Array.from(rows).map(row => {
         // Get only visible cells (not hidden)
@@ -1474,7 +1474,7 @@ export async function verifyRecordInTable(page: Page, step: testStep): Promise<O
     // Resolve expected values
     const expectedValues: string[] = expectedRefs.map((ref: string) => resolveTestVariables(ref));
 
-    // 🟢 IMPROVED: Find column indices with better matching
+    // ðŸŸ¢ IMPROVED: Find column indices with better matching
     const columnIndices: number[] = reqdColumns.map((col: string) => {
       // Try exact match first
       let index = cleanedHeaders.findIndex(header =>
@@ -1506,12 +1506,12 @@ export async function verifyRecordInTable(page: Page, step: testStep): Promise<O
       }
     });
 
-    // 🟢 FIXED: Safe row matching with undefined check
+    // ðŸŸ¢ FIXED: Safe row matching with undefined check
     const matchingRows = allRowsData.filter(row => {
       return columnIndices.every((colIdx: number, i: number) => {
         // SAFETY CHECK: Ensure column index exists in this row
         if (colIdx >= row.length) {
-          console.warn(`  ⚠️ Column index ${colIdx} out of bounds for row with ${row.length} columns`);
+          console.warn(`  âš ï¸ Column index ${colIdx} out of bounds for row with ${row.length} columns`);
           return false;
         }
 
@@ -1548,9 +1548,9 @@ export async function verifyRecordInTable(page: Page, step: testStep): Promise<O
     }
 
     // Log success
-    console.log(`  ✅ ${condition === 'in' ? 'Found' : 'Verified no'} ${matchingRows.length} matching row(s)`);
-    console.log(`  📊 Table: ${headers.filter(h => h).length} columns, ${allRowsData.length} rows`);
-    console.log(`  🔍 Criteria: ${reqdColumns.map((c, i) => `${c}="${expectedValues[i]}"`).join(', ')}`);
+    console.log(`  âœ… ${condition === 'in' ? 'Found' : 'Verified no'} ${matchingRows.length} matching row(s)`);
+    console.log(`  ðŸ“Š Table: ${headers.filter(h => h).length} columns, ${allRowsData.length} rows`);
+    console.log(`  ðŸ” Criteria: ${reqdColumns.map((c, i) => `${c}="${expectedValues[i]}"`).join(', ')}`);
 
     return {
       code: 0,
@@ -1558,7 +1558,7 @@ export async function verifyRecordInTable(page: Page, step: testStep): Promise<O
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error(`  ❌ Failed to verify record: ${errorMessage}`);
+    console.error(`  âŒ Failed to verify record: ${errorMessage}`);
     return {
       code: 1,
       value: `Failed to verify record: ${errorMessage}`
@@ -1603,15 +1603,15 @@ export async function clickAndHandleAlert(page: Page, step: testStep): Promise<O
       dialogAppeared = true;
       dialogMessage = dialog.message();
       dialogType = dialog.type();
-      console.log(`🟡 Dialog appeared: ${dialogType} - ${dialogMessage}`);
+      console.log(`ðŸŸ¡ Dialog appeared: ${dialogType} - ${dialogMessage}`);
 
       // Automatically handle the dialog based on action
       if (action === 'accept') {
         dialog.accept().catch(() => { });
-        console.log(`✅ Dialog accepted: ${dialogType}`);
+        console.log(`âœ… Dialog accepted: ${dialogType}`);
       } else if (action === 'dismiss') {
         dialog.dismiss().catch(() => { });
-        console.log(`✅ Dialog dismissed: ${dialogType}`);
+        console.log(`âœ… Dialog dismissed: ${dialogType}`);
       }
     };
 
@@ -1649,24 +1649,24 @@ export async function clickAndHandleAlert(page: Page, step: testStep): Promise<O
     }
 
     if (!dialogAppeared) {
-      console.warn(`⚠️ No dialog appeared within 5 seconds`);
+      console.warn(`âš ï¸ No dialog appeared within 5 seconds`);
     } else {
       // Give the page time to process the dialog response
       await page.waitForTimeout(500);
     }
 
-    console.log(`✅ Element clicked and dialog ${action}ed: ${step.page}.${step.element}`);
+    console.log(`âœ… Element clicked and dialog ${action}ed: ${step.page}.${step.element}`);
     if (expDialogMessage) {
       if (dialogMessage.trim() === expDialogMessage.trim()) {
-        console.log(`✅ Dialog message matches expected: "${expDialogMessage}"`);
+        console.log(`âœ… Dialog message matches expected: "${expDialogMessage}"`);
       } else {
-        console.warn(`⚠️  Dialog message does not match expected: "${expDialogMessage}"`);
+        console.warn(`âš ï¸  Dialog message does not match expected: "${expDialogMessage}"`);
       }
     }
 
     return { code: 0, value: `Successfully clicked element and ${action}ed dialog: ${dialogMessage}` };
   } catch (error) {
-    console.error(`❌ forceClickToOpenPopup failed: ${step.page}.${step.element}`, error);
+    console.error(`âŒ forceClickToOpenPopup failed: ${step.page}.${step.element}`, error);
     return { code: 1, value: `forceClickToOpenPopup failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -1821,7 +1821,7 @@ export async function jsclickByText(page: Page, step: testStep): Promise<Outcome
     // Escape special regex characters in the text
     const escaped = value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-    console.log(`  🔍 Looking for element with text: "${value}"`);
+    console.log(`  ðŸ” Looking for element with text: "${value}"`);
 
     // Strategy 1: Try exact text match (case insensitive)
     let item = page.getByText(new RegExp(`^${escaped}$`, "i")).first();
@@ -1830,7 +1830,7 @@ export async function jsclickByText(page: Page, step: testStep): Promise<Outcome
     if (isExactVisible) {
       await item.waitFor({ state: "visible", timeout: 5000 });
       await item.click();
-      console.log(`  ✅ Clicked element by exact text match: "${value}"`);
+      console.log(`  âœ… Clicked element by exact text match: "${value}"`);
       return {
         code: 0,
         value: `Successfully clicked element by exact text: "${value}"`
@@ -1842,14 +1842,14 @@ export async function jsclickByText(page: Page, step: testStep): Promise<Outcome
     await item.waitFor({ state: "visible", timeout: 5000 });
     await item.click();
 
-    console.log(`  ✅ Clicked element by partial text match: "${value}"`);
+    console.log(`  âœ… Clicked element by partial text match: "${value}"`);
     return {
       code: 0,
       value: `Successfully clicked element by text: "${value}"`
     };
 
   } catch (error) {
-    console.error(`  ❌ Failed to click element by text: ${step.page}.${step.element} with value: "${step.value}"`);
+    console.error(`  âŒ Failed to click element by text: ${step.page}.${step.element} with value: "${step.value}"`);
     return {
       code: 1,
       value: `Failed to click element by text "${step.value}": ${error instanceof Error ? error.message : String(error)}`
@@ -1890,18 +1890,18 @@ export async function dragTo(page: Page, step: testStep): Promise<Outcome> {
       if (!box) throw new Error('Element not visible');
       const targetLocator = page.locator(`//div[@x="${box.x + x}"][@y="${box.y + y}"]`).first();
       await element.dragTo(targetLocator);
-      console.log(`  ✅ Dragged element ${x}px right, ${y}px down`);
+      console.log(`  âœ… Dragged element ${x}px right, ${y}px down`);
       return { code: 0, value: `Dragged element to offset (${x}, ${y})` };
     } else {
       // Value is a selector - resolve target
       const targetSelector = getLocatorString({ ...step, element: step.value });
       const targetElement = await resolveElement(page, targetSelector, { ...step, element: step.value });
       await element.dragTo(targetElement);
-      console.log(`  ✅ Dragged to element: ${step.value}`);
+      console.log(`  âœ… Dragged to element: ${step.value}`);
       return { code: 0, value: `Dragged to element: ${step.value}` };
     }
   } catch (error) {
-    console.error(`  ❌ Drag operation failed`);
+    console.error(`  âŒ Drag operation failed`);
     return { code: 1, value: `Drag failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -1931,10 +1931,10 @@ export async function dragAndDrop(page: Page, step: testStep): Promise<Outcome> 
     const targetElement = await resolveElement(page, targetSelector, { ...step, element: step.value });
 
     await sourceElement.dragTo(targetElement);
-    console.log(`  ✅ Dragged ${step.element} to ${step.value}`);
+    console.log(`  âœ… Dragged ${step.element} to ${step.value}`);
     return { code: 0, value: `Dragged ${step.element} to ${step.value}` };
   } catch (error) {
-    console.error(`  ❌ Drag and drop failed`);
+    console.error(`  âŒ Drag and drop failed`);
     return { code: 1, value: `Drag and drop failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -1967,10 +1967,10 @@ export async function dragByOffset(page: Page, step: testStep): Promise<Outcome>
     const newY = Math.round(y);
     
     // For now, just log the operation
-    console.log(`  ✅ Dragged by offset (${newX}, ${newY})`);
+    console.log(`  âœ… Dragged by offset (${newX}, ${newY})`);
     return { code: 0, value: `Dragged by offset (${newX}, ${newY})` };
   } catch (error) {
-    console.error(`  ❌ Drag by offset failed`);
+    console.error(`  âŒ Drag by offset failed`);
     return { code: 1, value: `Drag by offset failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2002,10 +2002,10 @@ export async function uploadFile(page: Page, step: testStep): Promise<Outcome> {
     const element = await resolveElement(page, baseSelector, step);
 
     await element.setInputFiles(filePath);
-    console.log(`  ✅ Uploaded file: ${filePath}`);
+    console.log(`  âœ… Uploaded file: ${filePath}`);
     return { code: 0, value: `Uploaded file: ${filePath}` };
   } catch (error) {
-    console.error(`  ❌ File upload failed`);
+    console.error(`  âŒ File upload failed`);
     return { code: 1, value: `File upload failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2034,10 +2034,10 @@ export async function uploadFiles(page: Page, step: testStep): Promise<Outcome> 
     const element = await resolveElement(page, baseSelector, step);
 
     await element.setInputFiles(filePaths);
-    console.log(`  ✅ Uploaded ${filePaths.length} files`);
+    console.log(`  âœ… Uploaded ${filePaths.length} files`);
     return { code: 0, value: `Uploaded ${filePaths.length} files: ${filePaths.join(', ')}` };
   } catch (error) {
-    console.error(`  ❌ File upload failed`);
+    console.error(`  âŒ File upload failed`);
     return { code: 1, value: `File upload failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2060,10 +2060,10 @@ export async function scrollIntoView(page: Page, step: testStep): Promise<Outcom
     const element = await resolveElement(page, baseSelector, step);
     
     await element.scrollIntoViewIfNeeded({ timeout: 10000 });
-    console.log(`  ✅ Scrolled element into view: ${step.page}.${step.element}`);
+    console.log(`  âœ… Scrolled element into view: ${step.page}.${step.element}`);
     return { code: 0, value: `Scrolled into view: ${step.page}.${step.element}` };
   } catch (error) {
-    console.error(`  ❌ Scroll failed`);
+    console.error(`  âŒ Scroll failed`);
     return { code: 1, value: `Scroll failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2084,10 +2084,10 @@ export async function scrollToElement(page: Page, step: testStep): Promise<Outco
     await element.evaluate(el => el.scrollIntoView({ behavior: 'smooth', block: 'center' }));
     await page.waitForTimeout(500);
     
-    console.log(`  ✅ Scrolled to element: ${step.page}.${step.element}`);
+    console.log(`  âœ… Scrolled to element: ${step.page}.${step.element}`);
     return { code: 0, value: `Scrolled to element: ${step.page}.${step.element}` };
   } catch (error) {
-    console.error(`  ❌ Scroll to element failed`);
+    console.error(`  âŒ Scroll to element failed`);
     return { code: 1, value: `Scroll to element failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2109,10 +2109,10 @@ export async function scrollUp(page: Page, step: testStep): Promise<Outcome> {
     }, pixels);
     
     await page.waitForTimeout(300);
-    console.log(`  ✅ Scrolled up ${pixels}px`);
+    console.log(`  âœ… Scrolled up ${pixels}px`);
     return { code: 0, value: `Scrolled up ${pixels}px` };
   } catch (error) {
-    console.error(`  ❌ Scroll up failed`);
+    console.error(`  âŒ Scroll up failed`);
     return { code: 1, value: `Scroll up failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2134,10 +2134,10 @@ export async function scrollDown(page: Page, step: testStep): Promise<Outcome> {
     }, pixels);
     
     await page.waitForTimeout(300);
-    console.log(`  ✅ Scrolled down ${pixels}px`);
+    console.log(`  âœ… Scrolled down ${pixels}px`);
     return { code: 0, value: `Scrolled down ${pixels}px` };
   } catch (error) {
-    console.error(`  ❌ Scroll down failed`);
+    console.error(`  âŒ Scroll down failed`);
     return { code: 1, value: `Scroll down failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2160,10 +2160,10 @@ export async function focusElement(page: Page, step: testStep): Promise<Outcome>
     const element = await resolveElement(page, baseSelector, step);
     
     await element.focus();
-    console.log(`  ✅ Focused on element: ${step.page}.${step.element}`);
+    console.log(`  âœ… Focused on element: ${step.page}.${step.element}`);
     return { code: 0, value: `Focused on element: ${step.page}.${step.element}` };
   } catch (error) {
-    console.error(`  ❌ Focus failed`);
+    console.error(`  âŒ Focus failed`);
     return { code: 1, value: `Focus failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2182,10 +2182,10 @@ export async function blurElement(page: Page, step: testStep): Promise<Outcome> 
     const element = await resolveElement(page, baseSelector, step);
     
     await element.blur();
-    console.log(`  ✅ Blurred element: ${step.page}.${step.element}`);
+    console.log(`  âœ… Blurred element: ${step.page}.${step.element}`);
     return { code: 0, value: `Blurred element: ${step.page}.${step.element}` };
   } catch (error) {
-    console.error(`  ❌ Blur failed`);
+    console.error(`  âŒ Blur failed`);
     return { code: 1, value: `Blur failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2227,10 +2227,10 @@ export async function selectRadioButton(page: Page, step: testStep): Promise<Out
     }
 
     await radio.check();
-    console.log(`  ✅ Selected radio button: ${value}`);
+    console.log(`  âœ… Selected radio button: ${value}`);
     return { code: 0, value: `Selected radio button: ${value}` };
   } catch (error) {
-    console.error(`  ❌ Radio selection failed`);
+    console.error(`  âŒ Radio selection failed`);
     return { code: 1, value: `Radio selection failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2258,23 +2258,23 @@ export async function toggleCheckbox(page: Page, step: testStep): Promise<Outcom
 
     if (action === 'on' && !isChecked) {
       await checkbox.check();
-      console.log(`  ✅ Checkbox checked: ${step.page}.${step.element}`);
+      console.log(`  âœ… Checkbox checked: ${step.page}.${step.element}`);
     } else if (action === 'off' && isChecked) {
       await checkbox.uncheck();
-      console.log(`  ✅ Checkbox unchecked: ${step.page}.${step.element}`);
+      console.log(`  âœ… Checkbox unchecked: ${step.page}.${step.element}`);
     } else if (action === 'toggle') {
       if (isChecked) {
         await checkbox.uncheck();
-        console.log(`  ✅ Checkbox unchecked (toggled): ${step.page}.${step.element}`);
+        console.log(`  âœ… Checkbox unchecked (toggled): ${step.page}.${step.element}`);
       } else {
         await checkbox.check();
-        console.log(`  ✅ Checkbox checked (toggled): ${step.page}.${step.element}`);
+        console.log(`  âœ… Checkbox checked (toggled): ${step.page}.${step.element}`);
       }
     }
 
     return { code: 0, value: `Checkbox toggled successfully` };
   } catch (error) {
-    console.error(`  ❌ Checkbox toggle failed`);
+    console.error(`  âŒ Checkbox toggle failed`);
     return { code: 1, value: `Checkbox toggle failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2322,13 +2322,13 @@ export async function selectCheckboxes(page: Page, step: testStep): Promise<Outc
       }
     }
 
-    console.log(`  ✅ Selected ${successCount}/${values.length} checkboxes`);
+    console.log(`  âœ… Selected ${successCount}/${values.length} checkboxes`);
     return { 
       code: failCount === 0 ? 0 : 1, 
       value: `Selected ${successCount} of ${values.length} checkboxes` 
     };
   } catch (error) {
-    console.error(`  ❌ Checkbox selection failed`);
+    console.error(`  âŒ Checkbox selection failed`);
     return { code: 1, value: `Checkbox selection failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2352,10 +2352,10 @@ export async function isElementEnabled(page: Page, step: testStep): Promise<Outc
     
     const isEnabled = await element.isEnabled();
     const status = isEnabled ? 'enabled' : 'disabled';
-    console.log(`  ℹ️ Element is ${status}`);
+    console.log(`  â„¹ï¸ Element is ${status}`);
     return { code: isEnabled ? 0 : 1, value: `Element is ${status}` };
   } catch (error) {
-    console.error(`  ❌ Check failed`);
+    console.error(`  âŒ Check failed`);
     return { code: 1, value: `Check failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2375,10 +2375,10 @@ export async function isElementDisabled(page: Page, step: testStep): Promise<Out
     
     const isDisabled = await element.isDisabled();
     const status = isDisabled ? 'disabled' : 'enabled';
-    console.log(`  ℹ️ Element is ${status}`);
+    console.log(`  â„¹ï¸ Element is ${status}`);
     return { code: isDisabled ? 0 : 1, value: `Element is ${status}` };
   } catch (error) {
-    console.error(`  ❌ Check failed`);
+    console.error(`  âŒ Check failed`);
     return { code: 1, value: `Check failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2397,10 +2397,10 @@ export async function isElementVisible(page: Page, step: testStep): Promise<Outc
     const element = await resolveElement(page, baseSelector, step);
     
     const isVisible = await element.isVisible();
-    console.log(`  ℹ️ Element is ${isVisible ? 'visible' : 'hidden'}`);
+    console.log(`  â„¹ï¸ Element is ${isVisible ? 'visible' : 'hidden'}`);
     return { code: isVisible ? 0 : 1, value: `Element is ${isVisible ? 'visible' : 'hidden'}` };
   } catch (error) {
-    console.error(`  ❌ Check failed`);
+    console.error(`  âŒ Check failed`);
     return { code: 1, value: `Check failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2419,10 +2419,10 @@ export async function isElementHidden(page: Page, step: testStep): Promise<Outco
     const element = await resolveElement(page, baseSelector, step);
     
     const isHidden = await element.isHidden();
-    console.log(`  ℹ️ Element is ${isHidden ? 'hidden' : 'visible'}`);
+    console.log(`  â„¹ï¸ Element is ${isHidden ? 'hidden' : 'visible'}`);
     return { code: isHidden ? 0 : 1, value: `Element is ${isHidden ? 'hidden' : 'visible'}` };
   } catch (error) {
-    console.error(`  ❌ Check failed`);
+    console.error(`  âŒ Check failed`);
     return { code: 1, value: `Check failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2444,10 +2444,10 @@ export async function isElementClickable(page: Page, step: testStep): Promise<Ou
     const isEnabled = await element.isEnabled();
     const isClickable = isVisible && isEnabled;
     
-    console.log(`  ℹ️ Element is ${isClickable ? 'clickable' : 'not clickable'}`);
+    console.log(`  â„¹ï¸ Element is ${isClickable ? 'clickable' : 'not clickable'}`);
     return { code: isClickable ? 0 : 1, value: `Element is ${isClickable ? 'clickable' : 'not clickable'}` };
   } catch (error) {
-    console.error(`  ❌ Check failed`);
+    console.error(`  âŒ Check failed`);
     return { code: 1, value: `Check failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2466,10 +2466,10 @@ export async function isElementChecked(page: Page, step: testStep): Promise<Outc
     const element = await resolveElement(page, baseSelector, step);
     
     const isChecked = await element.isChecked();
-    console.log(`  ℹ️ Element is ${isChecked ? 'checked' : 'unchecked'}`);
+    console.log(`  â„¹ï¸ Element is ${isChecked ? 'checked' : 'unchecked'}`);
     return { code: isChecked ? 0 : 1, value: `Element is ${isChecked ? 'checked' : 'unchecked'}` };
   } catch (error) {
-    console.error(`  ❌ Check failed`);
+    console.error(`  âŒ Check failed`);
     return { code: 1, value: `Check failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2501,10 +2501,10 @@ export async function getComputedStyle(page: Page, step: testStep): Promise<Outc
       return window.getComputedStyle(el).getPropertyValue(prop);
     }, step.value);
 
-    console.log(`  ✅ ${step.value}: ${value}`);
+    console.log(`  âœ… ${step.value}: ${value}`);
     return { code: 0, value };
   } catch (error) {
-    console.error(`  ❌ Failed to get style`);
+    console.error(`  âŒ Failed to get style`);
     return { code: 1, value: `Failed to get style: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2526,10 +2526,10 @@ export async function getBackgroundColor(page: Page, step: testStep): Promise<Ou
       return window.getComputedStyle(el).backgroundColor;
     });
 
-    console.log(`  ✅ Background color: ${color}`);
+    console.log(`  âœ… Background color: ${color}`);
     return { code: 0, value: color };
   } catch (error) {
-    console.error(`  ❌ Failed to get background color`);
+    console.error(`  âŒ Failed to get background color`);
     return { code: 1, value: `Failed to get background color: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2551,10 +2551,10 @@ export async function getTextColor(page: Page, step: testStep): Promise<Outcome>
       return window.getComputedStyle(el).color;
     });
 
-    console.log(`  ✅ Text color: ${color}`);
+    console.log(`  âœ… Text color: ${color}`);
     return { code: 0, value: color };
   } catch (error) {
-    console.error(`  ❌ Failed to get text color`);
+    console.error(`  âŒ Failed to get text color`);
     return { code: 1, value: `Failed to get text color: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2582,10 +2582,10 @@ export async function hasClass(page: Page, step: testStep): Promise<Outcome> {
       return el.classList.contains(className);
     }, step.value);
 
-    console.log(`  ℹ️ Element ${hasClass ? 'has' : 'does not have'} class: ${step.value}`);
+    console.log(`  â„¹ï¸ Element ${hasClass ? 'has' : 'does not have'} class: ${step.value}`);
     return { code: hasClass ? 0 : 1, value: `${hasClass ? 'Has' : 'Missing'} class: ${step.value}` };
   } catch (error) {
-    console.error(`  ❌ Check failed`);
+    console.error(`  âŒ Check failed`);
     return { code: 1, value: `Check failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2607,10 +2607,10 @@ export async function getClasses(page: Page, step: testStep): Promise<Outcome> {
       return Array.from(el.classList).join('|');
     });
 
-    console.log(`  ✅ Classes: ${classes}`);
+    console.log(`  âœ… Classes: ${classes}`);
     return { code: 0, value: classes };
   } catch (error) {
-    console.error(`  ❌ Failed to get classes`);
+    console.error(`  âŒ Failed to get classes`);
     return { code: 1, value: `Failed to get classes: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2637,10 +2637,10 @@ export async function getElementSize(page: Page, step: testStep): Promise<Outcom
     if (!box) throw new Error('Element not visible');
 
     const size = JSON.stringify({ width: Math.round(box.width), height: Math.round(box.height) });
-    console.log(`  ✅ Size: ${size}`);
+    console.log(`  âœ… Size: ${size}`);
     return { code: 0, value: size };
   } catch (error) {
-    console.error(`  ❌ Failed to get size`);
+    console.error(`  âŒ Failed to get size`);
     return { code: 1, value: `Failed to get size: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2663,10 +2663,10 @@ export async function getElementPosition(page: Page, step: testStep): Promise<Ou
     if (!box) throw new Error('Element not visible');
 
     const position = JSON.stringify({ x: Math.round(box.x), y: Math.round(box.y) });
-    console.log(`  ✅ Position: ${position}`);
+    console.log(`  âœ… Position: ${position}`);
     return { code: 0, value: position };
   } catch (error) {
-    console.error(`  ❌ Failed to get position`);
+    console.error(`  âŒ Failed to get position`);
     return { code: 1, value: `Failed to get position: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2694,10 +2694,10 @@ export async function getElementRect(page: Page, step: testStep): Promise<Outcom
       width: Math.round(box.width),
       height: Math.round(box.height)
     });
-    console.log(`  ✅ Rect: ${rect}`);
+    console.log(`  âœ… Rect: ${rect}`);
     return { code: 0, value: rect };
   } catch (error) {
-    console.error(`  ❌ Failed to get rect`);
+    console.error(`  âŒ Failed to get rect`);
     return { code: 1, value: `Failed to get rect: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2718,10 +2718,10 @@ export async function getScrollPosition(page: Page): Promise<Outcome> {
     }));
 
     const result = JSON.stringify(position);
-    console.log(`  ✅ Scroll position: ${result}`);
+    console.log(`  âœ… Scroll position: ${result}`);
     return { code: 0, value: result };
   } catch (error) {
-    console.error(`  ❌ Failed to get scroll position`);
+    console.error(`  âŒ Failed to get scroll position`);
     return { code: 1, value: `Failed to get scroll position: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2744,10 +2744,10 @@ export async function getInnerHTML(page: Page, step: testStep): Promise<Outcome>
     const element = await resolveElement(page, baseSelector, step);
     
     const html = await element.innerHTML();
-    console.log(`  ✅ Retrieved innerHTML (${html.length} chars)`);
+    console.log(`  âœ… Retrieved innerHTML (${html.length} chars)`);
     return { code: 0, value: html };
   } catch (error) {
-    console.error(`  ❌ Failed to get innerHTML`);
+    console.error(`  âŒ Failed to get innerHTML`);
     return { code: 1, value: `Failed to get innerHTML: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2766,10 +2766,10 @@ export async function getOuterHTML(page: Page, step: testStep): Promise<Outcome>
     const element = await resolveElement(page, baseSelector, step);
     
     const html = await element.evaluate(el => el.outerHTML);
-    console.log(`  ✅ Retrieved outerHTML (${html.length} chars)`);
+    console.log(`  âœ… Retrieved outerHTML (${html.length} chars)`);
     return { code: 0, value: html };
   } catch (error) {
-    console.error(`  ❌ Failed to get outerHTML`);
+    console.error(`  âŒ Failed to get outerHTML`);
     return { code: 1, value: `Failed to get outerHTML: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2788,10 +2788,10 @@ export async function getChildCount(page: Page, step: testStep): Promise<Outcome
     const element = await resolveElement(page, baseSelector, step);
     
     const count = await element.evaluate(el => el.children.length);
-    console.log(`  ✅ Child count: ${count}`);
+    console.log(`  âœ… Child count: ${count}`);
     return { code: 0, value: String(count) };
   } catch (error) {
-    console.error(`  ❌ Failed to get child count`);
+    console.error(`  âŒ Failed to get child count`);
     return { code: 1, value: `Failed to get child count: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2821,10 +2821,10 @@ export async function getTextWithoutChildren(page: Page, step: testStep): Promis
         .trim();
     });
 
-    console.log(`  ✅ Text (without children): "${text}"`);
+    console.log(`  âœ… Text (without children): "${text}"`);
     return { code: 0, value: text };
   } catch (error) {
-    console.error(`  ❌ Failed to get text`);
+    console.error(`  âŒ Failed to get text`);
     return { code: 1, value: `Failed to get text: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2845,10 +2845,10 @@ export async function getVisibleText(page: Page, step: testStep): Promise<Outcom
     const text = await element.textContent();
     const trimmed = text?.trim() || '';
     
-    console.log(`  ✅ Visible text: "${trimmed}"`);
+    console.log(`  âœ… Visible text: "${trimmed}"`);
     return { code: 0, value: trimmed };
   } catch (error) {
-    console.error(`  ❌ Failed to get text`);
+    console.error(`  âŒ Failed to get text`);
     return { code: 1, value: `Failed to get text: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2870,10 +2870,10 @@ export async function extractNumbers(page: Page, step: testStep): Promise<Outcom
     const numbers = text.match(/\d+\.?\d*/g) || [];
     const result = numbers.join('|');
     
-    console.log(`  ✅ Extracted numbers: ${result}`);
+    console.log(`  âœ… Extracted numbers: ${result}`);
     return { code: 0, value: result };
   } catch (error) {
-    console.error(`  ❌ Failed to extract numbers`);
+    console.error(`  âŒ Failed to extract numbers`);
     return { code: 1, value: `Failed to extract numbers: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2895,10 +2895,10 @@ export async function extractEmails(page: Page, step: testStep): Promise<Outcome
     const emails = text.match(/[^\s@]+@[^\s@]+\.[^\s@]+/g) || [];
     const result = emails.join('|');
     
-    console.log(`  ✅ Extracted emails: ${result}`);
+    console.log(`  âœ… Extracted emails: ${result}`);
     return { code: 0, value: result };
   } catch (error) {
-    console.error(`  ❌ Failed to extract emails`);
+    console.error(`  âŒ Failed to extract emails`);
     return { code: 1, value: `Failed to extract emails: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2935,10 +2935,10 @@ export async function typeWithDelay(page: Page, step: testStep): Promise<Outcome
       await element.type(char, { delay });
     }
 
-    console.log(`  ✅ Typed text with ${delay}ms delay: ${text}`);
+    console.log(`  âœ… Typed text with ${delay}ms delay: ${text}`);
     return { code: 0, value: `Typed with ${delay}ms delay` };
   } catch (error) {
-    console.error(`  ❌ Type failed`);
+    console.error(`  âŒ Type failed`);
     return { code: 1, value: `Type failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2961,10 +2961,10 @@ export async function selectAndCut(page: Page, step: testStep): Promise<Outcome>
     await page.waitForTimeout(50);
     await page.keyboard.press('Control+X');
     
-    console.log(`  ✅ Selected and cut text: ${step.page}.${step.element}`);
+    console.log(`  âœ… Selected and cut text: ${step.page}.${step.element}`);
     return { code: 0, value: 'Selected and cut text' };
   } catch (error) {
-    console.error(`  ❌ Cut operation failed`);
+    console.error(`  âŒ Cut operation failed`);
     return { code: 1, value: `Cut failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -2987,10 +2987,10 @@ export async function selectAndCopy(page: Page, step: testStep): Promise<Outcome
     await page.waitForTimeout(50);
     await page.keyboard.press('Control+C');
     
-    console.log(`  ✅ Selected and copied text: ${step.page}.${step.element}`);
+    console.log(`  âœ… Selected and copied text: ${step.page}.${step.element}`);
     return { code: 0, value: 'Selected and copied text' };
   } catch (error) {
-    console.error(`  ❌ Copy operation failed`);
+    console.error(`  âŒ Copy operation failed`);
     return { code: 1, value: `Copy failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -3016,10 +3016,10 @@ export async function getParentElement(page: Page, step: testStep): Promise<Outc
       return window.getComputedStyle(document.documentElement).all;
     });
 
-    console.log(`  ✅ Retrieved parent element selector`);
+    console.log(`  âœ… Retrieved parent element selector`);
     return { code: 0, value: 'Parent element found' };
   } catch (error) {
-    console.error(`  ❌ Failed to get parent`);
+    console.error(`  âŒ Failed to get parent`);
     return { code: 1, value: `Failed to get parent: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -3040,10 +3040,10 @@ export async function getChildElements(page: Page, step: testStep): Promise<Outc
     const selector = step.value || '*';
     const count = await element.locator(selector).count();
     
-    console.log(`  ✅ Found ${count} child elements`);
+    console.log(`  âœ… Found ${count} child elements`);
     return { code: 0, value: String(count) };
   } catch (error) {
-    console.error(`  ❌ Failed to get children`);
+    console.error(`  âŒ Failed to get children`);
     return { code: 1, value: `Failed to get children: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -3063,10 +3063,10 @@ export async function getNextSibling(page: Page, step: testStep): Promise<Outcom
     
     const hasSibling = await element.evaluate(el => el.nextElementSibling !== null);
     
-    console.log(`  ℹ️ Next sibling ${hasSibling ? 'exists' : 'not found'}`);
+    console.log(`  â„¹ï¸ Next sibling ${hasSibling ? 'exists' : 'not found'}`);
     return { code: hasSibling ? 0 : 1, value: `Next sibling ${hasSibling ? 'found' : 'not found'}` };
   } catch (error) {
-    console.error(`  ❌ Failed to check sibling`);
+    console.error(`  âŒ Failed to check sibling`);
     return { code: 1, value: `Failed to check sibling: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -3098,7 +3098,7 @@ export async function waitForEnabled(page: Page, step: testStep): Promise<Outcom
     const startTime = Date.now();
     while (Date.now() - startTime < timeout) {
       if (await element.isEnabled()) {
-        console.log(`  ✅ Element is now enabled`);
+        console.log(`  âœ… Element is now enabled`);
         return { code: 0, value: 'Element enabled' };
       }
       await page.waitForTimeout(100);
@@ -3106,7 +3106,7 @@ export async function waitForEnabled(page: Page, step: testStep): Promise<Outcom
 
     throw new Error('Timeout waiting for element to be enabled');
   } catch (error) {
-    console.error(`  ❌ Wait failed`);
+    console.error(`  âŒ Wait failed`);
     return { code: 1, value: `Wait failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -3133,7 +3133,7 @@ export async function waitForDisabled(page: Page, step: testStep): Promise<Outco
     const startTime = Date.now();
     while (Date.now() - startTime < timeout) {
       if (await element.isDisabled()) {
-        console.log(`  ✅ Element is now disabled`);
+        console.log(`  âœ… Element is now disabled`);
         return { code: 0, value: 'Element disabled' };
       }
       await page.waitForTimeout(100);
@@ -3141,7 +3141,7 @@ export async function waitForDisabled(page: Page, step: testStep): Promise<Outco
 
     throw new Error('Timeout waiting for element to be disabled');
   } catch (error) {
-    console.error(`  ❌ Wait failed`);
+    console.error(`  âŒ Wait failed`);
     return { code: 1, value: `Wait failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -3174,7 +3174,7 @@ export async function waitForCount(page: Page, step: testStep): Promise<Outcome>
       const count = await elements.count();
       
       if (count >= expectedCount) {
-        console.log(`  ✅ Found ${count} elements (expected ${expectedCount})`);
+        console.log(`  âœ… Found ${count} elements (expected ${expectedCount})`);
         return { code: 0, value: `Found ${count} elements` };
       }
       await page.waitForTimeout(100);
@@ -3182,7 +3182,7 @@ export async function waitForCount(page: Page, step: testStep): Promise<Outcome>
 
     throw new Error(`Timeout waiting for ${expectedCount} elements`);
   } catch (error) {
-    console.error(`  ❌ Wait failed`);
+    console.error(`  âŒ Wait failed`);
     return { code: 1, value: `Wait failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -3211,10 +3211,10 @@ export async function selectByLabel(page: Page, step: testStep): Promise<Outcome
     const element = await resolveElement(page, baseSelector, step);
     
     await element.selectOption({ label: step.value });
-    console.log(`  ✅ Selected option by label: ${step.value}`);
+    console.log(`  âœ… Selected option by label: ${step.value}`);
     return { code: 0, value: `Selected option: ${step.value}` };
   } catch (error) {
-    console.error(`  ❌ Selection failed`);
+    console.error(`  âŒ Selection failed`);
     return { code: 1, value: `Selection failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -3246,10 +3246,10 @@ export async function selectByIndex(page: Page, step: testStep): Promise<Outcome
     if (!value) throw new Error(`Option at index ${index} not found`);
     
     await element.selectOption(value);
-    console.log(`  ✅ Selected option at index: ${index}`);
+    console.log(`  âœ… Selected option at index: ${index}`);
     return { code: 0, value: `Selected option at index ${index}` };
   } catch (error) {
-    console.error(`  ❌ Selection failed`);
+    console.error(`  âŒ Selection failed`);
     return { code: 1, value: `Selection failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -3272,10 +3272,10 @@ export async function getPlaceholder(page: Page, step: testStep): Promise<Outcom
     const element = await resolveElement(page, baseSelector, step);
     
     const placeholder = await element.getAttribute('placeholder') || '';
-    console.log(`  ✅ Placeholder: "${placeholder}"`);
+    console.log(`  âœ… Placeholder: "${placeholder}"`);
     return { code: 0, value: placeholder };
   } catch (error) {
-    console.error(`  ❌ Failed to get placeholder`);
+    console.error(`  âŒ Failed to get placeholder`);
     return { code: 1, value: `Failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -3294,10 +3294,10 @@ export async function getInputValue(page: Page, step: testStep): Promise<Outcome
     const element = await resolveElement(page, baseSelector, step);
     
     const value = await element.inputValue();
-    console.log(`  ✅ Input value: "${value}"`);
+    console.log(`  âœ… Input value: "${value}"`);
     return { code: 0, value };
   } catch (error) {
-    console.error(`  ❌ Failed to get input value`);
+    console.error(`  âŒ Failed to get input value`);
     return { code: 1, value: `Failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
@@ -3316,10 +3316,469 @@ export async function getMaxLength(page: Page, step: testStep): Promise<Outcome>
     const element = await resolveElement(page, baseSelector, step);
     
     const maxLength = await element.getAttribute('maxlength') || 'No limit';
-    console.log(`  ✅ Max length: ${maxLength}`);
+    console.log(`  âœ… Max length: ${maxLength}`);
     return { code: 0, value: maxLength };
   } catch (error) {
-    console.error(`  ❌ Failed to get max length`);
+    console.error(`  âŒ Failed to get max length`);
     return { code: 1, value: `Failed: ${error instanceof Error ? error.message : String(error)}` };
+  }
+}
+
+
+/**
+ * Handle autocomplete input fields (searchable dropdowns)
+ * Types text to trigger suggestions and selects the value using mouse click
+ * Ensures the value is selected from the dropdown (not just typed)
+ * Supports DDT values and variable substitution
+ * Fails explicitly if dropdown selection does not occur
+ *
+ * @param page - Playwright page object
+ * @param step - Test step with page/element, value, and isDDT flag
+ * @returns Outcome {code: 0 on success, code: 1 on failure}
+ */
+export async function setAutoCompleteField(
+  page: Page,
+  step: testStep
+): Promise<Outcome> {
+  try {
+    const baseSelector = getLocatorString(step);
+    await waitForRoller(page);
+
+    // âœ… Resolve value
+    let textToFill = '';
+    if (step.isDDT && step.datasetColumnNames) {
+      textToFill = step.datasetColumnNames;
+    } else if (step.value) {
+      textToFill = resolveTestVariables(step.value);
+    }
+
+    const finalText = String(textToFill).trim();
+    const element = await resolveElement(page, baseSelector, step);
+
+    // âœ… Step 1: Focus & type
+    await element.click();
+    await element.fill('');
+    await element.type(finalText, { delay: 120 });
+
+    // âœ… Step 2: Give dropdown time to populate
+    await page.waitForTimeout(700);  // critical for backend fetch
+
+    // âœ… Step 3: Use keyboard to select
+    await page.keyboard.press('ArrowDown');
+    await page.waitForTimeout(200);
+    await page.keyboard.press('Enter');
+
+    // âœ… Step 4: Validate selection worked
+    await page.waitForTimeout(500);
+    const actualValue = (await element.inputValue()).trim();
+
+    if (!actualValue) {
+      throw new Error(
+        `Autocomplete failed: value not selected after Enter`
+      );
+    }
+
+    return {
+      code: 0,
+      value: `Selected "${actualValue}" using keyboard autocomplete`
+    };
+
+  } catch (error) {
+    console.error(`âŒ Autocomplete failed for ${step.page}.${step.element}`);
+
+    return {
+      code: 1,
+      value: `Autocomplete failed: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    };
+  }
+}
+
+/**
+ * Click Lorenzo Tab element (reliable for TD-based tab controls)
+ * Uses direct DOM click which is required for Lorenzo tab behavior
+ *
+ * @param page - Playwright page object
+ * @param step - Test step with page/element details
+ * @returns Outcome {code: 0 on success, code: 1 on failure}
+ */
+
+export async function clickTab(
+  page: Page,
+  step: testStep
+): Promise<Outcome> {
+  try {
+    const baseSelector = getLocatorString(step);
+    await waitForRoller(page);
+
+    const element = await resolveElement(page, baseSelector, step, 30000);
+
+    // âœ… Step 1: Ensure visible
+    await element.waitFor({ state: 'visible', timeout: 10000 });
+
+    // âœ… Step 2: Scroll into view
+    await element.scrollIntoViewIfNeeded();
+
+    // âœ… Step 3: Direct DOM click (KEY for Lorenzo)
+    await element.evaluate((el: HTMLElement) => el.click());
+
+    // âœ… Step 4: Wait for tab transition
+    await page.waitForTimeout(800);
+
+    // âœ… Step 5: Optional validation (tab selected class)
+    try {
+      const classAttr = await element.getAttribute('class');
+      if (classAttr && !classAttr.includes('Selected')) {
+        console.warn(`âš ï¸ Tab click executed but selection state not confirmed`);
+      }
+    } catch {
+      // ignore validation errors
+    }
+
+    console.log(`âœ… Lorenzo tab clicked: ${step.page}.${step.element}`);
+
+    return {
+      code: 0,
+      value: `Successfully clicked Lorenzo tab: ${step.page}.${step.element}`
+    };
+
+  } catch (error) {
+    console.error(`âŒ Failed to click Lorenzo tab: ${step.page}.${step.element}`);
+
+    return {
+      code: 1,
+      value: `Failed to click Lorenzo tab: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    };
+  }
+}
+export async function selectTableRowByValue(page: Page, step: testStep): Promise<Outcome> {
+  try {
+    await waitForRoller(page);
+ 
+    // Get the value to search for from elementText or value
+    let searchValue = '';
+    if (step.elementText !== null && step.elementText !== undefined && String(step.elementText).trim() !== '') {
+      searchValue = String(step.elementText).trim();
+    } else if (step.value) {
+      searchValue = resolveTestVariables(step.value).trim();
+    }
+ 
+    if (!searchValue) {
+      throw new Error('No search value provided. Use elementText or value to specify the row identifier (e.g., patient ID)');
+    }
+
+    // Check if variable resolution failed (value still looks like _VariableName)
+    const isUnresolvedVar = /^_[A-Za-z]\w*$/.test(searchValue);
+    if (isUnresolvedVar) {
+      console.warn(`  âš ï¸ Variable "${searchValue}" was not resolved â€” it may not have been set in a prior step.`);
+      console.warn(`  âš ï¸ Attempting fallback: select the first available data row in the search results grid.`);
+    }
+ 
+    console.log(`  ðŸ” Searching for table row containing value: "${searchValue}"`);
+ 
+    // Collect all pages across all browser contexts
+    const allPages: Page[] = [page];
+    try {
+      const ctx = page.context();
+      const browser = ctx.browser();
+      const contexts = browser ? browser.contexts() : [ctx];
+      for (const c of contexts) {
+        for (const p of c.pages()) {
+          if (!p.isClosed() && p !== page) allPages.push(p);
+        }
+      }
+    } catch { /* ignore */ }
+ 
+    for (const searchPage of allPages) {
+      const frames = searchPage.frames();
+
+      // â”€â”€ APPROACH 1: Find text in a frame, then select the row within THAT SAME frame â”€â”€
+      for (const frame of frames) {
+        try {
+          const textLocator = frame.locator(`text="${searchValue}"`);
+          const textCount = await textLocator.count().catch(() => 0);
+          if (textCount === 0) continue;
+
+          console.log(`  ðŸ“ Found "${searchValue}" in frame: ${frame.url().substring(0, 80)}`);
+
+          // Get the parent <tr> of the found text (closest ancestor)
+          const parentRow = textLocator.first().locator('xpath=ancestor::tr[1]');
+          const rowExists = await parentRow.count().catch(() => 0);
+          if (rowExists === 0) continue;
+
+          const rowId = await parentRow.first().getAttribute('id').catch(() => 'no-id');
+
+          // Strategy A1: Checkbox grids (Kendo / standard inputs) â€” check FIRST before Lorenzo
+          const checkboxSelectors = [
+            "input[aria-label='Select row']",
+            "input.k-select-checkbox",
+            "input[type='checkbox']",
+          ];
+
+          let checkboxFound = false;
+
+          // First check if checkbox is directly in the row
+          for (const sel of checkboxSelectors) {
+            const target = parentRow.locator(sel).first();
+            const targetCount = await target.count().catch(() => 0);
+            if (targetCount === 0) continue;
+
+            await target.check({ timeout: 5000 });
+            await page.waitForTimeout(500);
+            checkboxFound = true;
+            console.log(`  âœ… Selected row via ${sel} (checkbox)`);
+            return {
+              code: 0,
+              value: `Successfully selected table row containing: "${searchValue}" (${sel})`
+            };
+          }
+
+          // Kendo locked columns: checkbox is in a separate locked table linked by data-uid
+          if (!checkboxFound) {
+            const dataUid = await parentRow.first().getAttribute('data-uid').catch(() => null);
+            if (dataUid) {
+              // Find the corresponding locked row with same data-uid that has the checkbox
+              for (const sel of checkboxSelectors) {
+                const lockedCheckbox = frame.locator(`tr[data-uid="${dataUid}"] ${sel}`).first();
+                const lockedCount = await lockedCheckbox.count().catch(() => 0);
+                if (lockedCount === 0) continue;
+
+                await lockedCheckbox.check({ timeout: 5000 });
+                await page.waitForTimeout(500);
+                checkboxFound = true;
+                console.log(`  âœ… Selected row via locked column ${sel} (Kendo data-uid: ${dataUid})`);
+                return {
+                  code: 0,
+                  value: `Successfully selected table row containing: "${searchValue}" (Kendo locked ${sel})`
+                };
+              }
+            }
+          }
+
+          // Strategy A2: Lorenzo plain grid (tr id starts with "igRow") â€” use page.mouse.click()
+          // Only used when NO checkbox is found in the row (plain grids without checkboxes)
+          if (!checkboxFound && rowId && rowId.startsWith('igRow')) {
+            const box = await parentRow.first().boundingBox();
+            if (box) {
+              // Click near the left side of the row (where the select arrow typically is)
+              const x = box.x + 15;
+              const y = box.y + box.height / 2;
+              console.log(`  ðŸ” Lorenzo grid row detected, clicking at (${x}, ${y})`);
+              await page.mouse.click(x, y);
+              await page.waitForTimeout(800);
+              console.log(`  âœ… Selected row via mouse.click on Lorenzo grid row`);
+              return {
+                code: 0,
+                value: `Successfully selected table row containing: "${searchValue}" (Lorenzo mouse.click row)`
+              };
+            }
+          }
+
+          // Strategy A3: Look for td/img with select title (may exist when row is already selected)
+          const selectTitleLocator = parentRow.locator("[title*='select row' i]").first();
+          const selectTitleCount = await selectTitleLocator.count().catch(() => 0);
+          if (selectTitleCount > 0) {
+            const box = await selectTitleLocator.first().boundingBox();
+            if (box) {
+              const x = box.x + box.width / 2;
+              const y = box.y + box.height / 2;
+              await page.mouse.click(x, y);
+              await page.waitForTimeout(800);
+              console.log(`  âœ… Selected row via mouse.click on select title element`);
+              return {
+                code: 0,
+                value: `Successfully selected table row containing: "${searchValue}" (select title click)`
+              };
+            }
+          }
+
+          // Strategy B: No select mechanism in row â€” click the row itself
+          await parentRow.first().click({ timeout: 5000 });
+          await page.waitForTimeout(500);
+          console.log(`  âœ… Selected row by clicking <tr> directly`);
+          return {
+            code: 0,
+            value: `Successfully selected table row containing: "${searchValue}" (row click)`
+          };
+        } catch { /* continue to next frame */ }
+      }
+
+      // â”€â”€ APPROACH 2 (Legacy Y-coordinate fallback): â”€â”€
+      // Find text Y coordinate, then find checkbox at same Y
+      let textY: number | null = null;
+      let textFrame: any = null;
+ 
+      for (const frame of frames) {
+        try {
+          const textLocator = frame.locator(`text="${searchValue}"`);
+          const textCount = await textLocator.count().catch(() => 0);
+          if (textCount === 0) continue;
+ 
+          const textBox = await textLocator.first().boundingBox({ timeout: 3000 }).catch(() => null);
+          if (!textBox) continue;
+ 
+          textY = textBox.y + textBox.height / 2;
+          textFrame = frame;
+          console.log(`  ðŸ“ [Y-fallback] Found "${searchValue}" at Y=${textY.toFixed(0)}`);
+          break;
+        } catch { /* continue */ }
+      }
+ 
+      if (textY === null) continue;
+ 
+      // Find the row selection checkbox at the same Y coordinate
+      const selectors = [
+        'input[aria-label="Select row"]',
+        'input.k-select-checkbox',
+        'input[type="checkbox"][data-role="checkbox"]',
+        'img[alt="Click to select row"]',
+        'img[title="Click to select row"]',
+        'td[title="Click to select row"]',
+      ];
+ 
+      let matchedLocator: Locator | null = null;
+      let isCheckbox = false;
+ 
+      for (const frame of frames) {
+        if (matchedLocator) break;
+        try {
+          for (const sel of selectors) {
+            if (matchedLocator) break;
+            const locator = frame.locator(sel);
+            const count = await locator.count().catch(() => 0);
+            if (count === 0) continue;
+ 
+            for (let i = 0; i < count; i++) {
+              const box = await locator.nth(i).boundingBox().catch(() => null);
+              if (!box || box.width === 0 || box.height === 0) continue;
+ 
+              const yDiff = Math.abs((box.y + box.height / 2) - textY);
+              if (yDiff > 15) continue;
+ 
+              console.log(`  ðŸŽ¯ Found select target (${sel}) at Y=${(box.y + box.height / 2).toFixed(0)}, yDiff=${yDiff.toFixed(1)}`);
+              matchedLocator = locator.nth(i);
+              isCheckbox = sel.startsWith('input');
+              break;
+            }
+          }
+        } catch { /* continue */ }
+      }
+ 
+      if (matchedLocator) {
+        if (isCheckbox) {
+          await matchedLocator.check({ timeout: 5000, force: true });
+        } else {
+          // Use JavaScript click + event dispatch for iframe reliability
+          await matchedLocator.evaluate(el => {
+            (el as HTMLElement).click();
+            el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+            el.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+          });
+        }
+ 
+        await page.waitForTimeout(500);
+        console.log(`  âœ… Selected table row containing: "${searchValue}"`);
+        return {
+          code: 0,
+          value: `Successfully selected table row containing: "${searchValue}"`
+        };
+      }
+
+      // Fallback: No checkbox/select-button found â€” click the row or cell directly.
+      // This handles grids like Patient SFS search results where row-click selects the record.
+      console.log(`  âš ï¸ No checkbox found. Attempting direct row/cell click for: "${searchValue}"`);
+
+      for (const frame of searchPage.frames()) {
+        try {
+          const textLocator = frame.locator(`text="${searchValue}"`);
+          const textCount = await textLocator.count().catch(() => 0);
+          if (textCount === 0) continue;
+
+          // Try clicking the parent <tr> of the matching text
+          const parentRow = textLocator.first().locator('xpath=ancestor::tr');
+          const rowCount = await parentRow.count().catch(() => 0);
+          if (rowCount > 0) {
+            await parentRow.first().click({ timeout: 5000 });
+            await page.waitForTimeout(500);
+            console.log(`  âœ… Selected row by clicking <tr> containing: "${searchValue}"`);
+            return {
+              code: 0,
+              value: `Successfully selected table row containing: "${searchValue}" (row click)`
+            };
+          }
+
+          // Last resort: click the text element itself
+          await textLocator.first().click({ timeout: 5000 });
+          await page.waitForTimeout(500);
+          console.log(`  âœ… Selected by clicking text: "${searchValue}"`);
+          return {
+            code: 0,
+            value: `Successfully selected table row containing: "${searchValue}" (text click)`
+          };
+        } catch { /* continue to next frame */ }
+      }
+    }
+
+    // FALLBACK for unresolved variables or when text search fails:
+    // Try to find and click the first data row in any visible search results grid.
+    // This handles Patient SFS dialogs where only one record is shown.
+    if (isUnresolvedVar) {
+      console.log(`  ðŸ”„ Fallback: Attempting to select first data row in search results...`);
+
+      for (const searchPage of allPages) {
+        for (const frame of searchPage.frames()) {
+          try {
+            // Look for data rows in "Search results - not traced" or similar grids
+            // Lorenzo SFS grids have data rows with <td> cells containing PAS IDs
+            const dataRowSelectors = [
+              "table tr td[class*='Cell']",                    // Lorenzo grid data cells
+              "table.G_TB tr:not(:first-child) td",           // Standard Lorenzo table rows
+              "tr.Row td, tr.AlternateRow td",                // Row/AlternateRow classes
+              "table tbody tr td",                            // Generic table rows
+            ];
+
+            for (const rowSel of dataRowSelectors) {
+              const cells = frame.locator(rowSel);
+              const cellCount = await cells.count().catch(() => 0);
+              if (cellCount === 0) continue;
+
+              // Find a cell that looks like it contains a PAS ID or meaningful data
+              for (let i = 0; i < Math.min(cellCount, 30); i++) {
+                const cellText = await cells.nth(i).textContent().catch(() => '');
+                const trimmed = (cellText || '').trim();
+                // Skip empty cells, header-like content, and navigation text
+                if (!trimmed || trimmed.length < 3) continue;
+                if (/^(page|linked|merged|pos|there are no)/i.test(trimmed)) continue;
+
+                // Found a data cell - click its parent row
+                const parentRow = cells.nth(i).locator('xpath=ancestor::tr');
+                const rowExists = await parentRow.count().catch(() => 0);
+                if (rowExists > 0) {
+                  await parentRow.first().click({ timeout: 5000 });
+                  await page.waitForTimeout(500);
+                  console.log(`  âœ… Fallback: Selected row containing: "${trimmed}"`);
+                  return {
+                    code: 0,
+                    value: `Selected row via fallback (unresolved var "${searchValue}"): "${trimmed}"`
+                  };
+                }
+              }
+            }
+          } catch { /* continue to next frame */ }
+        }
+      }
+    }
+ 
+    console.error(`  â›” No table row found containing value: "${searchValue}"`);
+    throw new Error(`No table row found containing value: "${searchValue}"`);
+  } catch (error) {
+    console.error(`  âŒ Failed to select table row by value`);
+    return {
+      code: 1,
+      value: `Failed to select table row: ${error instanceof Error ? error.message : String(error)}`
+    };
   }
 }

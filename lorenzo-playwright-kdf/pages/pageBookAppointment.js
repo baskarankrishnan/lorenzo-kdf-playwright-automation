@@ -8,3 +8,4 @@ export const txt_DOB = "//input[@class='DP_TB_Text']";
 export const btn_Find = "//button[@title='Click to Find']";
 export const btn_Next = "//td[@title='Next']";
 export const btn_PopUpNo = "//td[@class='Cmd_TTE'][@title='No']";
+export const chk_SelectRow = "//img[@title='Click to select row']";

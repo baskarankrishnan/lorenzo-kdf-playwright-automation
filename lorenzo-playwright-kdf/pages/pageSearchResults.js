@@ -1,2 +1,3 @@
 ﻿// pageSearchResults
-export const img_ExpandRow = "//img[@onclick="$_('C0','E_C',this,0)"]";
+export const img_ExpandRow = "//img[@alt='Click to expand row']";
+export const btn_Next = "//td[@title='Next']";

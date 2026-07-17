@@ -19,3 +19,5 @@ export const lnkSubPaneIPPatleaveReturn = "(//span[text()='Patient leave return'
 export const lnkSubPaneIPMedicalDischarge = "//span[text()='Medical discharge']";
 export const lnk_SubPaneIPActualDischarge = "//span[text()='Actual discharge']";
 export const lnk_ViewEPR = "//li[@title='View EPR']";
+
+

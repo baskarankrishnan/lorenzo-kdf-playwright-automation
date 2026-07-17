@@ -101,8 +101,8 @@ export function getActionKeywordFunction(actionKeyword: string): Function | unde
             return ElementActions.sleep;
         case 'jsclickbytext':
             return ElementActions.jsclickByText;
-          case 'jsclickbytext':
-            return ElementActions.jsclickByText;  
+        case 'selecttablerowbyvalue':
+            return ElementActions.selectTableRowByValue;
 
         // ASSERTION ACTIONS
         case 'verifyproperty':

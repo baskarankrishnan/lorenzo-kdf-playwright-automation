@@ -6,3 +6,4 @@ export const cmb_Selectaction = "//img[@title='Select the action to be performed
 export const icn_SFS = "//img[@title='Select the episode name']";
 export const btn_BookFinish = "//h1[contains(text(),'Manage referral')]/ancestor::table//tr[contains(@class,'TRSty3')]//button[@id='ic_C_C11']";
 export const dte_ReferralAcceptedDateTime = "//tr[@id='trMngReferralDate']//input[@type='text']",
+export const cmb_Finishmr = "//title[contains(text(),'Manage referral - LORENZO')]/ancestor::html//td[@title='Finish']";

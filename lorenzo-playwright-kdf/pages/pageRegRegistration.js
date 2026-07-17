@@ -45,3 +45,10 @@ export const btn_FindNowCP = "//td[@title='Click to execute the selected search 
 export const btn_OKCP = "//td[normalize-space(.)='Ok']";
 export const btn_AddCPgrid = "//td[normalize-space()='Add']";
 export const txt_CPTeam = "//input[@accesskey='Y'][@title='Select a Care provider team']";
+export const btn_Cancel = "//td[@class='msgboxbtnparentdiv']//td[@title='Cancel']";
+export const btn_Finishnow = "//title[contains(text(),'Registration - LORENZO')]/ancestor::html//td[@title='Finish now']";
+export const txt_Forename = "//input[@dikey='itxtForename']";
+export const txt_City = "//input[@dikey='C53_tA4']";
+export const cmb_Country = "//input[@title='Enter Country']";
+export const btn_Finishnow = "//table//td[@title='Finish now']";
+export const btn_Cancel = "//form[@name='iShowMessage']//td[@title='Cancel']";
