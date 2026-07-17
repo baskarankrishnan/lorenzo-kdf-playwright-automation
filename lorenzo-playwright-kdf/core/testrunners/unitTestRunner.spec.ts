@@ -12,11 +12,11 @@ import { getPageDefinition } from '../../product/pageRegistry';
 
 // ✅ Unit test specific configuration for step filtering
 const RunMode = {
-    testCaseId: 'LSTP_TaskMgmt_FloorPlan_WF001',
+    testCaseId: 'LSTP_MSI_WF001',
     mode: 'RANGE', // 'RANGE' | 'SINGLE' | 'ALL'
     stepRange: {
-        start: 1,
-        end: 100,
+        start: 4,
+        end: 6,
     },
     singleStep: 59,
     options: {
@@ -27,10 +27,10 @@ const RunMode = {
 
 // ✅ Hardcoded Test Case Configuration
 const TEST_CONFIG = {
-    module: 'TaskMgmt_FloorPlan',
-    excelName: 'LSTP_TaskMgmt_FloorPlan_WF001',
+    module: 'CaseLoad',
+    excelName: 'LSTP_CaseLoad_WF001',
     testcaseId: RunMode.testCaseId,
-    jiraId: 'LSTP_TaskMgmt_FloorPlan_WF001',
+    jiraId: 'LSTP_CaseLoad_WF001',
     description: 'End-to-end inpatient workflow',
     author: 'KDF Generator',
     isDDT: 'yes',

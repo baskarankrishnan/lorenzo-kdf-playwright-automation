@@ -32,5 +32,5 @@ export const btn_FindNow = "//td[@title='Click to execute the selected search cr
 export const btn_Ok = "//td[@title='Click to add the selected care providers(s)']";
 export const btn_Finish = "//td[@title='Finish']";
 export const cmb_PrimaryContact = "//img[@title='Select Primary Contact type']";
-export const lnk_Registrationtemporary = "//span[normalize-space()='Registration - temporary']";
+export const lnk_Registrationtemporary = "//span[text()='Registration - temporary']";
 export const btn_Cancel = "//form[@name='iShowMessage']//td[@title='Cancel']";
