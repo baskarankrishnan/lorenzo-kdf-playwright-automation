@@ -2,6 +2,7 @@ import { Page, BrowserContext, Browser } from "@playwright/test";
 import { executionContext, Outcome, testStep, LoaderRule } from "../utilities/interfaceUtils";
 import { resolveTestVariables } from "./dataActions";
 import { getPageDefinition, PageDefinition } from "../../product/pageRegistry";
+import { chromium } from "@playwright/test";
 
 /**
  * Manages multiple browser pages/tabs with title and URL-based matching
@@ -91,10 +92,8 @@ export class BrowserFocusTracker {
                         return singlePage;
                     }
 
-                    // Only 1 page open and doesn't match — no point waiting, return it immediately
-                    console.log(`  ☑️ Only 1 page open (no match for definition), using it: "${pageTitle}"`);
-                    await this.waitForPageReady(singlePage);
-                    return singlePage;
+                    // Only 1 page open and doesn't match — keep polling for new page to appear
+                    console.log(`  ⏳ Only 1 page open (no match for definition "${titlePatterns.join('|')}")... waiting for new page...`);
                 }
             }
 
@@ -316,6 +315,29 @@ export async function resolvePageForStep(
             return activePage;
         }
         return focusTracker.getInitialPage();
+    }
+
+    // Case 2.5: Check if we have a stored popup page from clickAndSwitchToPopup
+    const popupPage = (executionContext as any)._popupPage as Page | undefined;
+    if (popupPage && !popupPage.isClosed()) {
+        // Check if the popup matches the requested page definition
+        const popupUrl = popupPage.url();
+        const popupTitle = await popupPage.title().catch(() => '');
+        
+        const urlPatterns = pageDefinition.url
+            ? (Array.isArray(pageDefinition.url) ? pageDefinition.url : [pageDefinition.url])
+            : [];
+        const titlePatterns = pageDefinition.title
+            ? (Array.isArray(pageDefinition.title) ? pageDefinition.title : [pageDefinition.title])
+            : [];
+
+        const urlMatch = urlPatterns.some(p => popupUrl.toLowerCase().includes(p.toLowerCase()));
+        const titleMatch = titlePatterns.some(p => popupTitle.toLowerCase().includes(p.toLowerCase()));
+
+        if (urlMatch || titleMatch) {
+            console.log(`  ☑️ Using stored popup page: "${popupTitle}" - ${popupUrl}`);
+            return popupPage;
+        }
     }
 
     // Case 3: Page specified and found in registry - resolve normally

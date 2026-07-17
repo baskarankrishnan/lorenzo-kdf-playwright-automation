@@ -5,6 +5,7 @@ import { waitForRoller, waitForSeconds } from "../core/actionkeywords/browserAct
 import { resolveTestVariables } from "../core/actionkeywords/dataActions";
 import { getLocatorString } from "../core/utilities/locatorUtils";
 import { error } from "jquery";
+import { chromium } from "@playwright/test";
 
 // Helper function to check action results
 function checkResult(result: { code: number; value: string }) {
@@ -4937,31 +4938,58 @@ export async function selectRecordInTable(
   //
   console.log("⏳ Waiting for grid data to load...");
  
+  // Try multiple row selectors for compatibility with different Kendo versions
+  const rowSelectors = [
+    ".k-grid-content tbody tr.k-master-row",
+    ".k-grid-content tbody tr.k-table-row",
+    "tbody tr.k-master-row",
+    "tbody tr.k-table-row",
+    "tbody tr[role='row']"
+  ];
+
+  let activeRowSelector = rowSelectors[0];
+  for (const selector of rowSelectors) {
+    const count = await tableLocator.locator(selector).count().catch(() => 0);
+    if (count > 0) {
+      activeRowSelector = selector;
+      break;
+    }
+  }
+
   await tableLocator
-    .locator(".k-grid-content tbody tr.k-master-row")
+    .locator(activeRowSelector)
     .first()
-    .waitFor({ timeout: 1500 });
+    .waitFor({ timeout: 5000 });
  
-  await page.waitForFunction(() => {
-    const cells = document.querySelectorAll(
-      ".k-grid-content tbody tr.k-master-row td"
-    );
- 
+  await page.waitForFunction((sel) => {
+    const cells = document.querySelectorAll(sel + " td");
     return Array.from(cells).some(c =>
       (c.textContent || "").trim().length > 0
     );
-  }, { timeout: 15000 });
+  }, activeRowSelector, { timeout: 15000 });
  
   console.log("✅ Grid data loaded\n");
  
   //
   // HEADER EXTRACTION
   //
-  const headers = await tableLocator
-    .locator(".k-grid-header th")
-    .evaluateAll(ths =>
-      ths.map(th => (th.textContent || "").trim())
-    );
+  // Try multiple header selectors for compatibility
+  const headerSelectors = [
+    ".k-grid-header th",
+    "thead th",
+    "th[role='columnheader']",
+    "th"
+  ];
+
+  let headers: string[] = [];
+  for (const hdrSel of headerSelectors) {
+    headers = await tableLocator
+      .locator(hdrSel)
+      .evaluateAll(ths =>
+        ths.map(th => (th.textContent || "").trim())
+      );
+    if (headers.length > 0 && headers.some(h => h.length > 0)) break;
+  }
  
   console.log("📊 RAW HEADERS:", headers);
  
@@ -4970,9 +4998,17 @@ export async function selectRecordInTable(
   );
  
   const columnIndexes = reqdColumns.map(col => {
-    const idx = normalizedHeaders.indexOf(
+    let idx = normalizedHeaders.indexOf(
       col.toLowerCase().trim()
     );
+
+    // Fallback: partial match
+    if (idx === -1) {
+      idx = normalizedHeaders.findIndex(h =>
+        h.includes(col.toLowerCase().trim()) ||
+        col.toLowerCase().trim().includes(h)
+      );
+    }
  
     if (idx === -1) {
       throw new Error(
@@ -4991,9 +5027,7 @@ export async function selectRecordInTable(
   //
   // ROW SCAN
   //
-  const rows = tableLocator.locator(
-    ".k-grid-content tbody tr.k-master-row"
-  );
+  const rows = tableLocator.locator(activeRowSelector);
  
   const rowCount = await rows.count();
  
@@ -5036,15 +5070,30 @@ export async function selectRecordInTable(
  
       console.log(`\n✅ MATCH FOUND IN ROW ${i + 1}`);
  
-      const checkbox = row.locator("input.k-select-checkbox");
- 
-      const isChecked = await checkbox.isChecked();
- 
-      if (!isChecked) {
-        await checkbox.check();
-        console.log(`☑️ Row ${i + 1} selected`);
+      // Try multiple checkbox selectors for compatibility
+      let checkbox = row.locator("input.k-select-checkbox");
+      let checkboxCount = await checkbox.count();
+      if (checkboxCount === 0) {
+        checkbox = row.locator("input[aria-label='Select row']");
+        checkboxCount = await checkbox.count();
+      }
+      if (checkboxCount === 0) {
+        checkbox = row.locator("input[type='checkbox']");
+        checkboxCount = await checkbox.count();
+      }
+
+      if (checkboxCount > 0) {
+        const isChecked = await checkbox.isChecked();
+        if (!isChecked) {
+          await checkbox.check();
+          console.log(`☑️ Row ${i + 1} selected`);
+        } else {
+          console.log(`☑️ Row ${i + 1} already selected`);
+        }
       } else {
-        console.log(`☑️ Row ${i + 1} already selected`);
+        // No checkbox found, click the row directly
+        await row.click();
+        console.log(`☑️ Row ${i + 1} clicked (no checkbox found)`);
       }
  
       break;
@@ -5411,13 +5460,361 @@ console.log(`Stored split result in global variable: ${finalVarName} = "${result
 
 }
 
+/**
+ * Dynamically selects the appointment slot from the Clinic Overview grid based on current time.
+ * Rounds current time DOWN to the nearest 30-minute boundary and computes the full slot range.
+ * E.g., 13:07 → selects row with slot "13:00 to 13:30"
+ *       11:53 → selects row with slot "11:30 to 12:00"
+ *        1:07 → selects row with slot "1:00 to 1:30"
+ *
+ * Works directly with the Lorenzo appointment grid DOM structure using XPath.
+ * Does NOT require Kendo grid selectors.
+ *
+ * Usage in KDF:
+ *   Page: pageClinicOverview  (not used for locator - uses page directly)
+ *   Element: tbl_AppointmentGrid (not used - searches entire page)
+ *   ActionKeyword: selectSlotByCurrentTime
+ *   TableColumnNames: (not used)
+ *   Values: (optional) override time in HH:mm format for testing, otherwise uses system clock
+ */
+export async function selectSlotByCurrentTime(page: Page, step: testStep): Promise<{ code: number; value: string }> {
+  try {
+    // Determine current time (or use override from Values for testing)
+    let now: Date;
+    if (step.value && /^\d{1,2}:\d{2}$/.test(step.value.trim())) {
+      const [h, m] = step.value.trim().split(':').map(Number);
+      now = new Date();
+      now.setHours(h, m, 0, 0);
+      console.log(`  🕐 Using override time: ${step.value.trim()}`);
+    } else {
+      now = new Date();
+      console.log(`  🕐 Current system time: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`);
+    }
+
+    // Round DOWN to nearest 30-minute boundary
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const roundedMinutes = minutes < 30 ? 0 : 30;
+
+    // Calculate end time (start + 30 minutes)
+    const endDate = new Date(now);
+    endDate.setHours(hours, roundedMinutes + 30, 0, 0);
+    const endHours = endDate.getHours();
+    const endMinutes = endDate.getMinutes();
+
+    // Format without leading zeros on hours (e.g., "1:00" not "01:00")
+    const slotStartTime = `${hours}:${roundedMinutes.toString().padStart(2, '0')}`;
+    const slotEndTime = `${endHours}:${endMinutes.toString().padStart(2, '0')}`;
+    const slotRange = `${slotStartTime} to ${slotEndTime}`;
+    console.log(`  🎯 Target slot range: ${slotRange}`);
+
+    // Store calculated slot range as a variable for downstream steps
+    const varManager = executionContext.getVariableManager();
+    if (varManager) {
+      varManager.set('SlotTime', slotRange);
+      varManager.set('SlotStartTime', slotStartTime);
+      varManager.set('SlotEndTime', slotEndTime);
+    }
+
+    // Wait a moment for the grid to be fully rendered
+    await page.waitForTimeout(1000);
+
+    // Strategy: Use page.evaluate to find the row with matching slot range and click its checkbox.
+    // The Lorenzo Clinic Overview grid uses standard HTML tables. Slot cells contain
+    // range text like "1:00 to 1:30", "11:30 to 12:00", etc.
+    const result = await page.evaluate((targetRange: string) => {
+      const [targetStart] = targetRange.split(' to ');
+      const allCells = document.querySelectorAll('td');
+      let matchingRow: HTMLTableRowElement | null = null;
+
+      for (const cell of Array.from(allCells)) {
+        const text = (cell.textContent || '').trim();
+
+        // Strategy 1: Match full range text (e.g., "1:00 to 1:30")
+        if (text.includes(targetRange)) {
+          const row = cell.closest('tr') as HTMLTableRowElement;
+          if (row) { matchingRow = row; break; }
+        }
+
+        // Strategy 2: Match start time in a "Start time" column
+        const timeMatch = text.match(/(\d{1,2}:\d{2})/);
+        if (timeMatch && timeMatch[1] === targetStart) {
+          const row = cell.closest('tr');
+          if (!row) continue;
+
+          // Verify this cell is in a "Start time" column by checking the column header
+          const table = cell.closest('table');
+          if (!table) continue;
+
+          const cellIndex = Array.from(row.children).indexOf(cell);
+          const headerRow = table.querySelector('tr');
+          if (headerRow) {
+            const headerCells = headerRow.querySelectorAll('th, td');
+            if (cellIndex < headerCells.length) {
+              const headerText = (headerCells[cellIndex].textContent || '').toLowerCase().trim();
+              if (headerText.includes('start')) {
+                matchingRow = row as HTMLTableRowElement;
+                break;
+              }
+            }
+          }
+
+          // If no header check possible, just use first match
+          if (!matchingRow) {
+            matchingRow = row as HTMLTableRowElement;
+          }
+        }
+      }
+
+      if (!matchingRow) {
+        return { success: false, error: `No row found matching slot "${targetRange}" (start: "${targetStart}")` };
+      }
+
+      // Find the checkbox in the matching row
+      const checkbox = matchingRow.querySelector('input[type="checkbox"], input[aria-label="Select row"]') as HTMLInputElement;
+      if (checkbox) {
+        checkbox.click();
+        return { success: true, method: 'checkbox' };
+      }
+
+      // Try img-based select row button
+      const selectImg = matchingRow.querySelector('img[title="Click to select row"], img[alt="Click to select row"]') as HTMLElement;
+      if (selectImg) {
+        selectImg.click();
+        return { success: true, method: 'img-select' };
+      }
+
+      // Try clicking the row itself
+      matchingRow.click();
+      return { success: true, method: 'row-click' };
+    }, slotRange);
+
+    if (result.success) {
+      console.log(`  ✅ Selected slot ${slotRange} via ${result.method}`);
+      return { code: 0, value: `Selected slot ${slotRange} via ${result.method}` };
+    }
+
+    // Fallback: Try using Playwright locators across all frames
+    console.log(`  ⚠️ page.evaluate didn't find match. Trying Playwright locator approach...`);
+
+    // Search across all frames (Lorenzo uses iframes heavily)
+    const allFrames = page.frames();
+    for (const frame of allFrames) {
+      try {
+        // Find all cells containing the target slot range or start time
+        const timeCells = frame.locator(`xpath=//td[contains(text(),"${slotStartTime}")]`);
+        const count = await timeCells.count().catch(() => 0);
+
+        for (let i = 0; i < count; i++) {
+          const cell = timeCells.nth(i);
+          const cellText = await cell.textContent().catch(() => '');
+          // Match if cell contains the full range or just the start time
+          if (!(cellText || '').includes(slotRange) && !(cellText || '').includes(slotStartTime)) continue;
+
+          // Found matching cell - get its parent row
+          const row = cell.locator('xpath=ancestor::tr');
+          const rowCount = await row.count().catch(() => 0);
+          if (rowCount === 0) continue;
+
+          // Try to click the checkbox in this row
+          const checkboxSelectors = [
+            "input[aria-label='Select row']",
+            "input[type='checkbox']",
+            "img[title='Click to select row']"
+          ];
+
+          let clicked = false;
+          for (const sel of checkboxSelectors) {
+            const cb = row.locator(sel).first();
+            const cbCount = await cb.count().catch(() => 0);
+            if (cbCount > 0) {
+              await cb.click();
+              clicked = true;
+              console.log(`  ✅ Selected slot ${slotRange} via frame locator (${sel})`);
+              return { code: 0, value: `Selected slot ${slotRange}` };
+            }
+          }
+
+          if (!clicked) {
+            await row.click();
+            console.log(`  ✅ Selected slot ${slotRange} via row click in frame`);
+            return { code: 0, value: `Selected slot ${slotRange} via row click` };
+          }
+        }
+      } catch { /* continue to next frame */ }
+    }
+
+    // Final fallback: try next available slot after target time
+    console.log(`  ⚠️ Exact match for ${slotRange} not found. Trying next available slot...`);
+    const targetMinutes = hours * 60 + roundedMinutes;
+
+    const nextResult = await page.evaluate((targetMins: number) => {
+      const allCells = document.querySelectorAll('td');
+      let bestRow: HTMLTableRowElement | null = null;
+      let bestTime = '';
+      let bestDiff = Infinity;
+
+      for (const cell of Array.from(allCells)) {
+        const text = (cell.textContent || '').trim();
+        const timeMatch = text.match(/(\d{1,2}):(\d{2})/);
+        if (!timeMatch) continue;
+
+        const cellMins = parseInt(timeMatch[1]) * 60 + parseInt(timeMatch[2]);
+        const diff = cellMins - targetMins;
+        if (diff >= 0 && diff < bestDiff) {
+          const row = cell.closest('tr') as HTMLTableRowElement;
+          if (row) {
+            bestRow = row;
+            bestTime = `${timeMatch[1]}:${timeMatch[2]}`;
+            bestDiff = diff;
+          }
+        }
+      }
+
+      if (!bestRow) return { success: false, error: 'No available slot found' };
+
+      const checkbox = bestRow.querySelector('input[type="checkbox"], input[aria-label="Select row"]') as HTMLInputElement;
+      if (checkbox) { checkbox.click(); return { success: true, time: bestTime, method: 'checkbox' }; }
+
+      const selectImg = bestRow.querySelector('img[title="Click to select row"]') as HTMLElement;
+      if (selectImg) { selectImg.click(); return { success: true, time: bestTime, method: 'img' }; }
+
+      bestRow.click();
+      return { success: true, time: bestTime, method: 'row-click' };
+    }, targetMinutes);
+
+    if (nextResult.success) {
+      const selectedTime = (nextResult as any).time;
+      if (varManager) varManager.set('SlotTime', selectedTime);
+      console.log(`  ✅ Selected next available slot at ${selectedTime}`);
+      return { code: 0, value: `Selected next available slot at ${selectedTime}` };
+    }
+
+    return { code: 1, value: `No slot found for ${slotRange} or later` };
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(`  ❌ selectSlotByCurrentTime failed: ${msg}`);
+    return { code: 1, value: `Failed to select time slot: ${msg}` };
+  }
+
+}
 
 
+/**
+ * Clicks an element that opens a new browser window/popup (e.g., DI Detach Window),
+ * waits for the popup to appear, stores it as `_PopupPage` in execution context,
+ * and switches focus to the popup so subsequent steps run against it.
+ *
+ * Usage in KDF:
+ *   Page: pageHome (or wherever the trigger element lives)
+ *   Element: btn_DetachWindow (the button that opens the popup)
+ *   ActionKeyword: clickAndSwitchToPopup
+ *   Values: (optional) timeout in ms (default 30000)
+ */
+export async function clickAndSwitchToPopup(page: Page, step: testStep): Promise<Outcome> {
+  try {
+    const timeout = step.value ? parseInt(step.value, 10) : 30000;
+    const baseSelector = getLocatorString(step);
+    console.log(`  🔍 Looking for element to click: ${baseSelector}`);
+
+    const element = await resolveElement(page, baseSelector, step);
+
+    // Set up popup listener BEFORE clicking
+    const context = page.context();
+    const popupPromise = context.waitForEvent('page', { timeout });
+
+    console.log(`  🖱️ Clicking element and waiting for popup window...`);
+    await element.click();
+
+    let popupPage: Page;
+    try {
+      popupPage = await popupPromise;
+    } catch {
+      // Popup didn't appear via context event — try checking all browser contexts
+      // This can happen with CDP connections where the popup opens in a different context
+      console.log(`  ⚠️ No popup via context event. Attempting CDP re-connect to find new page...`);
+      
+      // Wait a bit for the window to fully open
+      await page.waitForTimeout(3000);
+      
+      // Try to find new page via the browser object
+      const browser = context.browser();
+      if (browser) {
+        const allContexts = browser.contexts();
+        for (const ctx of allContexts) {
+          const pages = ctx.pages();
+          for (const p of pages) {
+            if (p !== page && !p.isClosed()) {
+              const url = p.url();
+              const title = await p.title().catch(() => '');
+              if (url.toLowerCase().includes('diditesturl') || title.toLowerCase().includes('encounter')) {
+                popupPage = p;
+                console.log(`  ✅ Found popup page via browser contexts: "${title}" - ${url}`);
+                break;
+              }
+            }
+          }
+          if (popupPage!) break;
+        }
+      }
+
+      if (!popupPage!) {
+        // Last resort: try connecting to CDP again to pick up new pages
+        try {
+          const freshBrowser = await chromium.connectOverCDP('http://127.0.0.1:9222');
+          const allContexts = freshBrowser.contexts();
+          for (const ctx of allContexts) {
+            for (const p of ctx.pages()) {
+              if (!p.isClosed()) {
+                const url = p.url();
+                const title = await p.title().catch(() => '');
+                if (url.toLowerCase().includes('diditesturl') || title.toLowerCase().includes('encounter')) {
+                  popupPage = p;
+                  console.log(`  ✅ Found popup page via fresh CDP connection: "${title}" - ${url}`);
+                  break;
+                }
+              }
+            }
+            if (popupPage!) break;
+          }
+        } catch (cdpErr) {
+          console.log(`  ⚠️ Fresh CDP connection failed: ${cdpErr instanceof Error ? cdpErr.message : cdpErr}`);
+        }
+      }
+
+      if (!popupPage!) {
+        return { code: 1, value: `Popup window did not appear within ${timeout}ms` };
+      }
+
+    }
+
+    // Wait for popup to load
+    await popupPage.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => {});
+    await popupPage.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+
+    const popupTitle = await popupPage.title().catch(() => 'Unknown');
+    const popupUrl = popupPage.url();
+    console.log(`  ✅ Popup opened: "${popupTitle}" - ${popupUrl}`);
+
+    // Store popup page reference in execution context for subsequent steps
+    const varManager = executionContext.getVariableManager();
+    if (varManager) {
+      varManager.set('PopupPage', '__POPUP_PAGE_REF__');
+    }
+    // Store on execution context directly so resolvePageForStep can access it
+    (executionContext as any)._popupPage = popupPage;
+
+    return { code: 0, value: `Popup opened: "${popupTitle}" at ${popupUrl}` };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`  ❌ clickAndSwitchToPopup failed: ${msg}`);
+    return { code: 1, value: `Failed to click and switch to popup: ${msg}` };
+  }
+
+}
 
 
-
-
-// --- Carried from member Sriharan ---
+// --- Restored (carried earlier) ---
 export async function selectSlotByCurrentTimeDC(
 
   page: Page,
@@ -5799,7 +6196,7 @@ export async function selectSlotByCurrentTimeDC(
 }
 
 
-// --- Carried from member Sriharan ---
+// --- Restored (carried earlier) ---
 export async function selectBookedSlotByPatientId(
 
   page: Page,

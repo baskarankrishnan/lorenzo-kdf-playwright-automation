@@ -111,6 +111,14 @@ export function getActionKeywordFunction(actionKeyword: string): Function | unde
             return LZOActions.selectSlotByCurrentTimeDC;
         case 'selectbookedslotbypatientid':
             return LZOActions.selectBookedSlotByPatientId;
+        case 'selectslotbycurrenttime':
+            return LZOActions.selectSlotByCurrentTime;
+        case 'clickandswitchtopopup':
+            return LZOActions.clickAndSwitchToPopup;
+        case 'clicktab':
+            return ElementActions.clickTab;
+        case 'setautocompletefield':
+            return ElementActions.setAutoCompleteField;
 
         // ASSERTION ACTIONS
         case 'verifyproperty':

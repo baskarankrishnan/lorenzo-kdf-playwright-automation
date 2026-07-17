@@ -1,4 +1,4 @@
-// pageManagecurrentpregnancyrecordLORENZO
+﻿// pageManagecurrentpregnancyrecordLORENZO
 export const btn_Next = "//img[@title='Next']";
 export const ico_HeadingInfo = "//p[contains(text(),'Information')]";
 export const btn_Finish = "//img[@title='Finish']";
@@ -18,6 +18,13 @@ export const cmb_Pregnancyrisk = "//input[@id='C2T_C64']";
 export const cmb_FolicacidTaken ="//table[@id='C2_C28']//input[@type='text']";
 export const tab_Additionaldetails ="//td[@id='fTb_C01']";
 export const cmb_Pregnancyfirstcontacttype ="//input[@id='C2T_C4']";
+export const txt_Gravida = "//input[@title='Please enter the number of pregnancies']";
+export const txt_Gravida1 = "//input[@title='Please enter the number of live births']";
+export const txt_Parity="//input[@title='Please enter the number of non-viable births']";
+export const cmb_Pregnancyrisk = "//img[@title='Please select the pregnancy risk']";
+export const cmb_FolicacidTaken ="//table[@id='C2_C28']//input[@type='text']";
+export const tab_Additionaldetails ="//div[@id='ifS_C0']//td[@caption='Additional details']";
+export const cmb_Pregnancyfirstconclstacttype ="//img[@title='Select the first contact type for this pregnancy']";
 export const rad_Medicalcondtions = "//img[@id='iO_I_C9_1']";
 export const cmb_ispartnetfatherofbaby = "//input[@id='C2T_C14']";
 export const btn_Yes ="//img[@id='ic_I_C0']";

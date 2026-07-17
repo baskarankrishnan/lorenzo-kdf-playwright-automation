@@ -3709,6 +3709,137 @@ export async function getMaxLength(page: Page, step: testStep): Promise<Outcome>
     return { code: 1, value: `Failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
+
+
+/**
+ * Handle autocomplete input fields (searchable dropdowns)
+ * Types text to trigger suggestions and selects the value using mouse click
+ * Ensures the value is selected from the dropdown (not just typed)
+ * Supports DDT values and variable substitution
+ * Fails explicitly if dropdown selection does not occur
+ *
+ * @param page - Playwright page object
+ * @param step - Test step with page/element, value, and isDDT flag
+ * @returns Outcome {code: 0 on success, code: 1 on failure}
+ */
+export async function setAutoCompleteField(
+  page: Page,
+  step: testStep
+): Promise<Outcome> {
+  try {
+    const baseSelector = getLocatorString(step);
+    await waitForRoller(page);
+
+    // ✅ Resolve value
+    let textToFill = '';
+    if (step.isDDT && step.datasetColumnNames) {
+      textToFill = step.datasetColumnNames;
+    } else if (step.value) {
+      textToFill = resolveTestVariables(step.value);
+    }
+
+    const finalText = String(textToFill).trim();
+    const element = await resolveElement(page, baseSelector, step);
+
+    // ✅ Step 1: Focus & type
+    await element.click();
+    await element.fill('');
+    await element.type(finalText, { delay: 120 });
+
+    // ✅ Step 2: Give dropdown time to populate
+    await page.waitForTimeout(700);  // critical for backend fetch
+
+    // ✅ Step 3: Use keyboard to select
+    await page.keyboard.press('ArrowDown');
+    await page.waitForTimeout(200);
+    await page.keyboard.press('Enter');
+
+    // ✅ Step 4: Validate selection worked
+    await page.waitForTimeout(500);
+    const actualValue = (await element.inputValue()).trim();
+
+    if (!actualValue) {
+      throw new Error(
+        `Autocomplete failed: value not selected after Enter`
+      );
+    }
+
+    return {
+      code: 0,
+      value: `Selected "${actualValue}" using keyboard autocomplete`
+    };
+
+  } catch (error) {
+    console.error(`❌ Autocomplete failed for ${step.page}.${step.element}`);
+
+    return {
+      code: 1,
+      value: `Autocomplete failed: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    };
+  }
+}
+
+/**
+ * Click Lorenzo Tab element (reliable for TD-based tab controls)
+ * Uses direct DOM click which is required for Lorenzo tab behavior
+ *
+ * @param page - Playwright page object
+ * @param step - Test step with page/element details
+ * @returns Outcome {code: 0 on success, code: 1 on failure}
+ */
+
+export async function clickTab(
+  page: Page,
+  step: testStep
+): Promise<Outcome> {
+  try {
+    const baseSelector = getLocatorString(step);
+    await waitForRoller(page);
+
+    const element = await resolveElement(page, baseSelector, step, 30000);
+
+    // ✅ Step 1: Ensure visible
+    await element.waitFor({ state: 'visible', timeout: 10000 });
+
+    // ✅ Step 2: Scroll into view
+    await element.scrollIntoViewIfNeeded();
+
+    // ✅ Step 3: Direct DOM click (KEY for Lorenzo)
+    await element.evaluate((el: HTMLElement) => el.click());
+
+    // ✅ Step 4: Wait for tab transition
+    await page.waitForTimeout(800);
+
+    // ✅ Step 5: Optional validation (tab selected class)
+    try {
+      const classAttr = await element.getAttribute('class');
+      if (classAttr && !classAttr.includes('Selected')) {
+        console.warn(`⚠️ Tab click executed but selection state not confirmed`);
+      }
+    } catch {
+      // ignore validation errors
+    }
+
+    console.log(`✅ Lorenzo tab clicked: ${step.page}.${step.element}`);
+
+    return {
+      code: 0,
+      value: `Successfully clicked Lorenzo tab: ${step.page}.${step.element}`
+    };
+
+  } catch (error) {
+    console.error(`❌ Failed to click Lorenzo tab: ${step.page}.${step.element}`);
+
+    return {
+      code: 1,
+      value: `Failed to click Lorenzo tab: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    };
+  }
+}
 export async function selectTableRowByValue(page: Page, step: testStep): Promise<Outcome> {
 
   try {
@@ -3739,6 +3870,12 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
 
     }
 
+    // Check if variable resolution failed (value still looks like _VariableName)
+    const isUnresolvedVar = /^_[A-Za-z]\w*$/.test(searchValue);
+    if (isUnresolvedVar) {
+      console.warn(`  ⚠️ Variable "${searchValue}" was not resolved — it may not have been set in a prior step.`);
+      console.warn(`  ⚠️ Will still attempt to find a row matching the literal text "${searchValue}".`);
+    }
  
 
     console.log(`  🔍 Searching for table row containing value: "${searchValue}"`);
@@ -3775,12 +3912,153 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
 
       const frames = searchPage.frames();
 
- 
+      // ── APPROACH 1: Find text in a frame, then select the row within THAT SAME frame ──
+      for (const frame of frames) {
+        try {
+          const textLocator = frame.locator(`text="${searchValue}"`);
+          const textCount = await textLocator.count().catch(() => 0);
+          if (textCount === 0) continue;
 
-      // Pass 1: Find the text in any frame, get its page-relative Y coordinate
+          console.log(`  📍 Found "${searchValue}" in frame: ${frame.url().substring(0, 80)}`);
 
+          // Get the parent <tr> of the found text (closest ancestor)
+          const parentRow = textLocator.first().locator('xpath=ancestor::tr[1]');
+          const rowExists = await parentRow.count().catch(() => 0);
+          if (rowExists === 0) continue;
+
+          const rowId = await parentRow.first().getAttribute('id').catch(() => 'no-id');
+
+          // Strategy A1: Checkbox grids (Kendo / standard inputs) — check FIRST before Lorenzo
+          const checkboxSelectors = [
+            "input[aria-label='Select row']",
+            "input.k-select-checkbox",
+            "input[type='checkbox']",
+          ];
+
+          let checkboxFound = false;
+
+          // First check if checkbox is directly in the row
+          for (const sel of checkboxSelectors) {
+            const target = parentRow.locator(sel).first();
+            const targetCount = await target.count().catch(() => 0);
+            if (targetCount === 0) continue;
+
+            // If target is already checked, return immediately (no toggle)
+            const alreadyChecked = await target.isChecked().catch(() => false);
+            if (alreadyChecked) {
+              console.log(`  ✅ Row already selected via ${sel} (checkbox) — no action needed`);
+              return {
+                code: 0,
+                value: `Successfully selected table row containing: "${searchValue}" (${sel}, already selected)`
+              };
+            }
+
+            // Clear any pre-selected rows via Kendo API (silent, no per-row events)
+            // This handles the case where the app auto-selects the first row on load
+            try {
+              await frame.evaluate(() => {
+                const grids = document.querySelectorAll('[data-role="grid"], .k-grid');
+                grids.forEach(el => {
+                  const widget = (el as any).kendoGrid || ((window as any).kendo && (window as any).kendo.widgetInstance(el));
+                  if (widget && widget.clearSelection) {
+                    widget.clearSelection();
+                  }
+                });
+                // Also uncheck all checkboxes directly (in case Kendo API isn't available)
+                document.querySelectorAll('input.k-select-checkbox:checked, input[aria-label="Select row"]:checked').forEach(cb => {
+                  (cb as HTMLInputElement).checked = false;
+                });
+              });
+              await page.waitForTimeout(300);
+              console.log(`  🔄 Cleared pre-selected rows via Kendo API`);
+            } catch (clearErr) {
+              console.log(`  ⚠️ Could not clear pre-selections via Kendo API: ${clearErr}`);
+            }
+
+            await target.check({ timeout: 5000 });
+            await page.waitForTimeout(500);
+            checkboxFound = true;
+            console.log(`  ✅ Selected row via ${sel} (checkbox)`);
+            return {
+              code: 0,
+              value: `Successfully selected table row containing: "${searchValue}" (${sel})`
+            };
+          }
+
+          // Kendo locked columns: checkbox is in a separate locked table linked by data-uid
+          if (!checkboxFound) {
+            const dataUid = await parentRow.first().getAttribute('data-uid').catch(() => null);
+            if (dataUid) {
+              // Find the corresponding locked row with same data-uid that has the checkbox
+              for (const sel of checkboxSelectors) {
+                const lockedCheckbox = frame.locator(`tr[data-uid="${dataUid}"] ${sel}`).first();
+                const lockedCount = await lockedCheckbox.count().catch(() => 0);
+                if (lockedCount === 0) continue;
+
+                await lockedCheckbox.check({ timeout: 5000 });
+                await page.waitForTimeout(500);
+                checkboxFound = true;
+                console.log(`  ✅ Selected row via locked column ${sel} (Kendo data-uid: ${dataUid})`);
+                return {
+                  code: 0,
+                  value: `Successfully selected table row containing: "${searchValue}" (Kendo locked ${sel})`
+                };
+              }
+            }
+          }
+
+          // Strategy A2: Lorenzo plain grid (tr id starts with "igRow") — use page.mouse.click()
+          // Only used when NO checkbox is found in the row (plain grids without checkboxes)
+          if (!checkboxFound && rowId && rowId.startsWith('igRow')) {
+            const box = await parentRow.first().boundingBox();
+            if (box) {
+              // Click near the left side of the row (where the select arrow typically is)
+              const x = box.x + 15;
+              const y = box.y + box.height / 2;
+              console.log(`  🔍 Lorenzo grid row detected, clicking at (${x}, ${y})`);
+              await page.mouse.click(x, y);
+              await page.waitForTimeout(800);
+              console.log(`  ✅ Selected row via mouse.click on Lorenzo grid row`);
+              return {
+                code: 0,
+                value: `Successfully selected table row containing: "${searchValue}" (Lorenzo mouse.click row)`
+              };
+            }
+          }
+
+          // Strategy A3: Look for td/img with select title (may exist when row is already selected)
+          const selectTitleLocator = parentRow.locator("[title*='select row' i]").first();
+          const selectTitleCount = await selectTitleLocator.count().catch(() => 0);
+          if (selectTitleCount > 0) {
+            const box = await selectTitleLocator.first().boundingBox();
+            if (box) {
+              const x = box.x + box.width / 2;
+              const y = box.y + box.height / 2;
+              await page.mouse.click(x, y);
+              await page.waitForTimeout(800);
+              console.log(`  ✅ Selected row via mouse.click on select title element`);
+              return {
+                code: 0,
+                value: `Successfully selected table row containing: "${searchValue}" (select title click)`
+              };
+            }
+          }
+
+          // Strategy B: No select mechanism in row — click the row itself
+          await parentRow.first().click({ timeout: 5000 });
+          await page.waitForTimeout(500);
+          console.log(`  ✅ Selected row by clicking <tr> directly`);
+          return {
+            code: 0,
+            value: `Successfully selected table row containing: "${searchValue}" (row click)`
+          };
+        } catch { /* continue to next frame */ }
+      }
+
+      // ── APPROACH 2 (Legacy Y-coordinate fallback): ──
+      // Find text Y coordinate, then find checkbox at same Y
       let textY: number | null = null;
-
+      let textFrame: any = null;
  
 
       for (const frame of frames) {
@@ -3802,9 +4080,8 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
  
 
           textY = textBox.y + textBox.height / 2;
-
-          console.log(`  📍 Found "${searchValue}" at Y=${textY.toFixed(0)} in frame: ${frame.url().substring(0, 80)}`);
-
+          textFrame = frame;
+          console.log(`  📍 [Y-fallback] Found "${searchValue}" at Y=${textY.toFixed(0)}`);
           break;
 
         } catch { /* continue */ }
@@ -3816,11 +4093,7 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
       if (textY === null) continue;
 
  
-
-      // Pass 2: Find the row selection checkbox at the same Y coordinate.
-
-      // Supports Kendo UI grids and Lorenzo legacy grids
-
+      // Find the row selection checkbox at the same Y coordinate
       const selectors = [
 
         'input[aria-label="Select row"]',
@@ -3898,17 +4171,15 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
       if (matchedLocator) {
 
         if (isCheckbox) {
-
-          // Kendo UI checkbox: use .check() which is idempotent (only checks, never unchecks)
-
           await matchedLocator.check({ timeout: 5000, force: true });
 
         } else {
-
-          // Legacy Lorenzo grid: use click
-
-          await matchedLocator.click({ timeout: 5000, force: true });
-
+          // Use JavaScript click + event dispatch for iframe reliability
+          await matchedLocator.evaluate(el => {
+            (el as HTMLElement).click();
+            el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+            el.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+          });
         }
 
  
@@ -3927,30 +4198,61 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
 
       }
 
+      // Fallback: No checkbox/select-button found — click the row or cell directly.
+      // This handles grids like Patient SFS search results where row-click selects the record.
+      console.log(`  ⚠️ No checkbox found. Attempting direct row/cell click for: "${searchValue}"`);
+
+      for (const frame of searchPage.frames()) {
+        try {
+          const textLocator = frame.locator(`text="${searchValue}"`);
+          const textCount = await textLocator.count().catch(() => 0);
+          if (textCount === 0) continue;
+
+          // Try clicking the parent <tr> of the matching text
+          const parentRow = textLocator.first().locator('xpath=ancestor::tr');
+          const rowCount = await parentRow.count().catch(() => 0);
+          if (rowCount > 0) {
+            await parentRow.first().click({ timeout: 5000 });
+            await page.waitForTimeout(500);
+            console.log(`  ✅ Selected row by clicking <tr> containing: "${searchValue}"`);
+            return {
+              code: 0,
+              value: `Successfully selected table row containing: "${searchValue}" (row click)`
+            };
+          }
+
+          // Last resort: click the text element itself
+          await textLocator.first().click({ timeout: 5000 });
+          await page.waitForTimeout(500);
+          console.log(`  ✅ Selected by clicking text: "${searchValue}"`);
+          return {
+            code: 0,
+            value: `Successfully selected table row containing: "${searchValue}" (text click)`
+          };
+        } catch { /* continue to next frame */ }
+      }
     }
 
- 
+    // Fail explicitly — do NOT silently select the first row as fallback
+    if (isUnresolvedVar) {
+      console.error(`  ⛔ Variable "${searchValue}" was not resolved and no matching row was found.`);
+      console.error(`  ⛔ Ensure the variable is set in a prior step (e.g., via captureText or storeValue).`);
+      throw new Error(`Unresolved variable "${searchValue}" — cannot select row. Check that the variable is set in a prior KDF step.`);
+    }
 
     console.error(`  ⛔ No table row found containing value: "${searchValue}"`);
-
-    throw new Error(`No table row found containing value: "${searchValue}"`);
-
+    throw new Error(`No table row found containing value: "${searchValue}"`);  
   } catch (error) {
-
     console.error(`  ❌ Failed to select table row by value`);
-
     return {
-
       code: 1,
-
       value: `Failed to select table row: ${error instanceof Error ? error.message : String(error)}`
-
     };
-
   }
-
 }
 
+
+// --- Restored (carried earlier) ---
 export async function setAutoCompleteFill(
 
   page: Page,
@@ -4065,6 +4367,8 @@ export async function setAutoCompleteFill(
 
 }
 
+
+// --- Restored (carried earlier) ---
 export async function selectComboValue(
 
   page: Page,
@@ -4235,118 +4539,4 @@ export async function selectComboValue(
 
   }
 
-}
-
-
-// --- Restored from main (Dinesh) ---
-export async function clickTab(
-  page: Page,
-  step: testStep
-): Promise<Outcome> {
-  try {
-    const baseSelector = getLocatorString(step);
-    await waitForRoller(page);
-
-    const element = await resolveElement(page, baseSelector, step, 30000);
-
-    // âœ… Step 1: Ensure visible
-    await element.waitFor({ state: 'visible', timeout: 10000 });
-
-    // âœ… Step 2: Scroll into view
-    await element.scrollIntoViewIfNeeded();
-
-    // âœ… Step 3: Direct DOM click (KEY for Lorenzo)
-    await element.evaluate((el: HTMLElement) => el.click());
-
-    // âœ… Step 4: Wait for tab transition
-    await page.waitForTimeout(800);
-
-    // âœ… Step 5: Optional validation (tab selected class)
-    try {
-      const classAttr = await element.getAttribute('class');
-      if (classAttr && !classAttr.includes('Selected')) {
-        console.warn(`âš ï¸ Tab click executed but selection state not confirmed`);
-      }
-    } catch {
-      // ignore validation errors
-    }
-
-    console.log(`âœ… Lorenzo tab clicked: ${step.page}.${step.element}`);
-
-    return {
-      code: 0,
-      value: `Successfully clicked Lorenzo tab: ${step.page}.${step.element}`
-    };
-
-  } catch (error) {
-    console.error(`âŒ Failed to click Lorenzo tab: ${step.page}.${step.element}`);
-
-    return {
-      code: 1,
-      value: `Failed to click Lorenzo tab: ${
-        error instanceof Error ? error.message : String(error)
-      }`
-    };
-  }
-}
-
-
-// --- Restored from main (Dinesh) ---
-export async function setAutoCompleteField(
-  page: Page,
-  step: testStep
-): Promise<Outcome> {
-  try {
-    const baseSelector = getLocatorString(step);
-    await waitForRoller(page);
-
-    // âœ… Resolve value
-    let textToFill = '';
-    if (step.isDDT && step.datasetColumnNames) {
-      textToFill = step.datasetColumnNames;
-    } else if (step.value) {
-      textToFill = resolveTestVariables(step.value);
-    }
-
-    const finalText = String(textToFill).trim();
-    const element = await resolveElement(page, baseSelector, step);
-
-    // âœ… Step 1: Focus & type
-    await element.click();
-    await element.fill('');
-    await element.type(finalText, { delay: 120 });
-
-    // âœ… Step 2: Give dropdown time to populate
-    await page.waitForTimeout(700);  // critical for backend fetch
-
-    // âœ… Step 3: Use keyboard to select
-    await page.keyboard.press('ArrowDown');
-    await page.waitForTimeout(200);
-    await page.keyboard.press('Enter');
-
-    // âœ… Step 4: Validate selection worked
-    await page.waitForTimeout(500);
-    const actualValue = (await element.inputValue()).trim();
-
-    if (!actualValue) {
-      throw new Error(
-        `Autocomplete failed: value not selected after Enter`
-      );
-    }
-
-    return {
-      code: 0,
-      value: `Selected "${actualValue}" using keyboard autocomplete`
-    };
-
-  } catch (error) {
-    console.error(`âŒ Autocomplete failed for ${step.page}.${step.element}`);
-
-    return {
-      code: 1,
-      value: `Autocomplete failed: ${
-        error instanceof Error ? error.message : String(error)
-      }`
-    };
-  }
 }

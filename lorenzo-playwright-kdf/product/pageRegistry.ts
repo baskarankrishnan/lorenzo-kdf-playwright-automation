@@ -260,6 +260,100 @@ export const PAGE_REGISTRY: Record<string, PageDefinition> = {
         url: '/WebClient_SSO/Daycare/WZForms/DcsmMngAppmntStatus.aspx?WF_InstanceID=3aa3e8f8-fb43-4331-b963-bead7a2008ee',
         title: 'Manage appointment status - LORENZO',
     },
+    'pageClosealert': {
+    url: '/EPR/AppDialog.aspx?TITLE=Close%20alert%',
+    title: 'Close alert - LORENZO',
+    
+    },
+    'pageCloseReferral': {
+    url: '/EPR/AppDialog.aspx?TITLE=Close%20referral%20',
+    title: 'Close referral - LORENZO',
+    },
+    'pageCopyCareplan': {
+    url: '/EPR/AppDialog.aspx?TITLE=Copy%20care%20plan%20',
+    title: 'Copy care plan - LORENZO',
+    
+    },
+    'pageCreateCareplan': {
+    url: '/EPR/AppDialog.aspx?TITLE=Create%20care%20plan%20',
+    title: 'Create care plan - LORENZO',
+    
+    },
+    'pageDITestUrl': {
+    url: '/WebClient_sso/DIDITesturl.aspx',
+    title: 'Encounter',
+    },
+    'pageEPRManageReferral': {
+    url: 'AppDialog.aspx?TITLE=Manage%20referral%20',
+    title: 'Manage referral - LORENZO',
+    },
+    'pageHIALRCloseallergy': {
+    url: '/EPR/AppDialog.aspx?TITLE=Close%20allergy%',
+    title: 'Close allergy/ADR - LORENZO',
+    
+    },
+    'pageHIALRModifyallergy': {
+    url: '/EPR/AppDialog.aspx?TITLE=Modify%20allergy%',
+    title: 'Modify allergy/ADR - LORENZO',
+    
+    },
+    'pageHIALRRecordallergy': {
+    url: 'EPR/AppDialog.aspx?TITLE=Record%20allergy',
+    title: 'Record allergy/ADR - LORENZO',
+    
+    },
+    'pageHIALRStrikeallergy': {
+    url: '/EPR/AppDialog.aspx?TITLE=Strikeout%20allergy%',
+    title: 'Strikeout allergy/ADR - LORENZO',
+    
+    },
+    'pageHistoryTab': {
+    url: 'WebClient_SSO/clinical%20narrative/clinical%20statement%20management/views/Risk/HistoryTab.aspx',
+    title: 'HistoryTab',
+    
+    },
+    'pageManageStatusCareplan': {
+    url: '/EPR/AppDialog.aspx?TITLE=Manage%20status%20',
+    title: 'Manage status - LORENZO',
+    
+    },
+    'pageMngRelationShips': {
+    url: '/EPR/AppDialog.aspx?TITLE=Manage%20relationships%20',
+    title: 'Manage relationships - LORENZO'
+    },
+    'pageModifyalert': {
+    url: '/EPR/AppDialog.aspx?TITLE=Modify%20alert%',
+    title: 'Modify alert - LORENZO',
+    
+    },
+    'pageModifyCareplan': {
+    url: '/EPR/AppDialog.aspx?TITLE=Modify%20care%20plan%20',
+    title: 'Modify care plan - LORENZO',
+    
+    },
+    'pageModifyReferralDetails': {
+    url: '/EPR/AppDialog.aspx?TITLE=Modify%20referral%20',
+    title: 'Modify referral - LORENZO',
+    },
+    'pageRecordalert': {
+    url: '/EPR/AppDialog.aspx?TITLE=Record%20alert%',
+    title: 'Record alert - LORENZO',
+    
+    },
+    'pageReopenalert': {
+    url: '/EPR/AppDialog.aspx?TITLE=Re-open%20alert%',
+    title: 'Re-open alert - LORENZO',
+    
+    },
+    'pageReopenReferral': {
+    url: '/EPR/AppDialog.aspx?TITLE=Reopen%20referral%20',
+    title: 'Reopen referral - LORENZO',
+    },
+    'pageStrikealert': {
+    url: '/EPR/AppDialog.aspx?TITLE=Strikeout%20alert%',
+    title: ' alert - LORENZO',
+    
+    },
 }
     // 'pageSearchPatient': {
     //     url: '/EPR/APPMAINPAGE',

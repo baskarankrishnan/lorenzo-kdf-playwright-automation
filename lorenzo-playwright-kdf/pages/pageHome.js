@@ -207,3 +207,123 @@ export const tbl_SelectRow = "//tr[@id='igRowC6_0']//img[@onkeydown='C6.RCKeyDow
 export const tbl_RequestStatus = "//span[normalize-space()='Request Status']";
 export const btn_PromptYes = "//img[@id='ic_I_C0' and @title='Yes']";
 export const lnk_MarkasObsolete = "//span[normalize-space()='Mark as Obsolete']";
+export const btn_ProceduresInterventions = "//td[@tabaccesskey='P']"
+export const lnk_RecordProcedure = "//li[@title='Record procedure']"
+export const txt_ProcedureName = "//td[@icna = 'Name']"
+export const txt_ProcedureStatus = "//td[@icna = 'Status']"
+export const txt_ProcedurePerformedDate = "//td[@icna = 'PerformedDateTime']"
+// pageHistoryTab
+export const tab_Alerts = "//nobr[text()='Alerts']/parent::td";
+export const tab_Allergies = "//nobr[text()='Allergies/ADRs']/parent::td";
+export const tab_Problems = "//nobr[text()='Problems']/parent::td";
+export const btn_NewProblem = "//td[@title = 'Click to record new problem']";
+
+// pageLIMainViewResource
+export const chk_DisplayInactiveAllergies = "//td[@caption='Display inactive allergies/ADRs']";
+export const chk_DisplayStruckoutAllergies = "//td[@caption='Display struck out allergies/ADRs']";
+export const txt_AllergyStatus = "//td[@icn = 'AllergyStatus']/span";
+export const txt_Allergytype = "//td[@icn = 'AllergyType']/span";
+export const txt_Allergen_LV = "(//td[@icn = 'Allergen']/span)[2]";
+export const txt_Allergy_InfoSource = "//td[@icn = 'InformationSource']/span";
+export const txt_Allergy_OnsetDate = "//td[@icn = 'OnSetDttm']/span";
+// pageRiskListView
+export const chk_DisplayInactiveAlert = "//td[normalize-space()='Display inactive alert']";
+export const chk_DisplayStruckoutAlert = "//td[normalize-space()='Display struck out alert']";
+export const txt_Alerttype = "//td[@icna = 'Risk Type']";
+export const txt_Alertname = "//td[@icna = 'Risk Name']";
+export const txt_InformationSource = "//td[@icna = 'Information Source']";
+export const txt_AlertStatus = "//td[@icna = 'Status']";
+// Page Related People
+export const btn_RelatedPeople = "//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_9']";
+export const btn_Cancel = "//button[@id='ic_C_C2']";
+export const lnk_Relationship = "//li[@title='Manage relationships']";
+export const lnk_AdmitTaskPane = "//span[@class='T_PL' and text()='Admit']";
+export const lnk_ViewEPR = "//li[@title='View EPR']";
+
+// pageDetails Tab
+export const cmb_ProblemType = "//input[@title = 'Select problem type']";
+export const icn_SelectProblem = "//img[@title = 'Select problem name / code']";
+export const txt_SearchText = "//input[@title = 'Enter searched term']";
+export const cmb_Pattern = "//input[@title = 'Select a search pattern']";
+export const img_Search = "//img[@title = 'Click to search a term']";
+export const btn_PrbOk = "//td[@title = 'Click to select the term']";
+export const chk_Encounters = "//td[@title = 'All encounters and episodes']/img";
+export const btn_Save = "//td[@title = 'Save']";
+export const lbl_Problems1 = "(//tr[contains (@class, 'k-table-row')])[2]/td[8]";
+export const lbl_ProblemStatus1 = "(//tr[contains (@class, 'k-table-row')])[2]/td[11]";
+export const lbl_Problems2 = "(//tr[contains (@class, 'k-table-row')])[3]/td[8]";
+export const lbl_ProblemStatus2 = "(//tr[contains (@class, 'k-table-row')])[3]/td[11]";
+export const lbl_ProblemScope2 = "(//tr[contains (@class, 'k-table-row')])[3]/td[15]";
+export const lnk_MarkasMainProblem = "//li[@id = 'MarkasMainProblem']";
+export const btn_SelectScope = "//img[@title='Select scope details']";
+export const tab_Status = "//td[@key = 'Status']";
+export const cmb_Status = "//input[@title = 'Select status']";
+export const cmb_Reason = "//input[@title = 'Select reason for de-activation']";
+export const dte_DeactivationDate = "//label[@dikey = 'ilblDeactivationDate']";
+export const lnk_Link = "//li[@id = 'Link']";
+export const lbl_Link = "(//tr[contains (@class, 'k-table-row')])[2]/td[6]"
+export const lbl_LinkProcedure = "(//td[@icn = 'Namecode'])[2]/nobr"
+// pageScope SFS
+export const img_MarkasMain = "//td[@title='Mark as main']";
+export const btn_Ok = "//td[@title = 'Ok']";
+export const chk_Selectrow = "//img[@title='Click to unselect row']";
+export const img_ExpandRow = "//img[@alt='Click to expand row']";
+//Careplan
+export const lnk_CreateCareplan = "//li[@title='Create care plan']";
+export const lbl_CareplanName = "//td[@icna = 'CarePlanName']";
+export const lbl_CareplanStatus = "//td[contains(text(),'Careplan template01')]/following-sibling::td[@icna='Status']";
+export const btn_EPRTabSclUp = "//img[contains(@src,'ieprtabscrollup')]";
+export const btn_EPRTabScldown = "//img[contains(@src,'ieprtabscrolldown')]";
+export const lnk_ModifyCareplan = "//li[@title='Modify care plan']";
+export const lnk_CopyCareplan = "//li[@title='Copy care plan']";
+export const lnk_ManageStatus = "//li[@title='Manage status']";
+export const lbl_CareplanName2 = "(//td[@icna = 'CarePlanName'])[2]";
+export const lbl_CareplanStatus2 = "//td[contains(text(),'Careplan template02')]/following-sibling::td[@icna='Status']";
+
+// page EPR tab
+export const tab_Overview = "//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_1']";
+
+// Task link from EPR
+export const lnkTaskPaneCreateRef = "//li[@id='itTT_C20_0']";
+
+//Additional Options - Lorenzo
+export const chk_Managereferral = "//td[@text='Manage referral']";
+export const btn_AdRefMng_ok = "//button[.//td[normalize-space(.)='Ok']]";
+export const btn_AdRefMng_Cancel = "//button[.//td[normalize-space(.)='Cancel']]";
+export const tgl_FilterBY = "//td[@title='Filter by ']";
+export const txt_ValueSelect = "//td[@ival='Show all referrals']"
+export const lnk_TaskPaneModifyReferral ="//li[@caption='Modify referral']";
+export const lnk_TaskPaneManageReferral = "//li[@caption='Manage referral']";
+export const lnk_TaskPaneCloseReferral = "//li[@caption='Close referral']";
+export const lnk_TaskPaneReOpenReferral = "//li[@caption='Reopen referral']";
+export const lbl_ReferralStatus = "//td[@icna = 'ReferralStatus']";
+export const btn_ClinicFind = "//td[@title='Find']";
+export const btn_Clinicok ="//td[@title='OK']";
+export const img_ExternalLink = "//img[@title ='External Link']"
+export const btn_Encounter = "//button[@title ='encounter']"
+export const img_ExternalLinkHeader = "//td[@id = 'tdDIHeader']/img[@title = 'External Links']"
+export const img_DIDetachWindow = "//td[@id = 'tdDIExternal']/img[@title = 'Detach window']"
+
+//Additional Options - Lorenzo
+export const chk_Managereferral = "//td[@text='Manage referral']";
+export const btn_AdRefMng_ok = "//button[.//td[normalize-space(.)='Ok']]";
+export const btn_AdRefMng_Cancel = "//button[.//td[normalize-space(.)='Cancel']]";
+export const lnkSubTaskPaneCaseloadmanagement = "//span[text()='Caseload management']";
+
+//Caseload management
+export const chk_profile = "(//img[@class='Tree_B0AM'])[6]";
+export const btn_OK = "//span[@class='Cmd_AK' and normalize-space()='O']";
+export const lnkSubTaskPaneAllocatetocaseload = "//span[@class='T_PL' and normalize-space()='Allocate to caseload']";
+export const lnkSubTaskPaneModifycaseloadentry = "//span[contains(@class,'T_PL') and normalize-space()='Modify caseload entry']";
+export const chk_Mycaseload = "//tr[@data-uid]//input[@type='checkbox' and contains(@class,'k-select-checkbox')]";
+export const lnkSubTaskPaneSuspendcaseloadentry = "//span[@class='T_PL' and normalize-space()='Suspend caseload entry']";
+export const lnkSubTaskPaneResumecaseloadentry = "//span[@class='T_PL' and normalize-space()='Resume caseload entry']";
+export const lnkSubTaskPaneClosecaseloadentry = "//span[@class='T_PL' and normalize-space()='Close caseload entry']";
+export const tab_Historyview = "//nobr[normalize-space()='History view']";
+export const tbl_Selectrowclose = "//td[@title='Click to select row' and contains(@class,'G_DRO')]";
+export const lnkSubTaskPaneReinstatecaseloadentry = "//span[normalize-space()='Reinstate caseload entry']";
+export const lnkSubTaskPaneManagecaseloadentry = "//span[normalize-space()='Manage caseload transfer']";
+export const lnkSubTaskPaneInTray = "//span[normalize-space()='In-tray']";
+export const lbl_Mycaseload = "//td[@id='pht_SlPMyCaseLoad']";
+export const ico_HO = "//img[contains(@id,'ImgPlusORMinusHO490000017354_child')]";
+export const ico_Mycaseload = "//img[contains(@id,'C0_ImgPlusORMinusMYCLPRF_child')]"

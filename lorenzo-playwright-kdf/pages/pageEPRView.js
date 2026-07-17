@@ -53,3 +53,4 @@ export const btn_AccessplanningEPL = "//td[normalize-space()='Access Planning']"
 export const lbl_createAccessPlanEntrySCL = "(//li[contains(@caption,'Create access plan entry')])[2]";
 
 //export const btn_Maternity = "//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_21']";
+
