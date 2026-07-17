@@ -10,6 +10,9 @@ export function formatDateTime(date: Date, expFormat: string): string {
     const minutes = date.getMinutes().toString().padStart(2, '0');
     const seconds = date.getSeconds().toString().padStart(2, '0');
 
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthName = monthNames[date.getMonth()];
+
     switch (expFormat.toLowerCase().trim()) {
         case 'dd/mm/yyyy':
         case '%d/%m/%y':
@@ -17,6 +20,13 @@ export function formatDateTime(date: Date, expFormat: string): string {
         case 'dd/mm/yyyy hh:mm':
         case 'dd/mm/yyyy hh:mt':
             return `${day}/${month}/${year} ${hours}:${minutes}`;
+        case 'dd-mmm-yyyy':
+            return `${day}-${monthName}-${year}`;
+        case 'dd/mm':
+        case 'dd-mmm':
+            return `${day}-${monthName}`;
+        case 'dd-mmm-yyyy hh:mm':
+            return `${day}-${monthName}-${year} ${hours}:${minutes}`;
         case 'hh:mm':
             return `${hours}:${minutes}`;
         case 'ddmmyyyyhhmt':

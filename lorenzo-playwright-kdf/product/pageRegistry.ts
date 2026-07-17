@@ -1,3 +1,5 @@
+import { url } from "inspector/promises";
+
 export interface PageDefinition {
     url?: string | string[];
     title?: string | string[];
@@ -18,51 +20,51 @@ export const PAGE_REGISTRY: Record<string, PageDefinition> = {
         title: 'LORENZO'
     },
 
-    'pageCreateAdmit': {
-        url: '/EPR/AppDialog.aspx?TITLE=Create%20Admit%20',
+        'pageCreateAdmit': {
+        url: 'webclient_sso/EPR/AppTransfer',
         title: 'Create Admit - LORENZO',
-    },
+        },
 
-    'pageCreateReferral': {
-        url: 'webclient_sso/EPR/AppDialog.aspx?TITLE=Create%20referral%20',
-        title: 'Create referral - LORENZO',
-    },
-    'pageFindandbook': {
+        'pageCreateReferral': {
+        url: 'WebClient_SSO/identity%20management/wzforms/patientsearch',
+        title: 'ReferralDetails',
+        },
+        'pageFindandbook': {
         url: 'AppDialog.aspx?TITLE=Find%20and%20book',
         title: 'Find and book - LORENZO',
-    },
-    'pagePatientSearch': {
-         url: 'AppDialog.aspx?TITLE=Find%20and%20book',
-         title: 'Find and book - LORENZO',
-    },
-    'pagePatientBasicSearch': {
+        },
+        'pagePatientSearch': {
         url: 'AppDialog.aspx?TITLE=Find%20and%20book',
         title: 'Find and book - LORENZO',
-    },
+        },
+        'pagePatientBasicSearch': {
+        url: 'AppDialog.aspx?TITLE=Find%20and%20book',
+        title: 'Find and book - LORENZO',
+        },
         'pageIPSMBasicSearchCriteria': {
         url: 'AppDialog.aspx?TITLE=Find%20and%20book',
         title: 'Find and book - LORENZO',
-    },
+        },
         'pageBookBanner': {
         url: 'webclient_sso/EPR/AppContextBanner',
         title: 'AppContextBanner',
-    },
+        },
         'pageBookWardappointment': {
         url: 'AppDialog.aspx?TITLE=Find%20and%20book',
         title: 'Find and book - LORENZO',
-    },
+        },
         'pageReferralDetails': {
         url: 'AppDialog.aspx?TITLE=Find%20and%20book',
         title: 'Find and book - LORENZO',
-    },
+        },
         'pageManageReferral': {
-        url: 'AppDialog.aspx?TITLE=Find%20and%20book',
-        title: 'Find and book - LORENZO',
-    },
+        url: 'WebClient_SSO/care%20management/Referral%20mgmt/wzforms/RFManageReferral',
+        title: 'Manage referral - LORENZO',
+        },
         'pageClinicalUnit':{
             url:'webclient_sso/EPR/AppTransfer',
             title: 'Def_Users',
-    },
+        },
          'pageRegRegistration': {
         url: '/EPR/AppDialog.aspx?TITLE=Registration',
         title: 'Registration - LORENZO',
@@ -78,13 +80,13 @@ export const PAGE_REGISTRY: Record<string, PageDefinition> = {
           title: 'IP Pegboard Current View',
     },
     'pageEPRView': {
-        url: '/EPR/APPMAINPAGE',
-        title: 'LORENZO',
+        url: 'WebClient_SSO/identity%20management/views/Epr/EPRView',
+        title: 'EPRView',
     },
 
     'pagePDSSynchronisation': {
-        url: '/EPR/APPMAINPAGE',
-        title: 'LORENZO',
+        url: 'webclient_sso/EPR/AppTransfer.aspx?%3f__PageName=AppWizardPage',
+        title: 'PDS Synchronisation - LORENZO',
     },
     
     'pageAddressSFS': {
@@ -109,187 +111,112 @@ export const PAGE_REGISTRY: Record<string, PageDefinition> = {
    
     },
     'pagePbrdHistory': {
-        url: '/EPR/APPMAINPAGE',
+        url: 'WebClient_SSO/inpatient/Views/PbrdHistory',
         title: 'LORENZO',
    
     },
-    'pageHistoryTab': {
-        url: 'WebClient_SSO/clinical%20narrative/clinical%20statement%20management/views/Risk/HistoryTab.aspx',
-        title: 'HistoryTab',
-   
+    'pageEditBedBooking': {
+        url: 'WebClient_SSO/Enterprise%20Scheduling/WZForms/IPSMEditBedBooking',
+        title: 'Edit booking - LORENZO',
     },
-    'pageRecordalert': {
-        url: '/EPR/AppDialog.aspx?TITLE=Record%20alert%',
-        title: 'Record alert - LORENZO',
-   
+        'pageAdmitIPAdmitRoad': {
+        url: 'WebClient_SSO/inpatient/wzforms/patadmotherdetails',
+        title: 'Create Admit - LORENZO',
     },
-    'pageModifyalert': {
-        url: '/EPR/AppDialog.aspx?TITLE=Modify%20alert%',
-        title: 'Modify alert - LORENZO',
-   
+        'pagePatADMEditAdmission': {
+        url: 'WebClient_SSO/inpatient/wzforms/patadmeditadmission',
+        title: 'Modify Admit - LORENZO',
     },
-    'pageClosealert': {
-        url: '/EPR/AppDialog.aspx?TITLE=Close%20alert%',
-        title: 'Close alert - LORENZO',
-   
+        'pagePatienttransfer': {
+        url: 'WebClient_SSO/inpatient/wzforms/pattrspatienttransfer',
+        title: 'Patient transfer - LORENZO',
     },
-    'pageReopenalert': {
-        url: '/EPR/AppDialog.aspx?TITLE=Re-open%20alert%',
-        title: 'Re-open alert - LORENZO',
-   
+       'pagepatlevRetroPatientLeave': {
+        url: 'webclient_sso/EPR/AppDialog',
+        title: 'Patient leave - LORENZO',
     },
-      'pageStrikealert': {
-        url: '/EPR/AppDialog.aspx?TITLE=Strikeout%20alert%',
-        title: ' alert - LORENZO',
-   
+        'pageFmMedicalDischarge': {
+        url: 'WebClient_SSO/inpatient/wzforms/patdsgmedicaldischarge.aspx',
+        title: 'PMedical discharge - LORENZO',
     },
-    'pageHIALRRecordallergy': {
-        url: 'EPR/AppDialog.aspx?TITLE=Record%20allergy',
-        title: 'Record allergy/ADR - LORENZO',
-   
+        'pageDischarge': {
+        url: 'webclient_sso/EPR/AppDialog.aspx',
+        title: 'Discharge - LORENZO',
+    },
+        'pagepatientsummaryview': {
+        url: 'WebClient_SSO/identity%20management/views/PatientRegistration/patientsummaryview',
+        title: 'patientsummaryview',
     },
 
-    'pageHIALRModifyallergy': {
-        url: '/EPR/AppDialog.aspx?TITLE=Modify%20allergy%',
-        title: 'Modify allergy/ADR - LORENZO',
-   
+        'pageSearchReferral': {
+        url: 'webclient_sso/EPR/AppTransfer',
+        title: 'SearchReferral',
+        
     },
-    'pageHIALRCloseallergy': {
-        url: '/EPR/AppDialog.aspx?TITLE=Close%20allergy%',
-        title: 'Close allergy/ADR - LORENZO',
-   
+        'pageWamanageattstatus': {
+        url: 'webclient_sso/EPR/AppTransfer.aspx?%3f__PageName=AppWizardPage',
+        title: 'Manage attendance - LORENZO',
+       
     },
-    'pageHIALRStrikeallergy': {
-        url: '/EPR/AppDialog.aspx?TITLE=Strikeout%20allergy%',
-        title: 'Strikeout allergy/ADR - LORENZO',
-   
+        'pageTheatreSearchSesion': {
+        url: 'webclient_sso/Theatres/views/LTMSessionSearch',
+        title: 'Search session',
+       
     },
-    'pageHIALRReopenallergy': {
-        url: '/EPR/AppDialog.aspx?TITLE=Re-open%20allergy%',
-        title: 'Re-open allergy/ADR - LORENZO',
-   
+        'pageBookTheatre': {
+        url: 'WebClient_SSO/identity%20management/WZforms/patientbasicsearch',
+        title: 'PatientBasicSearch',
     },
-    'pageLinkProblem': {
-        url: '/EPR/AppDialog.aspx?TITLE=Link%20problem%',
-        title: 'Link problem - LORENZO',
-   
+        'pageTheatreBookSession': {
+        url: 'webclient_sso/EPR/AppDialog.aspx?TITLE=Book%20-%20LORENZO&__PageName=AppWizardPage',
+        title: 'Book - LORENZO',
     },
-    'pageCreateCareplan': {
-        url: '/EPR/AppDialog.aspx?TITLE=Create%20care%20plan%20',
-        title: 'Create care plan - LORENZO',
-   
-    },
-    'pageCreatedocument': {
-        url: '/EPR/AppDialog.aspx?TITLE=Create%20document%20',
-        title: 'Create document - LORENZO',
-   
-    },
-     'pageModifyCareplan': {
-        url: '/EPR/AppDialog.aspx?TITLE=Modify%20care%20plan%20',
-        title: 'Modify care plan - LORENZO',
-   
-    },
-    'pageCopyCareplan': {
-        url: '/EPR/AppDialog.aspx?TITLE=Copy%20care%20plan%20',
-        title: 'Copy care plan - LORENZO',
-   
+        'pageModifybooking': {
+        url: 'webclient_sso/EPR/AppDialog.aspx?TITLE=Modify%20booking%20-%20LORENZO&__PageName=AppWizardPage',
+        title: 'Modify booking - LORENZO',
+    }, 
+        'pageTheatreManagement':{
+            url: '/EPR/APPMAINPAGE',
+            title: 'LORENZO'
     },
 
-    'pageManageStatusCareplan': {
-        url: '/EPR/AppDialog.aspx?TITLE=Manage%20status%20',
-        title: 'Manage status - LORENZO',
-   
+        'pageSNOMEDDATA':{
+            url: 'WebClient_SSO/Theatres/InTheatre/#/landing/patient-hub',
+            title: 'Theatre Management'
     },
-    'pageECCreateAttendance': {
-        url: '/EPR/AppDialog.aspx?TITLE=Create%20attendance%20',
-        title: 'Create attendance - LORENZO',
-   
+            'pageMedicationAddtionOptionpop':{
+            url: 'webclient_sso/MedicationMgmt/IPP_P2/views/MedClerkingSource',
+            title: 'Medication Clerking Source'
     },
-    'pageECModifyAttendance': {
-        url: '/EPR/AppDialog.aspx?TITLE=Modify%20attendance%20',
-        title: 'Modify attendance - LORENZO',
-   
+        'pageMediClerking':{
+            url: 'webclient_sso/EPR/AppTransfer.aspx?%3f__PageName=AppWizardPage',
+            title: 'Medication clerking - LORENZO'
     },
-    'pageECTriageAndStream': {
-        url: '/EPR/AppDialog.aspx?TITLE=Triage%20and%20stream%20',
-        title: 'Triage and stream - LORENZO',
-   
+        'pageInpatientmedication':{
+            url: 'webclient_sso/EPR/AppTransfer.aspx?%3f__PageName=AppWizardPage',
+            title: 'Inpatient medication - LORENZO'
     },
-    'pageECModifyTriageAndStream': {
-        url: '/EPR/AppDialog.aspx?TITLE=Modify%20triage%20and%20stream%20',
-        title: 'Modify triage and stream - LORENZO',
-   
-    },
-    'pageECSeen': {
-        url: '/EPR/AppDialog.aspx?TITLE=Seen%20',
-        title: 'Seen - LORENZO',
-   
-    },
-    'pageECDTA': {
-        url: '/EPR/AppDialog.aspx?TITLE=Decision%20to%20admit%20',
-        title: 'Decision to admit - LORENZO',
-   
-    },
-    'pageECCloseAttendance': {
-        url: '/EPR/AppDialog.aspx?TITLE=Close%20attendance%20',
-        title: 'Close attendance - LORENZO',
-   
-    },
-    'pageObservations': {
-        url: '/EPR/APPMAINPAGE',
-        title: 'LORENZO'
-   
-    },
-    'pageCreateClinicalChart': {
-        url: '/EPR/AppDialog.aspx?TITLE=Create%20Clinical%20Chart%20',
-        title: 'Create Clinical Chart - LORENZO'
-   
-    },
-    'pageCreateNote': {
-        url: '/EPR/AppDialog.aspx?TITLE=Create%20note%20',
-        title: 'Create note - LORENZO'
-   
-    },
-    'pageInitiate': {
-        url: '/EPR/AppDialog.aspx?TITLE=Initiate%20',
-        title: 'Initiate - LORENZO'
-   
-    },
-    'pageDIExternalLinks': {
-        url: 'about:blank',
-        title: 'External Links'
-   
-    },
-    'pageBookAppt': {
-        url: '/EPR/AppDialog.aspx?TITLE=Book%20appointment%20',
-        title: 'Book appointment - LORENZO'
-   
-    },
-    'pageEPRManageReferral': {
-        url: '/webclient_sso/EPR/AppDialog.aspx?TITLE=Manage%20referral%20',
-        title: 'Manage referral - LORENZO'
-   
-    },
-    'pageCreatesinglecontact': {
-        url: '/EPR/AppDialog.aspx?TITLE=Create%20single%20contact%20',
-        title: 'Create single contact - LORENZO'
-   },
-   'pageRecordcontact': {
-        url: '/EPR/AppDialog.aspx?TITLE=Record%20single%20contact%20',
-        title: 'Record single contact - LORENZO'
-   },
-   'pageRecordquickcontact': {
-        url: '/EPR/AppDialog.aspx?TITLE=Record%20quick%20contact%20',
-        title: 'Record quick contact - LORENZO'
-   },
-   'pageIPBook': {
-        url: '/EPR/AppDialog.aspx?TITLE=Book%20',
-        title: 'Book - LORENZO'
-   },
-   
-
+        'pagePrintNote':{
+            url: 'WebClient_SSO/MedicationMgmt/LBMCommon/uiscripts/uiscripts/lorappmanageprescriptionbbui',
+            title: 'LORENZO--Webpage Dialog'
+        },
+        'pagePrintdocument':{
+            url: 'webclient_sso/EPR/AppTransfer.aspx?%3f__PageName=AppWizardPage',
+            title: 'Print document - LORENZO'
+        },
+        'pageMedicationEPR':{
+            url: 'WebClient_SSO/MedicationMgmt/IPP_P2/views/MedTabs',
+            title: 'Medication EPR - LORENZO        '
+        },
+        'pageMedicationadministrationchart':{
+            url: 'webclient_sso/EPR/AppTransfer.aspx?%3f__PageName=AppWizardPage',
+            title: 'Medication administration chart - LORENZO'
+        },
+        'PagePrescriptionchart':{
+            url: 'webclient_sso/EPR/AppTransfer.aspx?%3f__PageName=AppWizardPage.aspx',
+            title: 'Prescription chart - LORENZO'
+      },  
 }
-    
     // 'pageSearchPatient': {
     //     url: '/EPR/APPMAINPAGE',
     //     title: 'LORENZO'

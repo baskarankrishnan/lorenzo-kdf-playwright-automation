@@ -8,3 +8,4 @@ export const btn_Close = "//ion-button[normalize-space()='Close']";
 export const txt_Reason = "//ion-label[normalize-space()='<variable>']/ancestor::ion-item[1]/ion-radio";
 export const btn_ReasonOK = "//ion-button[contains(.,'OK')]";
 export const btn_OkManagedelay = "//ion-button[contains(.,'Ok')]";
+export const btn_managedelay = "(//ion-radio[contains(@class,'radio-justify-space-between')])[1]";

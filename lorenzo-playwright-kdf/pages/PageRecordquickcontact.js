@@ -1,8 +1,6 @@
-// pageRecordquickcontact
+// PageRecordquickcontact
 export const cmb_purpose = "//input[@id='icombobox_Text_C13']";
 export const cmb_Contacttype = "//input[@id='icombobox_Text_C15']";
-export const cmb_ContactSubject = "//input[@id='icombobox_Text_C17']";
-export const cmb_ConsultationMedium = "//input[@id = 'icombobox_Text_C19']";
 export const cmb_Locationtype = "//input[@id='icombobox_Text_C25']";
 export const ico_SelectExistingreferral = "//img[@title='Select an existing referral']";
 export const btn_ReferralSFS = "//td[@title='Click to add the selected referral service definition' and normalize-space()='Select']";
@@ -13,13 +11,3 @@ export const cmb_outcome = "//input[@id='icombobox_Text_C75']";
 export const btn_Add = "//td[@class='Cmd_TT' and contains(normalize-space(.), 'Add')]";
 export const btn_Finishnow = "//span[normalize-space()='Finish now' or normalize-space()='Finis h now']";
 export const btn_Finish = "//span[normalize-space()='Finish']";
-export const dte_plannedactualcontactstarttime = "//input[@id='itimebox_Hour_C62']";
-export const dte_plannedactualcontactstartMi = "//table[@title = 'Enter Actual contact start time']//input[@class  = 'Timebox_Normal iTB_T_MI']";
-export const dte_plannedactualcontactduration = "//table[@title = 'Enter Actual contact duration']//input[@class='Timebox_Normal iTB_T_HR']";
-export const dte_plannedactualcontactdurationMi = "//table[@title = 'Enter Actual contact duration']//input[@class='Timebox_Normal iTB_T_MI']";
-export const btn_popupWHYes = "//img[@title='Yes']";
-export const cmb_RTT = "//input[@title = 'Select the Actual RTT Status']";
-export const btn_Add = "//td[@title = 'Click to add the selected item(s) to the grid']";
-export const btn_popupOk = "//td[@class = 'Cmd_TTE' and  @title='Ok']";
-export const btn_Cancel = "//td[@title = 'Cancel']";
-export const btn_Yes = "//td[@title = 'Click to confirm the cancellation of the care activity']";

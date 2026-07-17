@@ -17,25 +17,27 @@ import * as path from 'path';
 
 // ✅ Unit test specific configuration for step filtering
 const RunMode = {
-    testCaseId: 'LSTP_TaskMgmt_FloorPlan_WF001',
+    testCaseId: 'LSTP_IP_WF001',
     mode: 'RANGE', // 'RANGE' | 'SINGLE' | 'ALL'
     stepRange: {
         start: 1,
         end: 182,
     },
-    singleStep: 59,
+
+    singleStep: 49 ,
     options: {
         continueOnFailure: false,
         pauseBetweenSteps: 0
-    }
+    },
 };
+
 
 // ✅ Hardcoded Test Case Configuration
 const TEST_CONFIG = {
-    module: 'TaskMgmt_FloorPlan',
-    excelName: 'LSTP_TaskMgmt_FloorPlan_WF001',
+    module: 'IP',
+    excelName: 'LSTP_IP_WF001',
     testcaseId: RunMode.testCaseId,
-    jiraId: 'LSTP_TaskMgmt_FloorPlan_WF001',
+    jiraId: 'LSTP_IP_WF001',
     description: 'End-to-end inpatient workflow',
     author: 'KDF Generator',
     isDDT: 'yes',
@@ -52,8 +54,7 @@ test.describe('Unit Test Case Runner', () => {
     let browser: Browser;
     let context: BrowserContext;
     let executionStartTime: Date;
-
-    test.setTimeout(3600000); // 1 hour
+    test.setTimeout(3600000); // 1 hour - 3600000
 
     test.beforeAll(async () => {
         // ✅ LOAD LOCATOR REPOSITORY HERE (inside beforeAll)
@@ -157,10 +158,18 @@ test.describe('Unit Test Case Runner', () => {
         }
         executionContext.setCurrentContext(contextKey);
 
+        let getActionKeywordFunction: any;
+        try {
+            // Use require at runtime to avoid eager compile-time loading of downstream action modules.
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            getActionKeywordFunction = require('../../product/actionregistry').getActionKeywordFunction;
+        } catch (err) {
+            throw new Error(`Failed to load action registry: ${err instanceof Error ? err.message : String(err)}`);
+        }
+
         // ✅ Unit test specific: Use existing page or create new one
         const pages = context.pages();
         let page: Page;
-
         if (pages.length > 0) {
             page = pages[0];
             console.log(`📄 Using existing page: ${page.url()}`);
