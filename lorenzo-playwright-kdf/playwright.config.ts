@@ -47,6 +47,14 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: reporters,
+  /* Per-test timeout. KDF workflows have 100-200 steps and run for several
+     minutes; Playwright's 30s default aborts a test mid-run and tears down the
+     page/context, which surfaces as "Target page/context/browser has been
+     closed" and "no valid page available" for every remaining step. Configurable
+     via TEST_TIMEOUT_MS (default 30 minutes). */
+  timeout: Number(process.env.TEST_TIMEOUT_MS) || 30 * 60 * 1000,
+  /* Assertion timeout for expect(); configurable via EXPECT_TIMEOUT_MS. */
+  expect: { timeout: Number(process.env.EXPECT_TIMEOUT_MS) || 15_000 },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */

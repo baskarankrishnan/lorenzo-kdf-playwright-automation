@@ -75,6 +75,8 @@ export const btn_findnow ="//img[@id='ic_I_C17']";
 export const btn_sfsOk ="//img[@id='ic_I_C18']";
 export const btn_find ="//img[@id='ic_I_C26']";
 export const tab_Mywork ="//td[@title='My work']";
+// Correctly-cased alias: test cases reference pageLORENZO.tab_MyWork (capital W); lookup is case-sensitive.
+export const tab_MyWork ="//td[@title='My work']";
 export const chk_SelectRow1 ="//td[contains(@class,'G_DRO') and contains(@class,'hdrwd6')]";
 export const btn_Sessionok ="//img[@alt='OK']";
 export const lnkTaskPaneBook ="//li[@id='itTT_C20_0']//span";

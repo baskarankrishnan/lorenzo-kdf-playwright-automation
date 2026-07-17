@@ -10,3 +10,6 @@ node_modules/
 # Generated report output + local notes
 /reports/
 /DUPLICATE_LOCATORS_TODO.md
+
+# Excel test-case backups from login-step fix script
+lorenzo-playwright-kdf/excelFramework/_backup_loginfix_*/
