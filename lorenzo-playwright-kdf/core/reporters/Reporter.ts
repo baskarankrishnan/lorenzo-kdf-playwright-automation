@@ -88,9 +88,12 @@ class ConsolidatedReporter implements Reporter {
     }
 
     onEnd(result: FullResult) {
-        // ✅ Skip consolidated report for single test execution
+        // ✅ Single test execution: individual report + captured data are already
+        //    produced directly by the single runner. Here we additionally build the
+        //    consolidated summary report from the single temp result file.
         if (this.isSingleTestExecution) {
             console.log('\n✅ Single test execution completed. Individual report generated.\n');
+            this.generateConsolidatedForSingle();
             return;
         }
 
@@ -261,6 +264,91 @@ class ConsolidatedReporter implements Reporter {
         }
 
         // Clean up temp files
+        if (fs.existsSync(tempReportsDir)) {
+            fs.readdirSync(tempReportsDir).forEach(file => {
+                fs.unlinkSync(path.join(tempReportsDir, file));
+            });
+            console.log('\n✅ Temp files cleanup completed');
+        }
+    }
+
+    /**
+     * Build the consolidated summary report for a SINGLE test execution.
+     * Isolated from the suite path so it cannot affect suite behavior.
+     * Reads the temp result file written by the single runner and emits only the
+     * consolidated HTML (individual report + captured data are already generated
+     * by the single runner itself, so they are intentionally not repeated here).
+     */
+    private generateConsolidatedForSingle() {
+        const tempReportsDir = process.env.TEMP_TEST_RESULTS_PATH || '';
+        const consolidatedDir = process.env.CONSOLIDATED_REPORT_PATH || '';
+
+        if (!consolidatedDir) {
+            console.warn('⚠️ CONSOLIDATED_REPORT_PATH not set - skipping consolidated report for single run');
+            return;
+        }
+        if (!fs.existsSync(consolidatedDir)) {
+            fs.mkdirSync(consolidatedDir, { recursive: true });
+        }
+
+        const consolidatedResults: consolidatedReport = {
+            executionPack: this.packName,
+            executionTimestamp: this.executionTimestamp,
+            continueOnFailure: this.continueOnFailure,
+            browserConfig: {} as browserConfig,
+            executionMetrics: {
+                totalTests: 0,
+                passedTests: 0,
+                failedTests: 0,
+                skippedTests: 0,
+                totalDuration: '0s',
+                startTime: this.suiteStartTime.toISOString(),
+                endTime: ''
+            },
+            testResults: {}
+        };
+
+        let browserConfigCaptured = false;
+
+        if (fs.existsSync(tempReportsDir)) {
+            const tempFiles = fs.readdirSync(tempReportsDir).filter(f => f.endsWith('.json'));
+            console.log(`\n=== Processing ${tempFiles.length} test result file(s) for consolidated report ===`);
+
+            tempFiles.forEach(file => {
+                const filePath = path.join(tempReportsDir, file);
+                const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+
+                if (!browserConfigCaptured && data.testResult && data.testResult.browserConfig) {
+                    consolidatedResults.browserConfig = data.testResult.browserConfig;
+                    browserConfigCaptured = true;
+                }
+
+                if (!consolidatedResults.testResults[data.excelName]) {
+                    consolidatedResults.testResults[data.excelName] = { module: data.module };
+                }
+                consolidatedResults.testResults[data.excelName][data.testcaseId] = data.testResult;
+
+                consolidatedResults.executionMetrics.totalTests++;
+                if (data.testStatus === 0) {
+                    consolidatedResults.executionMetrics.passedTests++;
+                } else if (data.testStatus === 3) {
+                    consolidatedResults.executionMetrics.skippedTests++;
+                } else {
+                    consolidatedResults.executionMetrics.failedTests++;
+                }
+            });
+        }
+
+        const runEndTime = new Date();
+        const runDuration = ((runEndTime.getTime() - this.suiteStartTime.getTime()) / 1000).toFixed(2);
+        consolidatedResults.executionMetrics.endTime = runEndTime.toISOString();
+        consolidatedResults.executionMetrics.totalDuration = `${runDuration}s`;
+
+        console.log('\n=== Generating Consolidated HTML Report (single run) ===');
+        generateConsolidatedReport(consolidatedResults, consolidatedDir, this.executionTimestamp);
+        console.log(`HTML Report: ${path.join(consolidatedDir, `${this.packName}_${this.executionTimestamp}.html`)}`);
+
+        // Clean up temp files created for the single run
         if (fs.existsSync(tempReportsDir)) {
             fs.readdirSync(tempReportsDir).forEach(file => {
                 fs.unlinkSync(path.join(tempReportsDir, file));

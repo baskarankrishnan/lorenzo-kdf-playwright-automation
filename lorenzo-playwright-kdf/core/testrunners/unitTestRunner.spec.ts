@@ -4,11 +4,16 @@ import { test, chromium, Browser, BrowserContext, Page } from "@playwright/test"
 import * as fileUtils from '../utilities/fileUtils';
 import * as databaseUtils from '../utilities/databaseUtils';
 import * as pageLoaderUtils from '../utilities/pageLoaderUtils';
-import { stepExecutionResult, testCase, executionContext } from '../utilities/interfaceUtils';
+import { stepExecutionResult, testCaseExecutionResult, testCase, executionContext } from '../utilities/interfaceUtils';
 import { getActionKeywordFunction } from '../../product/actionregistry';
 import { resolveTestVariables, resolveDatasetVariable } from '../actionkeywords/dataActions';
 import { BrowserFocusTracker, resolvePageForStep } from '../actionkeywords/browserActions';
 import { getPageDefinition } from '../../product/pageRegistry';
+import { generateIndividualReport } from '../reporters/individualReporter';
+import * as dateUtils from '../utilities/dateUtils';
+import { captureScreenshot } from '../utilities/imageUtils';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // ✅ Unit test specific configuration for step filtering
 const RunMode = {
@@ -16,7 +21,7 @@ const RunMode = {
     mode: 'RANGE', // 'RANGE' | 'SINGLE' | 'ALL'
     stepRange: {
         start: 1,
-        end: 100,
+        end: 182,
     },
     singleStep: 59,
     options: {
@@ -37,6 +42,11 @@ const TEST_CONFIG = {
     ddtStartRow: 1,
     ddtEndRow: 1
 };
+
+// ✅ Reporting paths (used to generate the individual report + temp file for the consolidated reporter)
+const executionTimestamp = dateUtils.getCurrentTimeStamp('YYYYMMDDHHmm');
+const reportDir = path.join(process.env.INDIVIDUAL_REPORT_PATH || './reports/individualReports', `${TEST_CONFIG.module}`, `${TEST_CONFIG.excelName}_${TEST_CONFIG.testcaseId}_${executionTimestamp}`);
+const tempReportsDir = process.env.TEMP_TEST_RESULTS_PATH || './reports/temp/testResults';
 
 test.describe('Unit Test Case Runner', () => {
     let browser: Browser;
@@ -374,6 +384,26 @@ test.describe('Unit Test Case Runner', () => {
             const stepEndTime = new Date();
             const duration = ((stepEndTime.getTime() - stepStartTime.getTime()) / 1000).toFixed(2);
 
+            // ✅ Capture screenshot for executed steps (pass/fail), matching single/suite runners.
+            //    Wrapped so a screenshot failure never breaks step execution.
+            let screenshotPath = '';
+            if (outcome === 0 || outcome === 1) {
+                try {
+                    const openPages = context.pages().filter(p => !p.isClosed());
+                    if (openPages.length > 0) {
+                        const screenshotPage = openPages[openPages.length - 1];
+                        screenshotPath = await captureScreenshot(
+                            screenshotPage,
+                            `step_${step.stepNo}_${outcome === 1 ? 'error' : 'success'}`,
+                            `${reportDir}/screenshots/${TEST_CONFIG.testcaseId}`,
+                            true
+                        );
+                    }
+                } catch (ssErr) {
+                    console.warn(`  ⚠️ Screenshot capture failed for step ${step.stepNo}: ${ssErr instanceof Error ? ssErr.message : String(ssErr)}`);
+                }
+            }
+
             // ✅ Store step result
             stepResults.push({
                 stepNo: step.stepNo,
@@ -393,7 +423,7 @@ test.describe('Unit Test Case Runner', () => {
                 stepEndTime: stepEndTime.toISOString(),
                 stepDuration: `${duration}`,
                 pageActions: pageActions,
-                screenshotPath: '',
+                screenshotPath: screenshotPath,
                 returnText,
                 stepTimestamp: stepStartTime.toISOString()
             });
@@ -442,6 +472,51 @@ test.describe('Unit Test Case Runner', () => {
             });
         }
         console.log('===================================\n');
+
+        // ✅ Generate reports (individual HTML + temp file for the consolidated reporter).
+        //    Wrapped in try/catch so report generation can never mask/break the actual run.
+        try {
+            const testResult: testCaseExecutionResult = {
+                testCaseId: testCase.testCaseId,
+                testCaseDescription: testCase.testCaseDescription,
+                module: testCase.module,
+                jiraId: testCase.jiraId,
+                author: testCase.author,
+                excelName: testCase.excelName,
+                testCaseStatus: testStatus,
+                steps: stepResults,
+                startTime: testStartTime.toISOString(),
+                endTime: testEndTime.toISOString(),
+                duration: `${testDuration}s`,
+                returnText: testStatus === 0 ? 'Test completed successfully' : `Test failed: ${stepResults.find(s => s.stepStatus === 1)?.returnText}`,
+                testTimestamp: testStartTime.toISOString(),
+                browserConfig: {
+                    browserName: browser.browserType().name(),
+                    browserVersion: browser.version(),
+                    os: process.platform,
+                    osVersion: process.version
+                },
+                capturedData: capturedData
+            };
+
+            if (!fs.existsSync(reportDir)) fs.mkdirSync(reportDir, { recursive: true });
+            generateIndividualReport(testResult, reportDir, TEST_CONFIG.testcaseId);
+            console.log(`📄 Individual report: ${path.join(reportDir, `${TEST_CONFIG.testcaseId}.html`)}`);
+
+            if (!fs.existsSync(tempReportsDir)) fs.mkdirSync(tempReportsDir, { recursive: true });
+            const tempResultFile = path.join(tempReportsDir, `${TEST_CONFIG.excelName}_${TEST_CONFIG.testcaseId}.json`);
+            fs.writeFileSync(tempResultFile, JSON.stringify({
+                excelName: TEST_CONFIG.excelName,
+                module: TEST_CONFIG.module,
+                testcaseId: TEST_CONFIG.testcaseId,
+                testResult,
+                testStatus,
+                excelReportDir: reportDir,
+                executionTimestamp
+            }, null, 2), 'utf-8');
+        } catch (reportErr) {
+            console.warn(`⚠️ Report generation failed (run result unaffected): ${reportErr instanceof Error ? reportErr.message : String(reportErr)}`);
+        }
 
         // ✅ Fail test if any step failed (unless continueOnFailure is enabled)
         if (testStatus === 1 && !RunMode.options.continueOnFailure) {

@@ -30,10 +30,12 @@ process.env.EXECUTION_TYPE = 'single';
 const executionTimestamp = dateUtils.getCurrentTimeStamp('YYYYMMDDHHmm');
 const reportDir = path.join(process.env.INDIVIDUAL_REPORT_PATH || './reports/individualReports', `${TEST_CONFIG.module}`, `${TEST_CONFIG.excelName}_${TEST_CONFIG.testcaseId}_${executionTimestamp}`);
 const capturedDataDir = path.join(process.env.ROOT_REPORT_PATH || './reports', 'capturedData');
+const tempReportsDir = process.env.TEMP_TEST_RESULTS_PATH || './reports/temp/testResults';
 
 // Initialize directories
 if (!fs.existsSync(reportDir)) fs.mkdirSync(reportDir, { recursive: true });
 if (!fs.existsSync(capturedDataDir)) fs.mkdirSync(capturedDataDir, { recursive: true });
+if (!fs.existsSync(tempReportsDir)) fs.mkdirSync(tempReportsDir, { recursive: true });
 
 test.describe('Test Case Runner', () => {
     test.setTimeout(3600000); // 1 hour
@@ -253,6 +255,19 @@ test.describe('Test Case Runner', () => {
 
         // ✅ Generate individual HTML report
         generateIndividualReport(testResult, reportDir, TEST_CONFIG.testcaseId);
+
+        // ✅ Write temp result file so the consolidated reporter can build a summary report
+        //    (existing individual report + captured data export above are preserved as-is)
+        const tempResultFile = path.join(tempReportsDir, `${TEST_CONFIG.excelName}_${TEST_CONFIG.testcaseId}.json`);
+        fs.writeFileSync(tempResultFile, JSON.stringify({
+            excelName: TEST_CONFIG.excelName,
+            module: TEST_CONFIG.module,
+            testcaseId: TEST_CONFIG.testcaseId,
+            testResult,
+            testStatus,
+            excelReportDir: reportDir,
+            executionTimestamp
+        }, null, 2), 'utf-8');
 
         // ✅ Export captured data to Excel
         if (capturedData && Object.keys(capturedData).length > 0) {

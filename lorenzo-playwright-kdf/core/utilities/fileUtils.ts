@@ -21,51 +21,39 @@ export function getExecutableScenarios(packName: string): testCasesByExcel {
         if (!sheetName) return {};
 
         const jsonData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: "" }) as any[];
-        const filteredData = jsonData.filter(row => {
-            const packValue = row[packName] || row[packName.toLowerCase()] || row[packName.toUpperCase()];
-            return packValue?.toString().toLowerCase() === 'yes';
-        });
 
         const result: testCasesByExcel = {};
-        const processedFiles = new Set<string>();
 
-        filteredData.forEach(row => {
-            const module = row.Module || row.module || '';
-            const excelName = row.ExcelName || row.excelName || row.excelname || '';
-            const fileKey = `${module}_${excelName}`;
+        // Each row in the master planner is a single test case. Rows flagged with
+        // the requested pack column = 'yes' are executed, in the order they appear.
+        jsonData.forEach(row => {
+            const packValue = row[packName] || row[packName.toLowerCase()] || row[packName.toUpperCase()];
+            if (packValue?.toString().toLowerCase() !== 'yes') return;
 
+            const module = (row.Module || row.module || '').toString().trim();
+            const excelName = (row.ExcelName || row.excelName || row.excelname || '').toString().trim().replace(/\.xlsx$/i, '');
+            const testcaseId = (row.TestcaseId || row.testcaseId || row.testcaseid || '').toString().trim();
 
-            if (!module || !excelName || processedFiles.has(fileKey)) return;
-            processedFiles.add(fileKey);
+            if (!module || !excelName || !testcaseId) return;
 
-            const filePath = `./excelFramework/testcasePlanner/${module}/${excelName}.xlsx`;
-            if (!fs.existsSync(filePath)) return;
+            // Verify the actual test case workbook exists before scheduling it
+            const filePath = `./excelFramework/testcases/${module}/${excelName}.xlsx`;
+            if (!fs.existsSync(filePath)) {
+                console.warn(`⚠️ Planner references a missing test case file (skipped): ${filePath}`);
+                return;
+            }
 
-            const testCaseWorkbook = xlsx.readFile(filePath);
-            const testCaseSheetName = testCaseWorkbook.SheetNames.find(name => name.toLowerCase() === 'planner');
-            if (!testCaseSheetName) return;
+            const jiraId = row.JiraId || row.jiraId || row.jiraid || row.jira || '';
+            const description = row.Description || row.description || '';
+            const author = row.Author || row.author || '';
+            const isDDt = row.IsDDT || row.isDDT || row.isddt || 'No';
+            const ddtStartRow = row.DDTStartRow || row.ddtStartRow || row.ddtstartrow || '';
+            const ddtEndRow = row.DDTEndRow || row.ddtEndRow || row.ddtendrow || '';
 
-            const testCaseData = xlsx.utils.sheet_to_json(testCaseWorkbook.Sheets[testCaseSheetName], { defval: "" }) as any[];
-
-            const excelKey = excelName.replace(/\.xlsx$/i, '');
-            result[excelKey] = { module, testCases: [] };
-
-            testCaseData.forEach(scenario => {
-                const packValue = scenario[packName] || scenario[packName.toLowerCase()] || scenario[packName.toUpperCase()];
-                if (packValue?.toString().toLowerCase() !== 'yes') return;
-
-                const testcaseId = scenario.TestcaseId || scenario.testcaseId || scenario.testcaseid || '';
-                const jiraId = scenario.JiraId || scenario.jiraId || scenario.jiraid || '';
-                const description = scenario.Description || scenario.description || '';
-                const author = scenario.Author || scenario.author || '';
-                const isDDt = scenario.IsDDT || scenario.isDDT || scenario.isddt || 'No';
-                const ddtStartRow = scenario.DDTStartRow || scenario.ddtStartRow || scenario.ddtstartrow || '';
-                const ddtEndRow = scenario.DDTEndRow || scenario.ddtEndRow || scenario.ddtendrow || '';
-
-                if (testcaseId) {
-                    result[excelKey].testCases.push({ testcaseId, jiraId, description, author, isDDt, ddtStartRow, ddtEndRow });
-                }
-            });
+            if (!result[excelName]) {
+                result[excelName] = { module, testCases: [] };
+            }
+            result[excelName].testCases.push({ testcaseId, jiraId, description, author, isDDt, ddtStartRow, ddtEndRow });
         });
 
         return result;

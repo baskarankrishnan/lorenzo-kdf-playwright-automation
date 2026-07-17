@@ -1,16 +1,40 @@
 import { defineConfig, devices } from '@playwright/test';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 /**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
+ * The whole framework uses paths relative to this project folder (e.g. `.env`,
+ * `EXECUTION_PLANNER=./excelFramework/...`, `./pages`, `./reports`). When the
+ * VS Code Playwright extension discovers tests it launches from the workspace
+ * root, which breaks those relative paths and makes the planner look empty.
+ * Force the working directory to this config's folder and load `.env` from here
+ * so behaviour is identical regardless of the launching cwd.
  */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+process.chdir(__dirname);
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
+
+/**
+ * Reporter selection.
+ * - Always keep Playwright's built-in `html` reporter (existing behavior).
+ * - Additionally attach the custom consolidated reporter ONLY when explicitly
+ *   requested (suite runs set `USE_CONSOLIDATED_REPORTER=true` via cross-env).
+ *   This keeps single test / unit / validate runs completely unaffected.
+ */
+const reporters: NonNullable<Parameters<typeof defineConfig>[0]['reporter']> = [['html']];
+if (process.env.USE_CONSOLIDATED_REPORTER === 'true') {
+  reporters.push(['./core/reporters/Reporter.ts']);
+}
+
+/**
+ * Headed / headless is configurable via the HEADED env var (set it in .env or
+ * the shell). HEADED=true → visible browser window; anything else → headless.
+ */
+const isHeaded = String(process.env.HEADED).toLowerCase() === 'true';
+
 export default defineConfig({
   testDir: './',
   /* Run tests in files in parallel */
@@ -22,11 +46,16 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: reporters,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
     // baseURL: 'http://localhost:3000',
+
+    /* Headed/headless controlled by the HEADED env var (configurable per run). */
+    headless: !isHeaded,
+    /* Lorenzo runs over http/self-signed in some envs; ignore cert issues. */
+    ignoreHTTPSErrors: true,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -35,8 +64,17 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      // Primary project runs on Microsoft Edge (msedge channel), not bundled Chromium.
+      // NOTE: do NOT spread devices['Desktop Edge'] here — it sets deviceScaleFactor,
+      // which is incompatible with `viewport: null` (maximized window) and throws in newContext.
+      name: 'edge',
+      use: {
+        channel: 'msedge',
+        viewport: null,
+        launchOptions: {
+          args: ['--disable-web-security', '--ignore-certificate-errors', '--start-maximized'],
+        },
+      },
     },
 
     {

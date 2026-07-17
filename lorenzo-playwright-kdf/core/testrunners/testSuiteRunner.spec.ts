@@ -7,6 +7,7 @@ import { captureScreenshot } from '../utilities/imageUtils';
 import { resolveTestVariables, resolveDatasetVariable } from '../actionkeywords/dataActions';
 import { BrowserFocusTracker, resolvePageForStep } from '../actionkeywords/browserActions';
 import * as databaseUtils from '../utilities/databaseUtils';
+import * as pageLoaderUtils from '../utilities/pageLoaderUtils';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -93,6 +94,12 @@ test.describe('Test Suite Execution', () => {
         if (process.env.LOCATOR_REPOSITORY_SOURCE === 'db') {
             locatorRepository = await databaseUtils.readLocatorRepository();
             executionContext.addSuiteVariable('LOCATOR_REPOSITORY', locatorRepository);
+        } else if (process.env.LOCATOR_REPOSITORY_SOURCE === 'pages') {
+            console.log('📄 Loading locators from page files...');
+            const pagesDir = './pages';
+            locatorRepository = await pageLoaderUtils.readLocatorRepositoryFromPages(pagesDir);
+            executionContext.addSuiteVariable('LOCATOR_REPOSITORY', locatorRepository);
+            console.log(`✅ Loaded ${Object.keys(locatorRepository).length} page objects from ${pagesDir}`);
         }
     });
 
@@ -172,6 +179,20 @@ test.describe('Test Suite Execution', () => {
                             });
                         }
                     } else {
+                        // ✅ Navigate to the application URL so the first step (login) has a
+                        //    loaded page to act on. Matches the unit runner's behavior; without
+                        //    this the page stays at about:blank and step 1 fails ("Page was closed").
+                        if (page.url() === 'about:blank') {
+                            const appUrl = process.env.URL || process.env.APP_URL || '';
+                            if (appUrl) {
+                                console.log(`🌐 Navigating to app URL: ${appUrl}`);
+                                await page.goto(appUrl, { waitUntil: 'domcontentloaded' });
+                                await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => { });
+                            } else {
+                                console.warn('⚠️ No app URL configured (.env URL or APP_URL) - first step may fail');
+                            }
+                        }
+
                         for (const step of testCase.testSteps) {
                             const stepStartTime = new Date();
                             let outcome = 0;
