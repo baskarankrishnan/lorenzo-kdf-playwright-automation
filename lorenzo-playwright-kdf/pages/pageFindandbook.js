@@ -18,7 +18,8 @@ export const icn_SFS = "//img[contains(@title,'Select a care provider')]";
 export const ico_CareProviderSFS = "//img[@tooltip='Please select the required care provider']";
 export const lnk_CreateReferral = "//button[contains(@title, 'create a referral')]";
 export const cmb_Visittype = "//input[@title='Please select the Visit type']";
-export const btn_Finish = "//td[normalize-space()='Finish']";
+// DUPLICATE of btn_Finish — superseded by the @title definition later in file; commented.
+// export const btn_Finish = "//td[normalize-space()='Finish']";
 export const ico_SelectReferral = "//img[@title='Please select the appropriate Referral ']";
 export const btn_Select = "//td[text()='Select']";
 export const lbl_Warning = "//p[text()='Warning - LORENZO']";

@@ -9,7 +9,8 @@ export const btn_FindNowCP = "//td[@title='Click to execute the selected search 
 export const btn_OKCP = "//td[normalize-space(.)='Ok']";
 export const cmb_Wareason = "//input[@title='Please choose another attendance reason if the current needs updating']";
 export const btn_CloseFavourites = "//a[@id='dialog_close_0' or @title='Close']";
-export const btn_Finish = "//td[@title='Finish']";
+// DUPLICATE of btn_Finish — identical to the btn_Finish definition at end of file; commented.
+// export const btn_Finish = "//td[@title='Finish']";
 export const ico_CareProviderSFS = "//img[@tooltip='Please select the relevant care provider']";
 export const txt_Identifier = "//input[@id='it_C_itxtID' and @title='Enter the identifier']";
 export const btn_Find = "//td[@class='Cmd_TTE' and @title='Click to execute the selected search criteria']";

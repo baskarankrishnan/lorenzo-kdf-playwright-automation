@@ -6,7 +6,8 @@ export const txt_DisplayName = "//input[@id='it_C_C5']";
 export const cmb_SubCategory = "//input[@id='icombobox_Text_C7']";
 export const btn_Find = "//td[@title='Click to find' and normalize-space()='Find']";
 export const tbl_Reports = "//td[@title='Admission List by name_ Referrer Report']";
-export const btn_Next = "//span[normalize-space()='Next']";
+// DUPLICATE of btn_Next — superseded by the @title definition later in file; commented.
+// export const btn_Next = "//span[normalize-space()='Next']";
 export const lbl_ReportName = "//label[normalize-space()=': Admission List By name_Referrer Report']";
 export const btn_Next = "//td[@class='Cmd_TTE' and @title='Next']";
 export const lbl_RunRoadmap = "//td[@class=' RM_NoWr  RoadMap_Current' and @title='Current']";

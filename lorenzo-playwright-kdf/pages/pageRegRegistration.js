@@ -2,7 +2,8 @@
 export const txt_Forename = "//input[@dikey='itxtForename']";
 export const txt_City = "//input[@dikey='C53_tA4']";
 export const cmb_Country = "//input[@title='Enter Country']";
-export const btn_Finishnow = "//table//td[@title='Finish now']";
+// DUPLICATE of btn_Finishnow — superseded by the title-ancestor definition later in file; commented.
+// export const btn_Finishnow = "//table//td[@title='Finish now']";
 export const ico_RegRoadmapTitle = "//td[@class='Cmd_TTE'][@title='Yes']";
 export const lnk_Postalcode = "//img[@title='Please enter Select address type']";
 export const txt_Pincode = "//input[@id='it_C_itxtFld6']";
@@ -33,8 +34,9 @@ export const btn_FindNow = "//td[@title='Click to execute the selected search cr
 export const btn_OkCP = "//td[@title='Click to add the selected care providers(s)']";
 export const btn_OK = "//td[@title='Ok']";
 export const btn_Finish = "//td[@title='Finish']";
-export const cmb_PrimaryContact = "//input[@title='Select Primary Contact type']";
-export const lnk_Registrationtemporary = "//span[normalize-space()='Registration - temporary']";
+// DUPLICATE (superseded by definitions later in file) — commented.
+// export const cmb_PrimaryContact = "//input[@title='Select Primary Contact type']";
+// export const lnk_Registrationtemporary = "//span[normalize-space()='Registration - temporary']";
 export const txt_Title = "//input[@title='Select title']";
 export const txt_Middlename = "//input[@title='Enter Middle Name']";
 export const btn_Relrolegreendrop = "//div[contains(@onclick, '('C28','DropOnClick')'')]";
@@ -45,7 +47,8 @@ export const btn_FindNowCP = "//td[@title='Click to execute the selected search 
 export const btn_OKCP = "//td[normalize-space(.)='Ok']";
 export const btn_AddCPgrid = "//td[normalize-space()='Add']";
 export const txt_CPTeam = "//input[@accesskey='Y'][@title='Select a Care provider team']";
-export const btn_Cancel = "//td[@class='msgboxbtnparentdiv']//td[@title='Cancel']";
+// DUPLICATE of btn_Cancel — superseded by the iShowMessage definition later in file; commented.
+// export const btn_Cancel = "//td[@class='msgboxbtnparentdiv']//td[@title='Cancel']";
 export const btn_Finishnow = "//title[contains(text(),'Registration - LORENZO')]/ancestor::html//td[@title='Finish now']";
 export const cmb_PrimaryContact = "//img[@title='Select Primary Contact type']";
 export const lnk_Registrationtemporary = "//span[text()='Registration - temporary']";

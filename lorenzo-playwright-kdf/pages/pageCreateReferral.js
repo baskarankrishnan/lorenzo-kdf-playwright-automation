@@ -2,7 +2,8 @@
 // pageCreateReferral
 
 export const cmb_ServiceType = "//input[@title='Select service type requested']";
-export const cmb_RefPriority = "//input[@title='Select referral priority']";
+// DUPLICATE of cmb_RefPriority — superseded by the @dikey definition later in file; commented.
+// export const cmb_RefPriority = "//input[@title='Select referral priority']";
 export const cmb_RefType = "//input[@title='Select type of referral']";
 export const cmb_RefSource = "//input[@title='Select the appropriate source of referral being created']";
 export const icn_OrganisationSFS = "//img[@tooltip='Select referred by organisation']";

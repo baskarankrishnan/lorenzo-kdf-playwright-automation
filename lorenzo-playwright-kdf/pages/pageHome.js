@@ -70,7 +70,8 @@ export const lbl_Gender = "//label[text()='Gender']";
 export const cmb_Gender = "//input[@title='Enter a gender value']";
 export const ico_Gender = "//img[@title='Enter a gender value']";
 export const btn_Next = "//td[@title='Next']";
-export const btn_PopUpNo = "//td[@class='Cmd_TTE'][@title='No']";
+// DUPLICATE of btn_PopUpNo — identical to the definition later in file; commented.
+// export const btn_PopUpNo = "//td[@class='Cmd_TTE'][@title='No']";
 export const txt_Forename = "//input[@dikey='itxtForename']";
 export const txt_Title = "//input[@title='Select title']";
 export const txt_Middlename = "//input[@title='Enter Middle Name']";

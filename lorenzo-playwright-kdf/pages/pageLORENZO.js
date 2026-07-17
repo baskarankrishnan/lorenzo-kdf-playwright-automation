@@ -3,7 +3,8 @@ export const lnk_NewBornDetails = "//td[@id='NewBornDetails']//u";
 export const lbl_modifyAccessPlanEntrySCL = "//span[normalize-space()='Modify access plan entry']";
 export const btn_Ok = "//td[@title='Ok']";
 export const lbl_ManageOffer = "(//li[contains(@caption,'Manage offer')])[6]";
-export const txt_ExpectedLOS = "//img[@onclick="$_('C29','ImageClick')";
+// DUPLICATE (broken/truncated locator) — superseded by the txt_ExpectedLOS definition later in file; commented.
+// export const txt_ExpectedLOS = "//img[@onclick="$_('C29','ImageClick')";
 export const lbl_ReportListView = "//td[@id='fTb_C20']";
 export const lbl_Selectrow = "//tr[@id='igRowC0_0']//img[@alt='Click to select row']";
 export const lbl_Available = "//td[@title='Available']";

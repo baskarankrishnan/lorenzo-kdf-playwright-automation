@@ -4,7 +4,8 @@ export const btn_Find = "//td[@class='Cmd_TT' and normalize-space()='Find']";
 export const tbl_Selectrow = "//input[@type='checkbox' and @title='Select row']";
 export const btn_Add = "//td[@class='Cmd_TT' and normalize-space()='Add']";
 export const btn_Next = "//table[contains(@class,'Cmd_MH')]//td[@class='Cmd_TTE' and normalize-space()='Next']";
-export const ico_LocationSFS = "//input[@dikey='txtRequiredAtLocation']";
+// DUPLICATE (input mislabeled as ico_) — superseded by the img launch-icon definition later in file; commented.
+// export const ico_LocationSFS = "//input[@dikey='txtRequiredAtLocation']";
 export const txt_Mainidentifier = "//input[@dikey='itxtIdentifier']";
 export const btn_Findls = "//td[normalize-space(.)='Find']";
 export const btn_AdultFloor01 = "//span[normalize-space(.)='Adult Floor01']";

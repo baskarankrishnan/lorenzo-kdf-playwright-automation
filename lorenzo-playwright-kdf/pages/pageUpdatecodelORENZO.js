@@ -1,10 +1,12 @@
 // pageUpdatecodelORENZO
-export const btn_Next = "//span[.//span[@class='Cmd_AK' and normalize-space()='N'] and contains(normalize-space(.),'Next')]";
+// DUPLICATE of btn_Next — superseded by the @title='Next' definition later in file; commented.
+// export const btn_Next = "//span[.//span[@class='Cmd_AK' and normalize-space()='N'] and contains(normalize-space(.),'Next')]";
 export const cmb_Code = "//img[@id='imgCode']";
 export const rad_Codes = "//table[@id='iO_C_C12']//tr[@caption='Code']";
 export const cmb_Category = "//img[@id='icombobox_Image_C8']";
 export const cmb_Codingscheme = "//img[@id='icombobox_Image_C10']";
-export const cmb_Status = "//input[@id='icombobox_Text_C39']";
+// DUPLICATE of cmb_Status — superseded by the image-icon definition later in file; commented.
+// export const cmb_Status = "//input[@id='icombobox_Text_C39']";
 export const btnFinish = "//span[.//span[normalize-space()='F'] and contains(normalize-space(.),'Finish')]";
 export const lnk_Updatecode =  "//span[normalize-space()='Update code']";
 export const btn_Next = "//td[@title='Next']";

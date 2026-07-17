@@ -1,5 +1,6 @@
 // pageDispatch volume(s)
-export const btn_Finish = "//span[normalize-space()='Finish']";
+// DUPLICATE of btn_Finish — superseded by the @title definition later in file; commented.
+// export const btn_Finish = "//span[normalize-space()='Finish']";
 export const ico_Desloc = "//img[@title='Allows user to select the location where the volume must be sent']";
 export const txt_Mainident = "//input[@title='Enter Main identifier']";
 export const btn_FindDL = "//td[@title='Click to find']";
