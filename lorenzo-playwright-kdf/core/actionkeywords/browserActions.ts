@@ -2,6 +2,7 @@ import { Page, BrowserContext, Browser } from "@playwright/test";
 import { executionContext, Outcome, testStep, LoaderRule } from "../utilities/interfaceUtils";
 import { resolveTestVariables } from "./dataActions";
 import { getPageDefinition, PageDefinition } from "../../product/pageRegistry";
+import { chromium } from "@playwright/test";
 
 /**
  * Manages multiple browser pages/tabs with title and URL-based matching
@@ -91,10 +92,8 @@ export class BrowserFocusTracker {
                         return singlePage;
                     }
 
-                    // Only 1 page open and doesn't match — no point waiting, return it immediately
-                    console.log(`  ☑️ Only 1 page open (no match for definition), using it: "${pageTitle}"`);
-                    await this.waitForPageReady(singlePage);
-                    return singlePage;
+                    // Only 1 page open and doesn't match — keep polling for new page to appear
+                    console.log(`  ⏳ Only 1 page open (no match for definition "${titlePatterns.join('|')}")... waiting for new page...`);
                 }
             }
 
@@ -316,6 +315,29 @@ export async function resolvePageForStep(
             return activePage;
         }
         return focusTracker.getInitialPage();
+    }
+
+    // Case 2.5: Check if we have a stored popup page from clickAndSwitchToPopup
+    const popupPage = (executionContext as any)._popupPage as Page | undefined;
+    if (popupPage && !popupPage.isClosed()) {
+        // Check if the popup matches the requested page definition
+        const popupUrl = popupPage.url();
+        const popupTitle = await popupPage.title().catch(() => '');
+        
+        const urlPatterns = pageDefinition.url
+            ? (Array.isArray(pageDefinition.url) ? pageDefinition.url : [pageDefinition.url])
+            : [];
+        const titlePatterns = pageDefinition.title
+            ? (Array.isArray(pageDefinition.title) ? pageDefinition.title : [pageDefinition.title])
+            : [];
+
+        const urlMatch = urlPatterns.some(p => popupUrl.toLowerCase().includes(p.toLowerCase()));
+        const titleMatch = titlePatterns.some(p => popupTitle.toLowerCase().includes(p.toLowerCase()));
+
+        if (urlMatch || titleMatch) {
+            console.log(`  ☑️ Using stored popup page: "${popupTitle}" - ${popupUrl}`);
+            return popupPage;
+        }
     }
 
     // Case 3: Page specified and found in registry - resolve normally
@@ -1566,89 +1588,5 @@ export async function waitForCondition(page: Page, step: testStep): Promise<Outc
     } catch (error) {
         console.error(`  ❌ Condition wait failed`);
         return { code: 1, value: `Condition wait failed: ${error instanceof Error ? error.message : String(error)}` };
-    }
-}
-
-
-const { chromium } = require('@playwright/test');
-
-
-export async function getEdgeBrowser(): Promise<{
-  browser: Browser;
-  context: BrowserContext;
-  page: Page;
-}> {
-  const EDGE_PATH =
-    'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
-
-  console.log('🚀 Launching fresh Edge browser...');
-
-  const browser = await chromium.launch({
-    executablePath: EDGE_PATH,
-    headless: false,
-    args: [
-      '--disable-web-security',
-      '--ignore-certificate-errors',
-      '--start-maximized',
-      '--no-first-run',
-      '--no-default-browser-check'
-    ]
-  });
-
-  const context = await browser.newContext({
-    ignoreHTTPSErrors: true,
-    viewport: { width: 1920, height: 1080 },
-    bypassCSP: true,
-    javaScriptEnabled: true,
-    acceptDownloads: true
-  });
-
-  const page = await context.newPage();
-
-  const appUrl = process.env.URL || process.env.APP_URL;
-
-  if (appUrl) {
-    console.log(`🌐 Navigating to: ${appUrl}`);
-
-    await page.goto(appUrl, {
-      waitUntil: 'domcontentloaded'
-    });
-
-    await page.waitForLoadState('networkidle').catch(() => {});
-  }
-
-  console.log('✅ Fresh Edge session ready');
-
-  return {
-    browser,
-    context,
-    page
-  };
-}
-export async function navigateToApp(page : Page) {
-    if (page.url() === 'about:blank') {
-        const appUrl = process.env.URL || process.env.APP_URL || '';
-
-        if (appUrl) {
-            console.log(`🌐 Auto-navigating to app URL: ${appUrl}`);
-
-            await page.goto(appUrl, {
-                waitUntil: 'domcontentloaded'
-            });
-
-            await page
-                .waitForLoadState('networkidle', {
-                    timeout: 30000
-                })
-                .catch(() => {});
-
-            console.log('✅ Application loaded successfully');
-        } else {
-            console.warn(
-                '⚠️ Page is blank and no URL configured in .env (URL or APP_URL).'
-            );
-        }
-    } else {
-        console.log(`✅ Page already loaded: ${page.url()}`);
     }
 }

@@ -1,3 +1,5 @@
+import { title } from "process";
+
 export interface PageDefinition {
     url?: string | string[];
     title?: string | string[];
@@ -17,52 +19,72 @@ export const PAGE_REGISTRY: Record<string, PageDefinition> = {
         url: '/EPR/APPMAINPAGE',
         title: 'LORENZO'
     },
+    
+     'pageMngRelationShips': {
+    url: '/EPR/AppDialog.aspx?TITLE=Manage%20relationships%20',
+    title: 'Manage relationships - LORENZO'
+    },
 
-    'pageCreateAdmit': {
-        url: '/EPR/AppDialog.aspx?TITLE=Create%20Admit%20',
+        'pageCreateAdmit': {
+        url: 'webclient_sso/EPR/AppTransfer',
         title: 'Create Admit - LORENZO',
-    },
+        },
 
-    'pageCreateReferral': {
-        url: 'webclient_sso/EPR/AppDialog.aspx?TITLE=Create%20referral%20',
-        title: 'Create referral - LORENZO',
-    },
-    'pageFindandbook': {
+       // 'pageCreateReferral': {
+        //url: 'WebClient_SSO/identity%20management/wzforms/patientsearch',
+        //title: 'ReferralDetails',
+        //},
+        'pageFindandbook': {
         url: 'AppDialog.aspx?TITLE=Find%20and%20book',
         title: 'Find and book - LORENZO',
-    },
-    'pagePatientSearch': {
+        },
+        'pagePatientSearch': {
          url: 'AppDialog.aspx?TITLE=Find%20and%20book',
          title: 'Find and book - LORENZO',
-    },
-    'pagePatientBasicSearch': {
+        },
+        'pagePatientBasicSearch': {
         url: 'AppDialog.aspx?TITLE=Find%20and%20book',
         title: 'Find and book - LORENZO',
-    },
+        },
         'pageIPSMBasicSearchCriteria': {
         url: 'AppDialog.aspx?TITLE=Find%20and%20book',
         title: 'Find and book - LORENZO',
-    },
+        },
         'pageBookBanner': {
         url: 'webclient_sso/EPR/AppContextBanner',
         title: 'AppContextBanner',
-    },
+        },
         'pageBookWardappointment': {
         url: 'AppDialog.aspx?TITLE=Find%20and%20book',
         title: 'Find and book - LORENZO',
-    },
+        },
         'pageReferralDetails': {
-        url: 'AppDialog.aspx?TITLE=Find%20and%20book',
-        title: 'Find and book - LORENZO',
-    },
+        url: ['AppDialog.aspx?TITLE=Find%20and%20book', 'AppDialog.aspx?TITLE=Create%20referral%20'],
+        title: ['Find and book - LORENZO', 'Create referral - LORENZO'],
+        },
         'pageManageReferral': {
         url: 'AppDialog.aspx?TITLE=Find%20and%20book',
         title: 'Find and book - LORENZO',
-    },
+        },
+         'pageEPRManageReferral': {
+        url: 'AppDialog.aspx?TITLE=Manage%20referral%20',
+        title: 'Manage referral - LORENZO',
+        },
+
+        'pageReopenReferral': {
+        url: '/EPR/AppDialog.aspx?TITLE=Reopen%20referral%20',
+        title: 'Reopen referral - LORENZO',
+        },
+
+        'pageCloseReferral': {
+        url: '/EPR/AppDialog.aspx?TITLE=Close%20referral%20',
+        title: 'Close referral - LORENZO',
+        },
+        
         'pageClinicalUnit':{
             url:'webclient_sso/EPR/AppTransfer',
             title: 'Def_Users',
-    },
+        },
          'pageRegRegistration': {
         url: '/EPR/AppDialog.aspx?TITLE=Registration',
         title: 'Registration - LORENZO',
@@ -95,9 +117,14 @@ export const PAGE_REGISTRY: Record<string, PageDefinition> = {
         url: 'AppWizardPage.aspx',
         title: ['Find and book - LORENZO', 'Registration - LORENZO', 'Create Admit - LORENZO'],
     },
-    'pageCreateReferralWizard': {
-        url: 'AppWizardPage.aspx',
+
+    'pageCreateReferral': {
+        url: '/EPR/AppDialog.aspx?TITLE=Create%20referral%20',
         title: 'Create referral - LORENZO',
+    },
+    'pageModifyReferralDetails': {
+        url: '/EPR/AppDialog.aspx?TITLE=Modify%20referral%20',
+        title: 'Modify referral - LORENZO',
     },
     'pageFindAndBookWizard': {
         url: 'AppWizardPage.aspx',
@@ -149,32 +176,31 @@ export const PAGE_REGISTRY: Record<string, PageDefinition> = {
    
     },
 
+    'pageSearchClinic': {
+        url: '/outpatient/Views/searchclinicresults.aspx?',
+        title: 'LORENZO'
+    },
+
     'pageHIALRModifyallergy': {
         url: '/EPR/AppDialog.aspx?TITLE=Modify%20allergy%',
         title: 'Modify allergy/ADR - LORENZO',
    
     },
-    'pageHIALRCloseallergy': {
+      'pageHIALRCloseallergy': {
         url: '/EPR/AppDialog.aspx?TITLE=Close%20allergy%',
         title: 'Close allergy/ADR - LORENZO',
    
     },
-    'pageHIALRStrikeallergy': {
+      'pageHIALRStrikeallergy': {
         url: '/EPR/AppDialog.aspx?TITLE=Strikeout%20allergy%',
         title: 'Strikeout allergy/ADR - LORENZO',
    
     },
-    'pageHIALRReopenallergy': {
+    ' pageHIALRReopenallergy': {
         url: '/EPR/AppDialog.aspx?TITLE=Re-open%20allergy%',
         title: 'Re-open allergy/ADR - LORENZO',
-   
-    },
-    'pageLinkProblem': {
-        url: '/EPR/AppDialog.aspx?TITLE=Link%20problem%',
-        title: 'Link problem - LORENZO',
-   
-    },
-    'pageCreateCareplan': {
+       },
+       'pageCreateCareplan': {
         url: '/EPR/AppDialog.aspx?TITLE=Create%20care%20plan%20',
         title: 'Create care plan - LORENZO',
    
@@ -194,100 +220,18 @@ export const PAGE_REGISTRY: Record<string, PageDefinition> = {
         title: 'Copy care plan - LORENZO',
    
     },
-
+ 
     'pageManageStatusCareplan': {
         url: '/EPR/AppDialog.aspx?TITLE=Manage%20status%20',
         title: 'Manage status - LORENZO',
    
     },
-    'pageECCreateAttendance': {
-        url: '/EPR/AppDialog.aspx?TITLE=Create%20attendance%20',
-        title: 'Create attendance - LORENZO',
-   
-    },
-    'pageECModifyAttendance': {
-        url: '/EPR/AppDialog.aspx?TITLE=Modify%20attendance%20',
-        title: 'Modify attendance - LORENZO',
-   
-    },
-    'pageECTriageAndStream': {
-        url: '/EPR/AppDialog.aspx?TITLE=Triage%20and%20stream%20',
-        title: 'Triage and stream - LORENZO',
-   
-    },
-    'pageECModifyTriageAndStream': {
-        url: '/EPR/AppDialog.aspx?TITLE=Modify%20triage%20and%20stream%20',
-        title: 'Modify triage and stream - LORENZO',
-   
-    },
-    'pageECSeen': {
-        url: '/EPR/AppDialog.aspx?TITLE=Seen%20',
-        title: 'Seen - LORENZO',
-   
-    },
-    'pageECDTA': {
-        url: '/EPR/AppDialog.aspx?TITLE=Decision%20to%20admit%20',
-        title: 'Decision to admit - LORENZO',
-   
-    },
-    'pageECCloseAttendance': {
-        url: '/EPR/AppDialog.aspx?TITLE=Close%20attendance%20',
-        title: 'Close attendance - LORENZO',
-   
-    },
-    'pageObservations': {
-        url: '/EPR/APPMAINPAGE',
-        title: 'LORENZO'
-   
-    },
-    'pageCreateClinicalChart': {
-        url: '/EPR/AppDialog.aspx?TITLE=Create%20Clinical%20Chart%20',
-        title: 'Create Clinical Chart - LORENZO'
-   
-    },
-    'pageCreateNote': {
-        url: '/EPR/AppDialog.aspx?TITLE=Create%20note%20',
-        title: 'Create note - LORENZO'
-   
-    },
-    'pageInitiate': {
-        url: '/EPR/AppDialog.aspx?TITLE=Initiate%20',
-        title: 'Initiate - LORENZO'
-   
-    },
-    'pageDIExternalLinks': {
-        url: 'about:blank',
-        title: 'External Links'
-   
-    },
-    'pageBookAppt': {
-        url: '/EPR/AppDialog.aspx?TITLE=Book%20appointment%20',
-        title: 'Book appointment - LORENZO'
-   
-    },
-    'pageEPRManageReferral': {
-        url: '/webclient_sso/EPR/AppDialog.aspx?TITLE=Manage%20referral%20',
-        title: 'Manage referral - LORENZO'
-   
-    },
-    'pageCreatesinglecontact': {
-        url: '/EPR/AppDialog.aspx?TITLE=Create%20single%20contact%20',
-        title: 'Create single contact - LORENZO'
-   },
-   'pageRecordcontact': {
-        url: '/EPR/AppDialog.aspx?TITLE=Record%20single%20contact%20',
-        title: 'Record single contact - LORENZO'
-   },
-   'pageRecordquickcontact': {
-        url: '/EPR/AppDialog.aspx?TITLE=Record%20quick%20contact%20',
-        title: 'Record quick contact - LORENZO'
-   },
-   'pageIPBook': {
-        url: '/EPR/AppDialog.aspx?TITLE=Book%20',
-        title: 'Book - LORENZO'
-   },
-   
 
+    'pageDITestUrl': {
+        url: '/WebClient_sso/DIDITesturl.aspx',
+        title: 'Encounter',
+    },
+ 
 }
     
     // 'pageSearchPatient': {

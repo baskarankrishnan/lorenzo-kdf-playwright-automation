@@ -5,6 +5,7 @@ import { waitForRoller, waitForSeconds } from "../core/actionkeywords/browserAct
 import { resolveTestVariables } from "../core/actionkeywords/dataActions";
 import { getLocatorString } from "../core/utilities/locatorUtils";
 import { error } from "jquery";
+import { chromium } from "@playwright/test";
 
 // Helper function to check action results
 function checkResult(result: { code: number; value: string }) {
@@ -3143,31 +3144,58 @@ export async function selectRecordInTable(
   //
   console.log("⏳ Waiting for grid data to load...");
  
+  // Try multiple row selectors for compatibility with different Kendo versions
+  const rowSelectors = [
+    ".k-grid-content tbody tr.k-master-row",
+    ".k-grid-content tbody tr.k-table-row",
+    "tbody tr.k-master-row",
+    "tbody tr.k-table-row",
+    "tbody tr[role='row']"
+  ];
+
+  let activeRowSelector = rowSelectors[0];
+  for (const selector of rowSelectors) {
+    const count = await tableLocator.locator(selector).count().catch(() => 0);
+    if (count > 0) {
+      activeRowSelector = selector;
+      break;
+    }
+  }
+
   await tableLocator
-    .locator(".k-grid-content tbody tr.k-master-row")
+    .locator(activeRowSelector)
     .first()
-    .waitFor({ timeout: 1500 });
+    .waitFor({ timeout: 5000 });
  
-  await page.waitForFunction(() => {
-    const cells = document.querySelectorAll(
-      ".k-grid-content tbody tr.k-master-row td"
-    );
- 
+  await page.waitForFunction((sel) => {
+    const cells = document.querySelectorAll(sel + " td");
     return Array.from(cells).some(c =>
       (c.textContent || "").trim().length > 0
     );
-  }, { timeout: 15000 });
+  }, activeRowSelector, { timeout: 15000 });
  
   console.log("✅ Grid data loaded\n");
  
   //
   // HEADER EXTRACTION
   //
-  const headers = await tableLocator
-    .locator(".k-grid-header th")
-    .evaluateAll(ths =>
-      ths.map(th => (th.textContent || "").trim())
-    );
+  // Try multiple header selectors for compatibility
+  const headerSelectors = [
+    ".k-grid-header th",
+    "thead th",
+    "th[role='columnheader']",
+    "th"
+  ];
+
+  let headers: string[] = [];
+  for (const hdrSel of headerSelectors) {
+    headers = await tableLocator
+      .locator(hdrSel)
+      .evaluateAll(ths =>
+        ths.map(th => (th.textContent || "").trim())
+      );
+    if (headers.length > 0 && headers.some(h => h.length > 0)) break;
+  }
  
   console.log("📊 RAW HEADERS:", headers);
  
@@ -3176,9 +3204,17 @@ export async function selectRecordInTable(
   );
  
   const columnIndexes = reqdColumns.map(col => {
-    const idx = normalizedHeaders.indexOf(
+    let idx = normalizedHeaders.indexOf(
       col.toLowerCase().trim()
     );
+
+    // Fallback: partial match
+    if (idx === -1) {
+      idx = normalizedHeaders.findIndex(h =>
+        h.includes(col.toLowerCase().trim()) ||
+        col.toLowerCase().trim().includes(h)
+      );
+    }
  
     if (idx === -1) {
       throw new Error(
@@ -3197,9 +3233,7 @@ export async function selectRecordInTable(
   //
   // ROW SCAN
   //
-  const rows = tableLocator.locator(
-    ".k-grid-content tbody tr.k-master-row"
-  );
+  const rows = tableLocator.locator(activeRowSelector);
  
   const rowCount = await rows.count();
  
@@ -3242,15 +3276,30 @@ export async function selectRecordInTable(
  
       console.log(`\n✅ MATCH FOUND IN ROW ${i + 1}`);
  
-      const checkbox = row.locator("input.k-select-checkbox");
- 
-      const isChecked = await checkbox.isChecked();
- 
-      if (!isChecked) {
-        await checkbox.check();
-        console.log(`☑️ Row ${i + 1} selected`);
+      // Try multiple checkbox selectors for compatibility
+      let checkbox = row.locator("input.k-select-checkbox");
+      let checkboxCount = await checkbox.count();
+      if (checkboxCount === 0) {
+        checkbox = row.locator("input[aria-label='Select row']");
+        checkboxCount = await checkbox.count();
+      }
+      if (checkboxCount === 0) {
+        checkbox = row.locator("input[type='checkbox']");
+        checkboxCount = await checkbox.count();
+      }
+
+      if (checkboxCount > 0) {
+        const isChecked = await checkbox.isChecked();
+        if (!isChecked) {
+          await checkbox.check();
+          console.log(`☑️ Row ${i + 1} selected`);
+        } else {
+          console.log(`☑️ Row ${i + 1} already selected`);
+        }
       } else {
-        console.log(`☑️ Row ${i + 1} already selected`);
+        // No checkbox found, click the row directly
+        await row.click();
+        console.log(`☑️ Row ${i + 1} clicked (no checkbox found)`);
       }
  
       break;
@@ -3436,6 +3485,7 @@ console.log(`Stored split result in global variable: ${finalVarName} = "${result
   }
 
 }
+
 /**
  * Dynamically selects the appointment slot from the Clinic Overview grid based on current time.
  * Rounds current time DOWN to the nearest 30-minute boundary and computes the full slot range.
@@ -3453,494 +3503,335 @@ console.log(`Stored split result in global variable: ${finalVarName} = "${result
  *   TableColumnNames: (not used)
  *   Values: (optional) override time in HH:mm format for testing, otherwise uses system clock
  */
-
-export async function selectSlotByCurrentTimeOP(
-  page: Page,
-  step: testStep
-): Promise<{ code: number; value: string }> {
-
+export async function selectSlotByCurrentTime(page: Page, step: testStep): Promise<{ code: number; value: string }> {
   try {
-
-    // ✅ STEP 1: Resolve time
+    // Determine current time (or use override from Values for testing)
     let now: Date;
-
-    if (step.value && /^\d{1,2}:\d{2}$/.test(String(step.value).trim())) {
-      const [h, m] = String(step.value).trim().split(":").map(Number);
+    if (step.value && /^\d{1,2}:\d{2}$/.test(step.value.trim())) {
+      const [h, m] = step.value.trim().split(':').map(Number);
       now = new Date();
       now.setHours(h, m, 0, 0);
-      console.log(`🕐 Using override time: ${step.value}`);
+      console.log(`  🕐 Using override time: ${step.value.trim()}`);
     } else {
       now = new Date();
+      console.log(`  🕐 Current system time: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`);
     }
 
-    // ✅ STEP 2: Round to 30 mins
+    // Round DOWN to nearest 30-minute boundary
     const hours = now.getHours();
     const minutes = now.getMinutes();
     const roundedMinutes = minutes < 30 ? 0 : 30;
 
-    const start = new Date(now);
-    start.setHours(hours, roundedMinutes, 0, 0);
+    // Calculate end time (start + 30 minutes)
+    const endDate = new Date(now);
+    endDate.setHours(hours, roundedMinutes + 30, 0, 0);
+    const endHours = endDate.getHours();
+    const endMinutes = endDate.getMinutes();
 
-    const slotStart = `${String(start.getHours()).padStart(2, "0")}:${String(start.getMinutes()).padStart(2, "0")}`;
+    // Format without leading zeros on hours (e.g., "1:00" not "01:00")
+    const slotStartTime = `${hours}:${roundedMinutes.toString().padStart(2, '0')}`;
+    const slotEndTime = `${endHours}:${endMinutes.toString().padStart(2, '0')}`;
+    const slotRange = `${slotStartTime} to ${slotEndTime}`;
+    console.log(`  🎯 Target slot range: ${slotRange}`);
 
-    console.log(`🎯 Target start time: ${slotStart}`);
+    // Store calculated slot range as a variable for downstream steps
+    const varManager = executionContext.getVariableManager();
+    if (varManager) {
+      varManager.set('SlotTime', slotRange);
+      varManager.set('SlotStartTime', slotStartTime);
+      varManager.set('SlotEndTime', slotEndTime);
+    }
 
-    // ✅ ✅ STEP 3: SEARCH IN FRAMES (ONLY ADDITION ✅)
-    for (const frame of page.frames()) {
+    // Wait a moment for the grid to be fully rendered
+    await page.waitForTimeout(1000);
 
+    // Strategy: Use page.evaluate to find the row with matching slot range and click its checkbox.
+    // The Lorenzo Clinic Overview grid uses standard HTML tables. Slot cells contain
+    // range text like "1:00 to 1:30", "11:30 to 12:00", etc.
+    const result = await page.evaluate((targetRange: string) => {
+      const [targetStart] = targetRange.split(' to ');
+      const allCells = document.querySelectorAll('td');
+      let matchingRow: HTMLTableRowElement | null = null;
+
+      for (const cell of Array.from(allCells)) {
+        const text = (cell.textContent || '').trim();
+
+        // Strategy 1: Match full range text (e.g., "1:00 to 1:30")
+        if (text.includes(targetRange)) {
+          const row = cell.closest('tr') as HTMLTableRowElement;
+          if (row) { matchingRow = row; break; }
+        }
+
+        // Strategy 2: Match start time in a "Start time" column
+        const timeMatch = text.match(/(\d{1,2}:\d{2})/);
+        if (timeMatch && timeMatch[1] === targetStart) {
+          const row = cell.closest('tr');
+          if (!row) continue;
+
+          // Verify this cell is in a "Start time" column by checking the column header
+          const table = cell.closest('table');
+          if (!table) continue;
+
+          const cellIndex = Array.from(row.children).indexOf(cell);
+          const headerRow = table.querySelector('tr');
+          if (headerRow) {
+            const headerCells = headerRow.querySelectorAll('th, td');
+            if (cellIndex < headerCells.length) {
+              const headerText = (headerCells[cellIndex].textContent || '').toLowerCase().trim();
+              if (headerText.includes('start')) {
+                matchingRow = row as HTMLTableRowElement;
+                break;
+              }
+            }
+          }
+
+          // If no header check possible, just use first match
+          if (!matchingRow) {
+            matchingRow = row as HTMLTableRowElement;
+          }
+        }
+      }
+
+      if (!matchingRow) {
+        return { success: false, error: `No row found matching slot "${targetRange}" (start: "${targetStart}")` };
+      }
+
+      // Find the checkbox in the matching row
+      const checkbox = matchingRow.querySelector('input[type="checkbox"], input[aria-label="Select row"]') as HTMLInputElement;
+      if (checkbox) {
+        checkbox.click();
+        return { success: true, method: 'checkbox' };
+      }
+
+      // Try img-based select row button
+      const selectImg = matchingRow.querySelector('img[title="Click to select row"], img[alt="Click to select row"]') as HTMLElement;
+      if (selectImg) {
+        selectImg.click();
+        return { success: true, method: 'img-select' };
+      }
+
+      // Try clicking the row itself
+      matchingRow.click();
+      return { success: true, method: 'row-click' };
+    }, slotRange);
+
+    if (result.success) {
+      console.log(`  ✅ Selected slot ${slotRange} via ${result.method}`);
+      return { code: 0, value: `Selected slot ${slotRange} via ${result.method}` };
+    }
+
+    // Fallback: Try using Playwright locators across all frames
+    console.log(`  ⚠️ page.evaluate didn't find match. Trying Playwright locator approach...`);
+
+    // Search across all frames (Lorenzo uses iframes heavily)
+    const allFrames = page.frames();
+    for (const frame of allFrames) {
       try {
+        // Find all cells containing the target slot range or start time
+        const timeCells = frame.locator(`xpath=//td[contains(text(),"${slotStartTime}")]`);
+        const count = await timeCells.count().catch(() => 0);
 
-        const startCells = frame.locator("//td[@icna='SlotStartDateTime']");
-        const count = await startCells.count().catch(() => 0);
-
-        if (count === 0) continue;
-
-        console.log(`✅ Found ${count} slots in frame`);
-
-        let index = -1;
-
-        // ✅ STEP 4: Find index
         for (let i = 0; i < count; i++) {
+          const cell = timeCells.nth(i);
+          const cellText = await cell.textContent().catch(() => '');
+          // Match if cell contains the full range or just the start time
+          if (!(cellText || '').includes(slotRange) && !(cellText || '').includes(slotStartTime)) continue;
 
-          const title = (await startCells.nth(i).getAttribute("title"))?.trim();
+          // Found matching cell - get its parent row
+          const row = cell.locator('xpath=ancestor::tr');
+          const rowCount = await row.count().catch(() => 0);
+          if (rowCount === 0) continue;
 
-          if (title === slotStart) {
-            index = i;
-            break;
+          // Try to click the checkbox in this row
+          const checkboxSelectors = [
+            "input[aria-label='Select row']",
+            "input[type='checkbox']",
+            "img[title='Click to select row']"
+          ];
+
+          let clicked = false;
+          for (const sel of checkboxSelectors) {
+            const cb = row.locator(sel).first();
+            const cbCount = await cb.count().catch(() => 0);
+            if (cbCount > 0) {
+              await cb.click();
+              clicked = true;
+              console.log(`  ✅ Selected slot ${slotRange} via frame locator (${sel})`);
+              return { code: 0, value: `Selected slot ${slotRange}` };
+            }
+          }
+
+          if (!clicked) {
+            await row.click();
+            console.log(`  ✅ Selected slot ${slotRange} via row click in frame`);
+            return { code: 0, value: `Selected slot ${slotRange} via row click` };
           }
         }
-
-        if (index === -1) {
-          console.log("⚠️ Start time not in this frame");
-          continue;
-        }
-
-        console.log(`✅ Found start index: ${index}`);
-
-        // ✅ SAME OLD LOGIC CONTINUES ✅
-        const slotCategoryCells = frame.locator("//td[@icna='SlotCategory']");
-
-        const checkboxes = frame.locator(
-          "//input[@type='checkbox' and @aria-label='Select row']"
-        );
-
-        const total = await checkboxes.count();
-
-        // ✅ ✅ Availability loop (unchanged)
-        for (let i = index; i < total; i++) {
-
-          const rawStatus = await slotCategoryCells.nth(i).getAttribute("title");
-          const status = (rawStatus || "").trim().toLowerCase();
-
-          const time = (await startCells.nth(i).getAttribute("title"))?.trim();
-
-          console.log(`➡️ Index ${i} | Time: ${time} | Status: ${status}`);
-
-          if (status.includes("available")) {
-
-            console.log(`✅ Selecting slot: ${time}`);
-
-            const checkbox = checkboxes.nth(i);
-
-            await checkbox.scrollIntoViewIfNeeded();
-            await checkbox.click();
-
-            return {
-              code: 0,
-              value: time || slotStart
-            };
-          }
-        }
-
-        console.log("⚠️ No available slots in this frame");
-
-      } catch {
-        // ignore frame errors
-      }
+      } catch { /* continue to next frame */ }
     }
 
-    throw new Error("No slots found in any frame");
+    // Final fallback: try next available slot after target time
+    console.log(`  ⚠️ Exact match for ${slotRange} not found. Trying next available slot...`);
+    const targetMinutes = hours * 60 + roundedMinutes;
 
+    const nextResult = await page.evaluate((targetMins: number) => {
+      const allCells = document.querySelectorAll('td');
+      let bestRow: HTMLTableRowElement | null = null;
+      let bestTime = '';
+      let bestDiff = Infinity;
+
+      for (const cell of Array.from(allCells)) {
+        const text = (cell.textContent || '').trim();
+        const timeMatch = text.match(/(\d{1,2}):(\d{2})/);
+        if (!timeMatch) continue;
+
+        const cellMins = parseInt(timeMatch[1]) * 60 + parseInt(timeMatch[2]);
+        const diff = cellMins - targetMins;
+        if (diff >= 0 && diff < bestDiff) {
+          const row = cell.closest('tr') as HTMLTableRowElement;
+          if (row) {
+            bestRow = row;
+            bestTime = `${timeMatch[1]}:${timeMatch[2]}`;
+            bestDiff = diff;
+          }
+        }
+      }
+
+      if (!bestRow) return { success: false, error: 'No available slot found' };
+
+      const checkbox = bestRow.querySelector('input[type="checkbox"], input[aria-label="Select row"]') as HTMLInputElement;
+      if (checkbox) { checkbox.click(); return { success: true, time: bestTime, method: 'checkbox' }; }
+
+      const selectImg = bestRow.querySelector('img[title="Click to select row"]') as HTMLElement;
+      if (selectImg) { selectImg.click(); return { success: true, time: bestTime, method: 'img' }; }
+
+      bestRow.click();
+      return { success: true, time: bestTime, method: 'row-click' };
+    }, targetMinutes);
+
+    if (nextResult.success) {
+      const selectedTime = (nextResult as any).time;
+      if (varManager) varManager.set('SlotTime', selectedTime);
+      console.log(`  ✅ Selected next available slot at ${selectedTime}`);
+      return { code: 0, value: `Selected next available slot at ${selectedTime}` };
+    }
+
+    return { code: 1, value: `No slot found for ${slotRange} or later` };
   } catch (error) {
-
     const msg = error instanceof Error ? error.message : String(error);
-
-    console.error(`❌ Error: ${msg}`);
-
-    return {
-      code: 1,
-      value: `Failed to select time slot: ${msg}`
-    };
+    console.error(`  ❌ selectSlotByCurrentTime failed: ${msg}`);
+    return { code: 1, value: `Failed to select time slot: ${msg}` };
   }
 }
-export async function selectSlotByCurrentTimeDC(
-  page: Page,
-  step: testStep
-): Promise<{ code: number; value: string }> {
 
+
+/**
+ * Clicks an element that opens a new browser window/popup (e.g., DI Detach Window),
+ * waits for the popup to appear, stores it as `_PopupPage` in execution context,
+ * and switches focus to the popup so subsequent steps run against it.
+ *
+ * Usage in KDF:
+ *   Page: pageHome (or wherever the trigger element lives)
+ *   Element: btn_DetachWindow (the button that opens the popup)
+ *   ActionKeyword: clickAndSwitchToPopup
+ *   Values: (optional) timeout in ms (default 30000)
+ */
+export async function clickAndSwitchToPopup(page: Page, step: testStep): Promise<Outcome> {
   try {
+    const timeout = step.value ? parseInt(step.value, 10) : 30000;
+    const baseSelector = getLocatorString(step);
+    console.log(`  🔍 Looking for element to click: ${baseSelector}`);
 
-    // ✅ STEP 1: Resolve time
-    let now = new Date();
+    const element = await resolveElement(page, baseSelector, step);
 
-    if (step.value && /^\d{1,2}:\d{2}$/.test(String(step.value).trim())) {
-      const [h, m] = String(step.value).trim().split(":").map(Number);
-      now.setHours(h, m, 0, 0);
-      console.log(`🕐 Using override time: ${step.value}`);
-    }
+    // Set up popup listener BEFORE clicking
+    const context = page.context();
+    const popupPromise = context.waitForEvent('page', { timeout });
 
-    // ✅ STEP 2: Round to 15 mins
-    const interval = 15;
-    const remainder = now.getMinutes() % interval;
+    console.log(`  🖱️ Clicking element and waiting for popup window...`);
+    await element.click();
 
-    if (remainder !== 0) {
-      now.setMinutes(now.getMinutes() + (interval - remainder));
-    }
-
-    now.setSeconds(0, 0);
-
-    const targetMinutes = now.getHours() * 60 + now.getMinutes();
-
-    const targetTime =
-      `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-
-    console.log(`🎯 Target: ${targetTime}`);
-
-    // ✅ STEP 3: Detect context (page or frame)
-    let ctx: any = null;
-
-    const pageCount = await page.locator("//td[@icn='StartTime']").count();
-
-    if (pageCount > 10) {
-      ctx = page;
-      console.log("✅ Grid found on MAIN page");
-    } else {
-      for (const f of page.frames()) {
-        try {
-          if ((await f.locator("//td[@icn='StartTime']").count()) > 10) {
-            ctx = f;
-            console.log("✅ Grid found in FRAME");
-            break;
+    let popupPage: Page;
+    try {
+      popupPage = await popupPromise;
+    } catch {
+      // Popup didn't appear via context event — try checking all browser contexts
+      // This can happen with CDP connections where the popup opens in a different context
+      console.log(`  ⚠️ No popup via context event. Attempting CDP re-connect to find new page...`);
+      
+      // Wait a bit for the window to fully open
+      await page.waitForTimeout(3000);
+      
+      // Try to find new page via the browser object
+      const browser = context.browser();
+      if (browser) {
+        const allContexts = browser.contexts();
+        for (const ctx of allContexts) {
+          const pages = ctx.pages();
+          for (const p of pages) {
+            if (p !== page && !p.isClosed()) {
+              const url = p.url();
+              const title = await p.title().catch(() => '');
+              if (url.toLowerCase().includes('diditesturl') || title.toLowerCase().includes('encounter')) {
+                popupPage = p;
+                console.log(`  ✅ Found popup page via browser contexts: "${title}" - ${url}`);
+                break;
+              }
+            }
           }
-        } catch {}
-      }
-    }
-
-    if (!ctx) {
-      throw new Error("Slot grid not found");
-    }
-
-    // ✅ STEP 4: Locators
-    const startCells = ctx.locator("//td[@icn='StartTime']");
-    const statusCells = ctx.locator("//td[@icn='AppointmentStatus']");
-    const clickCells = ctx.locator("//td[.//img[@title='Click to select row']]");
-
-    const total = await startCells.count();
-    const statusCount = await statusCells.count();
-    const clickCount = await clickCells.count();
-
-    console.log(`✅ Slots: ${total}`);
-
-    let selectedIndex = -1;
-
-    // ✅ ✅ STEP 5: MAIN LOOP (OPTIMIZED ✅)
-    for (let i = 0; i < total; i++) {
-
-      const startCell = startCells.nth(i);
-
-      // ✅ Get time from title or text
-      let raw = await startCell.getAttribute("title");
-      if (!raw) raw = await startCell.innerText();
-
-      const time = (raw || "").replace(/\s+/g, "").trim();
-
-      if (!time || !time.includes(":")) continue;
-
-      const [h, m] = time.split(":").map(Number);
-      if (isNaN(h) || isNaN(m)) continue;
-
-      const minutes = h * 60 + m;
-
-      // ✅ Skip past slots
-      if (minutes < targetMinutes) continue;
-
-      // ✅ Get visual position
-      const startBox = await startCell.boundingBox();
-      if (!startBox) continue;
-
-      // ✅ Match status via Y alignment
-      let matchedStatus = "";
-
-      for (let j = 0; j < statusCount; j++) {
-
-        const statusCell = statusCells.nth(j);
-        const statusBox = await statusCell.boundingBox();
-
-        if (!statusBox) continue;
-
-        if (Math.abs(statusBox.y - startBox.y) < 5) {
-          matchedStatus =
-            (await statusCell.getAttribute("title")) ||
-            await statusCell.innerText();
-          break;
+          if (popupPage!) break;
         }
       }
 
-      const status = (matchedStatus || "").trim();
-
-      console.log(`➡️ ${time} | Status: ${status}`);
-
-      // ✅ ✅ FIRST AVAILABLE SLOT → STOP ✅
-      if (status === "Available") {
-        selectedIndex = i;
-        break;  // 🔥 performance optimization
-      }
-    }
-
-    if (selectedIndex === -1) {
-      throw new Error("No available slots found after target time");
-    }
-
-    // ✅ STEP 6: Get selected time
-    let selectedTime =
-      await startCells.nth(selectedIndex).getAttribute("title");
-
-    if (!selectedTime) {
-      selectedTime = await startCells.nth(selectedIndex).innerText();
-    }
-
-    console.log(`✅ Selected slot: ${selectedTime}`);
-
-    // ✅ STEP 7: Click using visual mapping ✅
-    const startElement = startCells.nth(selectedIndex);
-    const startBox = await startElement.boundingBox();
-
-    if (!startBox) {
-      throw new Error("Unable to locate slot position");
-    }
-
-    let bestClickIndex = -1;
-    let bestDistance = Number.MAX_SAFE_INTEGER;
-
-    for (let i = 0; i < clickCount; i++) {
-
-      const clickBox = await clickCells.nth(i).boundingBox();
-      if (!clickBox) continue;
-
-      const distance = Math.abs(clickBox.y - startBox.y);
-
-      if (distance < bestDistance) {
-        bestDistance = distance;
-        bestClickIndex = i;
-      }
-    }
-
-    if (bestClickIndex === -1) {
-      throw new Error("No matching checkbox found");
-    }
-
-    console.log("✅ Clicking slot");
-
-    const clickCell = clickCells.nth(bestClickIndex);
-
-    await clickCell.scrollIntoViewIfNeeded();
-    await clickCell.click();
-
-    return {
-      code: 0,
-      value: (selectedTime || "").trim()
-    };
-
-  } catch (error) {
-
-    const msg = error instanceof Error ? error.message : String(error);
-
-    console.error(`❌ Error: ${msg}`);
-
-    return {
-      code: 1,
-      value: `Failed to select time slot: ${msg}`
-    };
-  }
-}
-export async function selectBookedSlotByPatientId(
-  
-  page: Page,
-  step: testStep
-): Promise<{ code: number; value: string }> {
-
-  try {
-
-    // ✅ ✅ STEP 0: SIMULATED RUNTIME VARIABLE STORE ✅
-    // 🔁 Replace this with your actual framework store if available
-    
-
-    const runtimeData = (globalThis as any).testData || {}; {
-      _PASID: "PASID-052913"  // 👉 example fallback
-    };
-
-    // ✅ ✅ VARIABLE RESOLVER ✅
-    const resolveValue = (val: string) => {
-      if (!val) return "";
-
-      if (val.startsWith("_")) {
-        const resolved = runtimeData[val];
-        console.log(`🔁 Resolving ${val} → ${resolved}`);
-        return resolved || val;   // fallback if missing
-      }
-
-      return val;
-    };
-
-    // ✅ Normalize function
-    const normalize = (val: string) =>
-      (val || "")
-        .replace(/\u00A0/g, "")      // NBSP
-        .replace(/\s+/g, "")         // remove spaces/newlines
-        .replace(/–|—|‑/g, "-")      // normalize dashes
-        .trim();
-
-    // ✅ STEP 1: Resolve input value
-    const rawInput = String(step.value || "").trim();
-    console.log(`📌 Raw input: "${rawInput}"`);
-
-    const resolvedValue = resolveValue(rawInput);
-    const expected = normalize(resolvedValue);
-
-    console.log(`🎯 Final PASID to match: ${expected}`);
-
-    // ✅ STEP 2: Detect context (page or frame)
-    let ctx: any = null;
-
-    const pageCount = await page.locator("//td[@icn='PatientInfo.PatientIdentifier']").count();
-
-    if (pageCount > 10) {
-      ctx = page;
-      console.log("✅ Grid found on MAIN page");
-    } else {
-      for (const f of page.frames()) {
+      if (!popupPage!) {
+        // Last resort: try connecting to CDP again to pick up new pages
         try {
-          const count = await f.locator("//td[@icn='PatientInfo.PatientIdentifier']").count();
-          if (count > 10) {
-            ctx = f;
-            console.log("✅ Grid found in FRAME");
-            break;
+          const freshBrowser = await chromium.connectOverCDP('http://127.0.0.1:9222');
+          const allContexts = freshBrowser.contexts();
+          for (const ctx of allContexts) {
+            for (const p of ctx.pages()) {
+              if (!p.isClosed()) {
+                const url = p.url();
+                const title = await p.title().catch(() => '');
+                if (url.toLowerCase().includes('diditesturl') || title.toLowerCase().includes('encounter')) {
+                  popupPage = p;
+                  console.log(`  ✅ Found popup page via fresh CDP connection: "${title}" - ${url}`);
+                  break;
+                }
+              }
+            }
+            if (popupPage!) break;
           }
-        } catch {}
-      }
-    }
-
-    if (!ctx) {
-      throw new Error("Grid not found");
-    }
-
-    // ✅ STEP 3: Locators
-    const patientCells = ctx.locator("//td[@icn='PatientInfo.PatientIdentifier']");
-    const clickCells = ctx.locator("//td[.//img[@title='Click to select row']]");
-    const startCells = ctx.locator("//td[@icn='StartTime']");
-
-    const total = await patientCells.count();
-    console.log(`✅ Total rows: ${total}`);
-
-    let targetBox: any = null;
-
-    // ✅ ✅ STEP 4: FIND PASID (ONLY THIS MATTERS ✅)
-    for (let i = 0; i < total; i++) {
-
-      let raw =
-        (await patientCells.nth(i).getAttribute("title")) ||
-        await patientCells.nth(i).innerText();
-
-      const id = normalize(raw);
-
-      console.log(`➡️ Checking PatientID: "${id}"`);
-
-      if (id === expected) {
-        console.log(`✅ MATCH FOUND`);
-        targetBox = await patientCells.nth(i).boundingBox();
-
-        if (!targetBox) {
-          throw new Error("Could not determine row position");
+        } catch (cdpErr) {
+          console.log(`  ⚠️ Fresh CDP connection failed: ${cdpErr instanceof Error ? cdpErr.message : cdpErr}`);
         }
+      }
 
-        break;
+      if (!popupPage!) {
+        return { code: 1, value: `Popup window did not appear within ${timeout}ms` };
       }
     }
 
-    if (!targetBox) {
-      throw new Error(`Patient ID ${resolvedValue} not found`);
+    // Wait for popup to load
+    await popupPage.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => {});
+    await popupPage.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+
+    const popupTitle = await popupPage.title().catch(() => 'Unknown');
+    const popupUrl = popupPage.url();
+    console.log(`  ✅ Popup opened: "${popupTitle}" - ${popupUrl}`);
+
+    // Store popup page reference in execution context for subsequent steps
+    const varManager = executionContext.getVariableManager();
+    if (varManager) {
+      varManager.set('PopupPage', '__POPUP_PAGE_REF__');
     }
+    // Store on execution context directly so resolvePageForStep can access it
+    (executionContext as any)._popupPage = popupPage;
 
-    // ✅ STEP 5: (Optional) derive time only for logging
-    let selectedTime = "";
-
-    const startCount = await startCells.count();
-
-    let bestTimeDistance = Number.MAX_SAFE_INTEGER;
-
-    for (let i = 0; i < startCount; i++) {
-
-      const box = await startCells.nth(i).boundingBox();
-      if (!box) continue;
-
-      const delta = Math.abs(box.y - targetBox.y);
-
-      if (delta < bestTimeDistance) {
-        bestTimeDistance = delta;
-
-        selectedTime =
-          (await startCells.nth(i).getAttribute("title")) ||
-          await startCells.nth(i).innerText();
-      }
-    }
-
-    console.log(`✅ Slot time (visual match): ${selectedTime}`);
-
-    // ✅ ✅ STEP 6: CLICK CORRECT ROW ✅
-    const clickCount = await clickCells.count();
-
-    let bestClickIndex = -1;
-    let bestDistance = Number.MAX_SAFE_INTEGER;
-
-    for (let i = 0; i < clickCount; i++) {
-
-      const box = await clickCells.nth(i).boundingBox();
-      if (!box) continue;
-
-      const delta = box.y - targetBox.y;
-
-      // ✅ ❗ IMPORTANT FIX (NO ABOVE ROW)
-      if (delta < -2) continue;
-
-      if (delta < bestDistance) {
-        bestDistance = delta;
-        bestClickIndex = i;
-      }
-    }
-
-    if (bestClickIndex === -1) {
-      throw new Error("Matching checkbox not found");
-    }
-
-    console.log("✅ Clicking correct booked slot ✅");
-
-    await clickCells.nth(bestClickIndex).scrollIntoViewIfNeeded();
-    await clickCells.nth(bestClickIndex).click();
-
-    return {
-      code: 0,
-      value: (selectedTime || "").trim()
-    };
-
-  } catch (error) {
-
-    const msg = error instanceof Error ? error.message : String(error);
-
-    console.error(`❌ Error: ${msg}`);
-
-    return {
-      code: 1,
-      value: `Failed to select booked slot: ${msg}`
-    };
+    return { code: 0, value: `Popup opened: "${popupTitle}" at ${popupUrl}` };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`  ❌ clickAndSwitchToPopup failed: ${msg}`);
+    return { code: 1, value: `Failed to click and switch to popup: ${msg}` };
   }
 }

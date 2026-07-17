@@ -44,17 +44,17 @@ export function getActionKeywordFunction(actionKeyword: string): Function | unde
             return LZOActions.getTextAndStorePASID;
         case 'splitstring':
             return LZOActions.splitString;
-        case 'selectippegboardbyheader':
+        case 'selectslotbycurrenttime':
+            return LZOActions.selectSlotByCurrentTime;
+            case 'selectippegboardbyheader':
             return LZOActions.selectIPPegBoardByHeader;
-        case 'selectslotbycurrenttimeop':
-            return LZOActions.selectSlotByCurrentTimeOP;
-        case 'selectslotbycurrenttimedc':
-            return LZOActions.selectSlotByCurrentTimeDC;
-        case 'selectbookedslotbypatientid':
-            return LZOActions.selectBookedSlotByPatientId;
+        case 'clickandswitchtopopup':
+            return LZOActions.clickAndSwitchToPopup;
             
 
         // ELEMENT ACTIONS
+        case 'selecttablerowbyvalue':
+            return ElementActions.selectTableRowByValue;
         case 'waitforelement':
             return ElementActions.waitForElement;
         case 'clickelement':
@@ -88,23 +88,7 @@ export function getActionKeywordFunction(actionKeyword: string): Function | unde
         case 'setautocompletefield':
             return ElementActions.setAutoCompleteField;    
         case 'clicktab':
-            return ElementActions.clickTab;
-        case 'selectcombovalue':
-            return ElementActions.selectComboValue;
-        case 'selecttablerowbyvalue':
-            return ElementActions.selectTableRowByValue;    
-        case 'comparevariables':
-            return ElementActions.compareVariables;
-        case 'dragsplitterauto':
-            return ElementActions.dragSplitterAuto;
-        case 'selecttablerowbypasidusingstructure':
-            return ElementActions.selectTableRowByPasIdUsingStructure;
-        case 'clickifpresent':
-            return ElementActions.ClickIfPresent;  
-        case 'clickbubblebypasid':
-            return ElementActions.clickBubbleByPASID;
-        case 'selecttablerowbyintray':
-            return ElementActions.selectTableRowByIntray;
+            return ElementActions.clickTab;  
 
         // ASSERTION ACTIONS
         case 'verifyproperty':
@@ -155,8 +139,6 @@ export function getActionKeywordFunction(actionKeyword: string): Function | unde
             return BrowserActions.refreshCurrentPage;
         case 'maximizebrowser':
             return BrowserActions.maximizeBrowser;
-        case 'getedgebrowser':
-            return BrowserActions.getEdgeBrowser;
 
 
         default:
