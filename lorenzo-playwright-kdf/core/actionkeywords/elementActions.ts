@@ -1,11 +1,9 @@
-import { Page, Locator, Frame } from "@playwright/test";
+import { Page, Locator } from "@playwright/test";
 import { getLocatorString } from "../utilities/locatorUtils";
 import { testStep, executionContext, Outcome } from "../utilities/interfaceUtils";
 import { resolveTestVariables } from "./dataActions";
 import { waitForRoller } from "./browserActions";
 import { getPageDefinition } from "../../product/pageRegistry";
-
-
 
 /**
  * Sleep/delay execution for specified milliseconds
@@ -473,187 +471,534 @@ export async function waitForElement(page: Page, step: testStep): Promise<Outcom
  * @example
  * await clickElement(page, { page: 'pageForm', element: 'btn_Submit' });
  */
+
+
 export async function clickElement(page: Page, step: testStep): Promise<Outcome> {
-  try {
-    const baseSelector = getLocatorString(step);
-    await waitForRoller(page);
+  try {
+    const baseSelector = getLocatorString(step);
 
-    const isOptional = ['optional', '__transient__'].includes(String(step.condition || '').toLowerCase());
-    const pageDef = step.page ? getPageDefinition(step.page) : undefined;
-    const resolveTimeout = pageDef?.elementTimeout ?? (isOptional ? 15000 : 30000);
-    
-    // For popup button elements (btn_PopUp*) that can appear with delay after PDS lookup,
-    // implement framework-level retry with extended patience instead of quick fail.
-    // These are conditional elements that may not appear immediately.
-    const isPopupButton = step.element && String(step.element).toLowerCase().includes('popup');
-    const popupRetryTimeout = isPopupButton ? 120000 : resolveTimeout;  // 120s patience for delayed popups
-    
-    let element;
-    try {
-      element = await resolveElement(page, baseSelector, step, popupRetryTimeout);
-    } catch (err) {
-      // If popup button not found, treat as soft-fail (optional) rather than hard failure
-      if (isPopupButton && !isOptional) {
-        console.log(`  ⚠️ Popup button not found (may not have appeared): ${step.page}.${step.element}`);
-        return {
-          code: 2,  // Soft fail
-          value: `Popup button not found (optional/conditional): ${step.element}`
-        };
-      }
-      throw err;
-    }
+ 
 
-    // Check if it's an area element - use JavaScript click instead
-    const tagName = await element.evaluate(el => el.tagName.toLowerCase()).catch(() => 'unknown');
-    if (tagName === 'area') {
-      await element.evaluate((el: HTMLAreaElement) => { el.click(); });
-      console.log(`  ✅ Clicked area element (JavaScript): ${step.page}.${step.element}`);
-    } else {
-      let clicked = false;
+    await waitForRoller(page);
 
-      // Wait for the element to become visible before attempting any click strategy.
-      // This handles cases where resolveElement returns an attached-but-hidden element
-      // (e.g. Lorenzo search result rows that are in DOM but not yet rendered visible).
-      await element.waitFor({ state: 'visible', timeout: isOptional ? 3000 : 30000 }).catch(() => { });
+ 
 
-      // DIAGNOSTIC: Element info for debugging phantom clicks
-      try {
-        const elementInfo = await element.evaluate((el: HTMLElement) => {
-          const rect = el.getBoundingClientRect();
-          const style = window.getComputedStyle(el);
-          return {
-            tagName: el.tagName,
-            title: el.getAttribute('title'),
-            className: el.className,
-            isVisible: style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0,
-            width: rect.width,
-            height: rect.height,
-            innerHTML: el.innerHTML.substring(0, 100)
-          };
-        });
-        console.log(`  📋 Element info: <${elementInfo.tagName}> title="${elementInfo.title}" class="${elementInfo.className}" visible=${elementInfo.isVisible} size=${elementInfo.width}x${elementInfo.height}`);
-        console.log(`  📋 Inner content: ${elementInfo.innerHTML}`);
-      } catch { /* ignore diagnostic errors */ }
+    const isOptional = ['optional', '__transient__'].includes(
+      String(step.condition || '').toLowerCase()
+    );
 
-      // Detect if element is in an iframe (frame element vs main page element)
-      // For iframe elements, skip mouse simulation since page.mouse uses main page coordinates
-      // which won't work correctly for elements inside iframes
-      let isInIframe = false;
-      try {
-        const ownerFrame = await element.evaluate(el => {
-          return window.self !== window.top;  // true if inside an iframe
-        });
-        isInIframe = ownerFrame;
-      } catch { /* assume main page */ }
+ 
 
-      // Strategy 1: scrollIntoView + mouse simulation (ONLY for main page elements)
-      // Skip for iframe elements since page.mouse coordinates don't translate to iframe context
-      if (!isInIframe) {
-        try {
-          await element.scrollIntoViewIfNeeded({ timeout: 5000 });
-          const box = await element.boundingBox();
-          if (box) {
-            await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-            await page.mouse.down();
-            await page.mouse.up();
-            clicked = true;
-          }
-        } catch { /* fall through */ }
-      }
+    const pageDef = step.page ? getPageDefinition(step.page) : undefined;
 
-      // Strategy 2: Playwright native click (handles auto-scroll, cross-frame)
-      // This is the PRIMARY strategy for iframe elements
-      if (!clicked) {
-        try {
-          await element.click({ timeout: 5000 });
-          clicked = true;
-          if (isInIframe) {
-            console.log(`  🎯 Clicked iframe element using Playwright native click: ${step.page}.${step.element}`);
-          }
-        } catch (nativeErr) {
-          console.log(`  ⚠️ Native click failed: ${nativeErr instanceof Error ? nativeErr.message : String(nativeErr)}`);
-        }
-      }
+ 
 
-      // Strategy 3: Force click (bypasses actionability checks as last resort)
-      if (!clicked) {
-        try {
-          await element.click({ force: true, timeout: 5000 });
-          clicked = true;
-          console.log(`  ⚡ Force-clicked element: ${step.page}.${step.element}`);
-        } catch (forceErr) {
-          console.log(`  ⚠️ Force click failed: ${forceErr instanceof Error ? forceErr.message : String(forceErr)}`);
-        }
-      }
+    const resolveTimeout =
+      pageDef?.elementTimeout ?? (isOptional ? 15000 : 30000);
 
-      // Strategy 4: JavaScript DOM click with proper event dispatch
-      if (!clicked) {
-        try {
-          await element.evaluate((el: HTMLElement) => {
-            // Create and dispatch proper mouse events for better compatibility
-            const mouseDown = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window });
-            const mouseUp = new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window });
-            const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
-            el.dispatchEvent(mouseDown);
-            el.dispatchEvent(mouseUp);
-            el.dispatchEvent(clickEvent);
-          });
-          clicked = true;
-          console.log(`  💻 JS dispatchEvent click: ${step.page}.${step.element}`);
-        } catch (evalErr) {
-          const evalMsg = evalErr instanceof Error ? evalErr.message : String(evalErr);
-          if (evalMsg.includes('Target page') || evalMsg.includes('browser has been closed') || evalMsg.includes('context or browser')) {
-            clicked = true;
-          } else {
-            console.log(`  ⚠️ JS dispatchEvent failed: ${evalMsg}`);
-          }
-        }
-      }
+ 
 
-      // Strategy 5: Click inner clickable child (for TD/DIV wrappers)
-      if (!clicked) {
-        try {
-          const innerClicked = await element.evaluate((el: HTMLElement) => {
-            // Find clickable child element
-            const clickable = el.querySelector('button, a, span, input[type="button"], input[type="submit"]') as HTMLElement;
-            if (clickable) {
-              clickable.click();
-              return true;
-            }
-            // Fallback to direct click
-            el.click();
-            return true;
-          });
-          if (innerClicked) {
-            clicked = true;
-            console.log(`  🔘 Clicked inner element: ${step.page}.${step.element}`);
-          }
-        } catch (innerErr) {
-          const innerMsg = innerErr instanceof Error ? innerErr.message : String(innerErr);
-          if (innerMsg.includes('Target page') || innerMsg.includes('browser has been closed') || innerMsg.includes('context or browser')) {
-            clicked = true;
-          }
-        }
-      }
-      
-      console.log(`  ✅ Clicked element: ${step.page}.${step.element}`);
-    }
+    // Popup buttons may appear late after async processing
+    const isPopupButton =
+      step.element &&
+      String(step.element).toLowerCase().includes('popup');
 
-    return {
-      code: 0,
-      value: `Successfully clicked element: ${step.page}.${step.element}`
-    };
-  } catch (error) {
-    console.error(`  ❌ Failed to click element: ${step.page}.${step.element}`);
-    return {
-      code: 1,
-      value: `Failed to click element: ${error instanceof Error ? error.message : String(error)}`
-    };
-  }
+ 
 
-  
+    const popupRetryTimeout = isPopupButton
+      ? 120000
+      : resolveTimeout;
 
+ 
+
+    let element;
+
+ 
+
+    try {
+      element = await resolveElement(
+        page,
+        baseSelector,
+        step,
+        popupRetryTimeout
+      );
+    } catch (err) {
+      // Soft-fail popup buttons
+      if (isPopupButton && !isOptional) {
+        console.log(
+          `  ⚠️ Popup button not found (may not have appeared): ${step.page}.${step.element}`
+        );
+
+ 
+
+        return {
+          code: 2,
+          value: `Popup button not found (optional/conditional): ${step.element}`
+        };
+      }
+
+ 
+
+      throw err;
+    }
+
+ 
+
+    // AREA elements need JS click
+    const tagName = await element
+      .evaluate(el => el.tagName.toLowerCase())
+      .catch(() => 'unknown');
+
+ 
+
+    if (tagName === 'area') {
+      await element.evaluate((el: HTMLAreaElement) => {
+        el.click();
+      });
+
+ 
+
+      console.log(
+        `  ✅ Clicked area element (JavaScript): ${step.page}.${step.element}`
+      );
+
+ 
+
+      return {
+        code: 0,
+        value: `Successfully clicked element: ${step.page}.${step.element}`
+      };
+    }
+
+ 
+
+    let clicked = false;
+
+ 
+
+    // ============================================================
+    // NEW: Always scroll to bottom if element is near page bottom
+    // Request: Need to click button in bottom of page using KDF element
+    // ============================================================
+
+ 
+
+    try {
+      await element.evaluate((el: HTMLElement) => {
+        el.scrollIntoView({
+          behavior: 'instant',
+          block: 'center',
+          inline: 'nearest'
+        });
+      });
+
+ 
+
+      // Extra bottom-page handling
+      await page.evaluate(() => {
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: 'instant'
+        });
+      });
+
+ 
+
+      // Re-align target element after full-page scroll
+      await element.scrollIntoViewIfNeeded({
+        timeout: 5000
+      });
+
+ 
+
+      await page.waitForTimeout(500);
+
+ 
+
+      console.log(
+        `  📜 Scrolled to bottom and aligned element: ${step.page}.${step.element}`
+      );
+    } catch (scrollErr) {
+      console.log(
+        `  ⚠️ Bottom scroll handling failed: ${
+          scrollErr instanceof Error
+            ? scrollErr.message
+            : String(scrollErr)
+        }`
+      );
+    }
+
+ 
+
+    // Wait for visible state if possible
+    await element
+      .waitFor({
+        state: 'visible',
+        timeout: isOptional ? 3000 : 10000
+      })
+      .catch(() => {});
+
+ 
+
+    // ============================================================
+    // DIAGNOSTICS
+    // ============================================================
+
+ 
+
+    try {
+      const elementInfo = await element.evaluate((el: HTMLElement) => {
+        const rect = el.getBoundingClientRect();
+        const style = window.getComputedStyle(el);
+
+ 
+
+        return {
+          tagName: el.tagName,
+          title: el.getAttribute('title'),
+          className: el.className,
+          isVisible:
+            style.display !== 'none' &&
+            style.visibility !== 'hidden' &&
+            rect.width > 0 &&
+            rect.height > 0,
+          width: rect.width,
+          height: rect.height,
+          top: rect.top,
+          bottom: rect.bottom,
+          innerHTML: el.innerHTML.substring(0, 100)
+        };
+      });
+
+ 
+
+      console.log(
+        `  📋 Element info: <${elementInfo.tagName}> title="${elementInfo.title}" class="${elementInfo.className}" visible=${elementInfo.isVisible} size=${elementInfo.width}x${elementInfo.height}`
+      );
+
+ 
+
+      console.log(
+        `  📋 Position: top=${elementInfo.top}, bottom=${elementInfo.bottom}`
+      );
+
+ 
+
+      console.log(`  📋 Inner content: ${elementInfo.innerHTML}`);
+    } catch {
+      // ignore diagnostics
+    }
+
+ 
+
+    // ============================================================
+    // Detect iframe context
+    // ============================================================
+
+ 
+
+    let isInIframe = false;
+
+ 
+
+    try {
+      const ownerFrame = await element.evaluate(() => {
+        return window.self !== window.top;
+      });
+
+ 
+
+      isInIframe = ownerFrame;
+    } catch {
+      // assume main page
+    }
+
+ 
+
+    // ============================================================
+    // Strategy 1: Native Playwright click (preferred)
+    // ============================================================
+
+ 
+
+    if (!clicked) {
+      try {
+        await element.click({
+          timeout: 5000
+        });
+
+ 
+
+        clicked = true;
+
+ 
+
+        console.log(
+          `  🎯 Native click successful: ${step.page}.${step.element}`
+        );
+      } catch (nativeErr) {
+        console.log(
+          `  ⚠️ Native click failed: ${
+            nativeErr instanceof Error
+              ? nativeErr.message
+              : String(nativeErr)
+          }`
+        );
+      }
+    }
+
+ 
+
+    // ============================================================
+    // Strategy 2: Mouse simulation
+    // ============================================================
+
+ 
+
+    if (!clicked && !isInIframe) {
+      try {
+        await element.scrollIntoViewIfNeeded({
+          timeout: 5000
+        });
+
+ 
+
+        const box = await element.boundingBox();
+
+ 
+
+        if (box) {
+          const x = box.x + box.width / 2;
+          const y = box.y + box.height / 2;
+
+ 
+
+          await page.mouse.move(x, y);
+
+ 
+
+          await page.mouse.down();
+          await page.mouse.up();
+
+ 
+
+          clicked = true;
+
+ 
+
+          console.log(
+            `  🖱️ Mouse simulation click successful: ${step.page}.${step.element}`
+          );
+        }
+      } catch (mouseErr) {
+        console.log(
+          `  ⚠️ Mouse click failed: ${
+            mouseErr instanceof Error
+              ? mouseErr.message
+              : String(mouseErr)
+          }`
+        );
+      }
+    }
+
+ 
+
+    // ============================================================
+    // Strategy 3: Force click
+    // ============================================================
+
+ 
+
+    if (!clicked) {
+      try {
+        await element.scrollIntoViewIfNeeded().catch(() => {});
+
+ 
+
+        await element.click({
+          force: true,
+          timeout: 5000
+        });
+
+ 
+
+        clicked = true;
+
+ 
+
+        console.log(
+          `  ⚡ Force click successful: ${step.page}.${step.element}`
+        );
+      } catch (forceErr) {
+        console.log(
+          `  ⚠️ Force click failed: ${
+            forceErr instanceof Error
+              ? forceErr.message
+              : String(forceErr)
+          }`
+        );
+      }
+    }
+
+ 
+
+    // ============================================================
+    // Strategy 4: JS dispatch events
+    // ============================================================
+
+ 
+
+    if (!clicked) {
+      try {
+        await element.evaluate((el: HTMLElement) => {
+          const mouseDown = new MouseEvent('mousedown', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+          });
+
+ 
+
+          const mouseUp = new MouseEvent('mouseup', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+          });
+
+ 
+
+          const clickEvent = new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+          });
+
+ 
+
+          el.dispatchEvent(mouseDown);
+          el.dispatchEvent(mouseUp);
+          el.dispatchEvent(clickEvent);
+        });
+
+ 
+
+        clicked = true;
+
+ 
+
+        console.log(
+          `  💻 JS dispatch click successful: ${step.page}.${step.element}`
+        );
+      } catch (evalErr) {
+        console.log(
+          `  ⚠️ JS dispatch failed: ${
+            evalErr instanceof Error
+              ? evalErr.message
+              : String(evalErr)
+          }`
+        );
+      }
+    }
+
+ 
+
+    // ============================================================
+    // Strategy 5: Inner clickable child
+    // ============================================================
+
+ 
+
+    if (!clicked) {
+      try {
+        const innerClicked = await element.evaluate(
+          (el: HTMLElement) => {
+            const clickable = el.querySelector(
+              'button, a, span, input[type="button"], input[type="submit"]'
+            ) as HTMLElement | null;
+
+ 
+
+            if (clickable) {
+              clickable.click();
+              return true;
+            }
+
+ 
+
+            el.click();
+
+ 
+
+            return true;
+          }
+        );
+
+ 
+
+        if (innerClicked) {
+          clicked = true;
+
+ 
+
+          console.log(
+            `  🔘 Inner element click successful: ${step.page}.${step.element}`
+          );
+        }
+      } catch (innerErr) {
+        console.log(
+          `  ⚠️ Inner click failed: ${
+            innerErr instanceof Error
+              ? innerErr.message
+              : String(innerErr)
+          }`
+        );
+      }
+    }
+
+ 
+
+    // ============================================================
+    // Final validation
+    // ============================================================
+
+ 
+
+    if (!clicked) {
+      throw new Error(
+        `All click strategies failed for ${step.page}.${step.element}`
+      );
+    }
+
+ 
+
+    console.log(
+      `  ✅ Clicked element: ${step.page}.${step.element}`
+    );
+
+ 
+
+    return {
+      code: 0,
+      value: `Successfully clicked element: ${step.page}.${step.element}`
+    };
+  } catch (error) {
+    console.error(
+      `  ❌ Failed to click element: ${step.page}.${step.element}`
+    );
+
+ 
+
+    return {
+      code: 1,
+      value: `Failed to click element: ${
+        error instanceof Error
+          ? error.message
+          : String(error)
+      }`
+    };
+  }
 }
+
 
 /**
  * Fill input field with text
@@ -1118,53 +1463,97 @@ export async function sendKeys(page: Page, step: testStep): Promise<Outcome> {
       throw new Error(`No keys provided for sendKeys action`);
     }
 
+    // Normalize key values
+    const normalizedKey = String(keysToSend).trim();
+
+    // Special handling for keyboard keys
+    const specialKeys: Record<string, string> = {
+      TAB: 'Tab',
+      ENTER: 'Enter',
+      ESC: 'Escape',
+      ESCAPE: 'Escape',
+      SHIFTTAB: 'Shift+Tab',
+      SPACE: 'Space',
+      DOWN: 'ArrowDown',
+      UP: 'ArrowUp',
+      LEFT: 'ArrowLeft',
+      RIGHT: 'ArrowRight'
+    };
+
+    const keyToPress =
+      specialKeys[normalizedKey.toUpperCase().replace(/\s+/g, '')] ||
+      normalizedKey;
+
     if (step.element && step.element.trim() !== '') {
       try {
         const baseSelector = getLocatorString(step);
+
         await waitForRoller(page);
+
         const element = await resolveElement(page, baseSelector, step);
 
-        await element.waitFor({ state: 'visible', timeout: 5000 });
-        //await element.scrollIntoViewIfNeeded({ timeout: 15000 });
+        await element.waitFor({
+          state: 'visible',
+          timeout: 5000
+        });
+
         await element.focus();
 
         console.log(`  🔍 Focused on element: ${step.page}.${step.element}`);
+        console.log(`  ⌨️ Sending key: ${keyToPress}`);
+
         await page.waitForTimeout(100);
 
-        await element.press(String(keysToSend));
+        // Handle TAB and other keyboard actions
+        await element.press(keyToPress);
 
-        console.log(`  ✅ Sent keys "${keysToSend}" to element: ${step.page}.${step.element}`);
+        console.log(
+          `  ✅ Sent keys "${keyToPress}" to element: ${step.page}.${step.element}`
+        );
 
         return {
           code: 0,
-          value: `Successfully sent keys "${keysToSend}" to element: ${step.page}.${step.element}`
+          value: `Successfully sent keys "${keyToPress}" to element: ${step.page}.${step.element}`
         };
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        console.warn(`  ⚠️ Could not focus on element ${step.page}.${step.element}, sending keys to page instead`);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
 
-        await page.keyboard.press(String(keysToSend));
-        console.log(`  ✅ Sent keys "${keysToSend}" to page (fallback)`);
+        console.warn(
+          `  ⚠️ Could not focus on element ${step.page}.${step.element}, sending keys to page instead`
+        );
+
+        console.warn(`  ⚠️ Reason: ${errorMessage}`);
+
+        await page.keyboard.press(keyToPress);
+
+        console.log(`  ✅ Sent keys "${keyToPress}" to page (fallback)`);
 
         return {
           code: 0,
-          value: `Successfully sent keys "${keysToSend}" to page (element focus failed, used fallback)`
+          value: `Successfully sent keys "${keyToPress}" to page (fallback)`
         };
       }
     } else {
-      await page.keyboard.press(String(keysToSend));
-      console.log(`  ✅ Sent keys "${keysToSend}" to page`);
+      console.log(`  ⌨️ Sending key to page: ${keyToPress}`);
+
+      await page.keyboard.press(keyToPress);
+
+      console.log(`  ✅ Sent keys "${keyToPress}" to page`);
 
       return {
         code: 0,
-        value: `Successfully sent keys "${keysToSend}" to page`
+        value: `Successfully sent keys "${keyToPress}" to page`
       };
     }
   } catch (error) {
     console.error(`  ❌ Failed to send keys`);
+
     return {
       code: 1,
-      value: `Failed to send keys: ${error instanceof Error ? error.message : String(error)}`
+      value: `Failed to send keys: ${
+        error instanceof Error ? error.message : String(error)
+      }`
     };
   }
 }
@@ -3317,919 +3706,530 @@ export async function getMaxLength(page: Page, step: testStep): Promise<Outcome>
     return { code: 1, value: `Failed: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
-
-
-/**
- * Handle autocomplete input fields (searchable dropdowns)
- * Types text to trigger suggestions and selects the value using mouse click
- * Ensures the value is selected from the dropdown (not just typed)
- * Supports DDT values and variable substitution
- * Fails explicitly if dropdown selection does not occur
- *
- * @param page - Playwright page object
- * @param step - Test step with page/element, value, and isDDT flag
- * @returns Outcome {code: 0 on success, code: 1 on failure}
- */
-export async function setAutoCompleteField(
-  page: Page,
-  step: testStep
-): Promise<Outcome> {
-  try {
-    const baseSelector = getLocatorString(step);
-    await waitForRoller(page);
-
-    // ✅ Resolve value
-    let textToFill = '';
-    if (step.isDDT && step.datasetColumnNames) {
-      textToFill = step.datasetColumnNames;
-    } else if (step.value) {
-      textToFill = resolveTestVariables(step.value);
-    }
-
-    const finalText = String(textToFill).trim();
-    const element = await resolveElement(page, baseSelector, step);
-
-    // ✅ Step 1: Focus & type
-    await element.click();
-    await element.fill('');
-    await element.type(finalText, { delay: 120 });
-
-    // ✅ Step 2: Give dropdown time to populate
-    await page.waitForTimeout(700);  // critical for backend fetch
-
-    // ✅ Step 3: Use keyboard to select
-    await page.keyboard.press('ArrowDown');
-    await page.waitForTimeout(200);
-    await page.keyboard.press('Enter');
-
-    // ✅ Step 4: Validate selection worked
-    await page.waitForTimeout(500);
-    const actualValue = (await element.inputValue()).trim();
-
-    if (!actualValue) {
-      throw new Error(
-        `Autocomplete failed: value not selected after Enter`
-      );
-    }
-
-    return {
-      code: 0,
-      value: `Selected "${actualValue}" using keyboard autocomplete`
-    };
-
-  } catch (error) {
-    console.error(`❌ Autocomplete failed for ${step.page}.${step.element}`);
-
-    return {
-      code: 1,
-      value: `Autocomplete failed: ${
-        error instanceof Error ? error.message : String(error)
-      }`
-    };
-  }
-}
-
-/**
- * Click Lorenzo Tab element (reliable for TD-based tab controls)
- * Uses direct DOM click which is required for Lorenzo tab behavior
- *
- * @param page - Playwright page object
- * @param step - Test step with page/element details
- * @returns Outcome {code: 0 on success, code: 1 on failure}
- */
-
-export async function clickTab(
-  page: Page,
-  step: testStep
-): Promise<Outcome> {
-  try {
-    const baseSelector = getLocatorString(step);
-    await waitForRoller(page);
-
-    const element = await resolveElement(page, baseSelector, step, 30000);
-
-    // ✅ Step 1: Ensure visible
-    await element.waitFor({ state: 'visible', timeout: 10000 });
-
-    // ✅ Step 2: Scroll into view
-    await element.scrollIntoViewIfNeeded();
-
-    // ✅ Step 3: Direct DOM click (KEY for Lorenzo)
-    await element.evaluate((el: HTMLElement) => el.click());
-
-    // ✅ Step 4: Wait for tab transition
-    await page.waitForTimeout(800);
-
-    // ✅ Step 5: Optional validation (tab selected class)
-    try {
-      const classAttr = await element.getAttribute('class');
-      if (classAttr && !classAttr.includes('Selected')) {
-        console.warn(`⚠️ Tab click executed but selection state not confirmed`);
-      }
-    } catch {
-      // ignore validation errors
-    }
-
-    console.log(`✅ Lorenzo tab clicked: ${step.page}.${step.element}`);
-
-    return {
-      code: 0,
-      value: `Successfully clicked Lorenzo tab: ${step.page}.${step.element}`
-    };
-
-  } catch (error) {
-    console.error(`❌ Failed to click Lorenzo tab: ${step.page}.${step.element}`);
-
-    return {
-      code: 1,
-      value: `Failed to click Lorenzo tab: ${
-        error instanceof Error ? error.message : String(error)
-      }`
-    };
-  }
-}
-/** */
-export async function selectComboValue(
-  page: Page,
-  step: testStep
-): Promise<Outcome> {
-  try {
-    // ✅ Step 1: Resolve and normalize value (string + number safe)
-    const rawValue = resolveTestVariables(step.value);
-    const targetValue = String(rawValue ?? "").trim();
-
-    if (!targetValue) {
-      throw new Error("Target value is empty or undefined");
-    }
-
-    console.log(`🎯 Target value: ${targetValue}`);
-
-    const input = await resolveElement(page, getLocatorString(step), step);
-
-    await waitForRoller(page);
-
-    await input.waitFor({ state: "visible", timeout: 10000 });
-
-    // ✅ Step 2: Open dropdown via keyboard
-    await input.click();
-    await input.press("ArrowDown");
-
-    let found = false;
-    let previousValue = "";
-    const maxAttempts = 50; // covers long dropdowns
-
-    // ✅ Step 3: Iterate through dropdown values
-    for (let i = 0; i < maxAttempts; i++) {
-
-      // ✅ Read currently selected value in combo
-      let currentValue = "";
-
-      try {
-        currentValue = await input.inputValue();  // works for input-based combo
-      } catch {
-        // fallback if not input
-        currentValue = await input.innerText();
-      }
-
-      currentValue = String(currentValue ?? "").trim();
-
-      console.log(`➡️ Current: ${currentValue}`);
-
-      // ✅ Exact match (string or number)
-      if (currentValue.toLowerCase() === targetValue.toLowerCase()) {
-        console.log(`✅ Match found: ${currentValue}`);
-
-        await input.press("Enter");   // select
-        found = true;
-        break;
-      }
-
-      // ✅ Prevent infinite loop (end of list)
-      if (currentValue === previousValue) {
-        console.log("⚠️ Reached end of dropdown list");
-        break;
-      }
-
-      previousValue = currentValue;
-
-      // ✅ Move to next value
-      await input.press("ArrowDown");
-      await page.waitForTimeout(120);
-    }
-
-    if (!found) {
-      throw new Error(`Value "${targetValue}" not found in dropdown`);
-    }
-
-    return {
-      code: 0,
-      value: `✅ Selected combo value: ${targetValue}`
-    };
-
-  } catch (error) {
-    return {
-      code: 1,
-      value: `❌ Failed: ${
-        error instanceof Error ? error.message : String(error)
-      }`
-    };
-  }
-}
-
-/** */
 export async function selectTableRowByValue(page: Page, step: testStep): Promise<Outcome> {
-  try {
-    await waitForRoller(page);
- 
-    // Get the value to search for from elementText or value
-    let searchValue = '';
-    if (step.elementText !== null && step.elementText !== undefined && String(step.elementText).trim() !== '') {
-      searchValue = String(step.elementText).trim();
-    } else if (step.value) {
-      searchValue = resolveTestVariables(step.value).trim();
-    }
- 
-    if (!searchValue) {
-      throw new Error('No search value provided. Use elementText or value to specify the row identifier (e.g., patient ID)');
-    }
- 
-    console.log(`  🔍 Searching for table row containing value: "${searchValue}"`);
- 
-    // Collect all pages across all browser contexts
-    const allPages: Page[] = [page];
-    try {
-      const ctx = page.context();
-      const browser = ctx.browser();
-      const contexts = browser ? browser.contexts() : [ctx];
-      for (const c of contexts) {
-        for (const p of c.pages()) {
-          if (!p.isClosed() && p !== page) allPages.push(p);
-        }
-      }
-    } catch { /* ignore */ }
- 
-    for (const searchPage of allPages) {
-      const frames = searchPage.frames();
- 
-      // Pass 1: Find the text in any frame, get its page-relative Y coordinate
-      let textY: number | null = null;
- 
-      for (const frame of frames) {
-        try {
-          const textLocator = frame.locator(`text="${searchValue}"`);
-          const textCount = await textLocator.count().catch(() => 0);
-          if (textCount === 0) continue;
- 
-          const textBox = await textLocator.first().boundingBox({ timeout: 3000 }).catch(() => null);
-          if (!textBox) continue;
- 
-          textY = textBox.y + textBox.height / 2;
-          console.log(`  📍 Found "${searchValue}" at Y=${textY.toFixed(0)} in frame: ${frame.url().substring(0, 80)}`);
-          break;
-        } catch { /* continue */ }
-      }
- 
-      if (textY === null) continue;
- 
-      // Pass 2: Find the row selection checkbox at the same Y coordinate.
-      // Supports Kendo UI grids and Lorenzo legacy grids
-      const selectors = [
-        'input[aria-label="Select row"]',
-        'input.k-select-checkbox',
-        'input[type="checkbox"][data-role="checkbox"]',
-        'img[alt="Click to select row"]',
-        'img[title="Click to select row"]',
-        'td[title="Click to select row"]',
-      ];
- 
-      let matchedLocator: Locator | null = null;
-      let isCheckbox = false;
- 
-      for (const frame of frames) {
-        if (matchedLocator) break;
-        try {
-          for (const sel of selectors) {
-            if (matchedLocator) break;
-            const locator = frame.locator(sel);
-            const count = await locator.count().catch(() => 0);
-            if (count === 0) continue;
- 
-            for (let i = 0; i < count; i++) {
-              const box = await locator.nth(i).boundingBox().catch(() => null);
-              if (!box || box.width === 0 || box.height === 0) continue;
- 
-              const yDiff = Math.abs((box.y + box.height / 2) - textY);
-              if (yDiff > 15) continue;
- 
-              console.log(`  🎯 Found select target (${sel}) at Y=${(box.y + box.height / 2).toFixed(0)}, yDiff=${yDiff.toFixed(1)}`);
-              matchedLocator = locator.nth(i);
-              isCheckbox = sel.startsWith('input');
-              break;
-            }
-          }
-        } catch { /* continue */ }
-      }
- 
-      if (matchedLocator) {
-        if (isCheckbox) {
-          // Kendo UI checkbox: use .check() which is idempotent (only checks, never unchecks)
-          await matchedLocator.check({ timeout: 5000, force: true });
-        } else {
-          // Legacy Lorenzo grid: use click
-          await matchedLocator.click({ timeout: 5000, force: true });
-        }
- 
-        await page.waitForTimeout(500);
-        console.log(`  ✅ Selected table row containing: "${searchValue}"`);
-        return {
-          code: 0,
-          value: `Successfully selected table row containing: "${searchValue}"`
-        };
-      }
-    }
- 
-    console.error(`  ⛔ No table row found containing value: "${searchValue}"`);
-    throw new Error(`No table row found containing value: "${searchValue}"`);
-  } catch (error) {
-    console.error(`  ❌ Failed to select table row by value`);
-    return {
-      code: 1,
-      value: `Failed to select table row: ${error instanceof Error ? error.message : String(error)}`
-    };
-  }
+
+  try {
+
+    await waitForRoller(page);
+
+ 
+
+    // Get the value to search for from elementText or value
+
+    let searchValue = '';
+
+    if (step.elementText !== null && step.elementText !== undefined && String(step.elementText).trim() !== '') {
+
+      searchValue = String(step.elementText).trim();
+
+    } else if (step.value) {
+
+      searchValue = resolveTestVariables(step.value).trim();
+
+    }
+
+ 
+
+    if (!searchValue) {
+
+      throw new Error('No search value provided. Use elementText or value to specify the row identifier (e.g., patient ID)');
+
+    }
+
+ 
+
+    console.log(`  🔍 Searching for table row containing value: "${searchValue}"`);
+
+ 
+
+    // Collect all pages across all browser contexts
+
+    const allPages: Page[] = [page];
+
+    try {
+
+      const ctx = page.context();
+
+      const browser = ctx.browser();
+
+      const contexts = browser ? browser.contexts() : [ctx];
+
+      for (const c of contexts) {
+
+        for (const p of c.pages()) {
+
+          if (!p.isClosed() && p !== page) allPages.push(p);
+
+        }
+
+      }
+
+    } catch { /* ignore */ }
+
+ 
+
+    for (const searchPage of allPages) {
+
+      const frames = searchPage.frames();
+
+ 
+
+      // Pass 1: Find the text in any frame, get its page-relative Y coordinate
+
+      let textY: number | null = null;
+
+ 
+
+      for (const frame of frames) {
+
+        try {
+
+          const textLocator = frame.locator(`text="${searchValue}"`);
+
+          const textCount = await textLocator.count().catch(() => 0);
+
+          if (textCount === 0) continue;
+
+ 
+
+          const textBox = await textLocator.first().boundingBox({ timeout: 3000 }).catch(() => null);
+
+          if (!textBox) continue;
+
+ 
+
+          textY = textBox.y + textBox.height / 2;
+
+          console.log(`  📍 Found "${searchValue}" at Y=${textY.toFixed(0)} in frame: ${frame.url().substring(0, 80)}`);
+
+          break;
+
+        } catch { /* continue */ }
+
+      }
+
+ 
+
+      if (textY === null) continue;
+
+ 
+
+      // Pass 2: Find the row selection checkbox at the same Y coordinate.
+
+      // Supports Kendo UI grids and Lorenzo legacy grids
+
+      const selectors = [
+
+        'input[aria-label="Select row"]',
+
+        'input.k-select-checkbox',
+
+        'input[type="checkbox"][data-role="checkbox"]',
+
+        'img[alt="Click to select row"]',
+
+        'img[title="Click to select row"]',
+
+        'td[title="Click to select row"]',
+
+      ];
+
+ 
+
+      let matchedLocator: Locator | null = null;
+
+      let isCheckbox = false;
+
+ 
+
+      for (const frame of frames) {
+
+        if (matchedLocator) break;
+
+        try {
+
+          for (const sel of selectors) {
+
+            if (matchedLocator) break;
+
+            const locator = frame.locator(sel);
+
+            const count = await locator.count().catch(() => 0);
+
+            if (count === 0) continue;
+
+ 
+
+            for (let i = 0; i < count; i++) {
+
+              const box = await locator.nth(i).boundingBox().catch(() => null);
+
+              if (!box || box.width === 0 || box.height === 0) continue;
+
+ 
+
+              const yDiff = Math.abs((box.y + box.height / 2) - textY);
+
+              if (yDiff > 15) continue;
+
+ 
+
+              console.log(`  🎯 Found select target (${sel}) at Y=${(box.y + box.height / 2).toFixed(0)}, yDiff=${yDiff.toFixed(1)}`);
+
+              matchedLocator = locator.nth(i);
+
+              isCheckbox = sel.startsWith('input');
+
+              break;
+
+            }
+
+          }
+
+        } catch { /* continue */ }
+
+      }
+
+ 
+
+      if (matchedLocator) {
+
+        if (isCheckbox) {
+
+          // Kendo UI checkbox: use .check() which is idempotent (only checks, never unchecks)
+
+          await matchedLocator.check({ timeout: 5000, force: true });
+
+        } else {
+
+          // Legacy Lorenzo grid: use click
+
+          await matchedLocator.click({ timeout: 5000, force: true });
+
+        }
+
+ 
+
+        await page.waitForTimeout(500);
+
+        console.log(`  ✅ Selected table row containing: "${searchValue}"`);
+
+        return {
+
+          code: 0,
+
+          value: `Successfully selected table row containing: "${searchValue}"`
+
+        };
+
+      }
+
+    }
+
+ 
+
+    console.error(`  ⛔ No table row found containing value: "${searchValue}"`);
+
+    throw new Error(`No table row found containing value: "${searchValue}"`);
+
+  } catch (error) {
+
+    console.error(`  ❌ Failed to select table row by value`);
+
+    return {
+
+      code: 1,
+
+      value: `Failed to select table row: ${error instanceof Error ? error.message : String(error)}`
+
+    };
+
+  }
+
 }
 
-/**
- * Compare two variables in KDF
- *
- * step.value    → first variable ({{VAR1}})
- * step.property → second variable ({{VAR2}})
- * step.condition → equal / notEqual / contains / greaterThan / lessThan
- */
+export async function setAutoCompleteFill(
 
-export async function compareVariables(
-  page: Page,
-  step: testStep
+  page: Page,
+
+  step: testStep
+
 ): Promise<Outcome> {
-  try {
-    // ✅ Step 1: Resolve variables safely
-    const rawValue1 = resolveTestVariables(step.value);
-    const rawValue2 = resolveTestVariables(step.property);
 
-    const value1 = String(rawValue1 ?? "").trim();
-    const value2 = String(rawValue2 ?? "").trim();
+  try {
 
-    const condition = (step.condition || "equal").toLowerCase();
+    const baseSelector = getLocatorString(step);
 
-    console.log(`🔍 Comparing values`);
-    console.log(`Value1: "${value1}"`);
-    console.log(`Value2: "${value2}"`);
-    console.log(`Condition: ${condition}`);
+    await waitForRoller(page);
 
-    let result = false;
+ 
 
-    // ✅ Step 2: Apply condition
-    switch (condition) {
+    // ✅ Resolve value
 
-      case "equal":
-        result = value1.toLowerCase() === value2.toLowerCase();
-        break;
+    let textToFill = '';
 
-      case "notequal":
-        result = value1.toLowerCase() !== value2.toLowerCase();
-        break;
+    if (step.isDDT && step.datasetColumnNames) {
 
-      case "contains":
-        result = value1.toLowerCase().includes(value2.toLowerCase());
-        break;
+      textToFill = step.datasetColumnNames;
 
-      case "greaterthan":
-        result = Number(value1) > Number(value2);
-        break;
+    } else if (step.value) {
 
-      case "lessthan":
-        result = Number(value1) < Number(value2);
-        break;
+      textToFill = resolveTestVariables(step.value);
 
-      default:
-        throw new Error(`Unsupported condition: ${condition}`);
-    }
+    }
 
-    // ✅ Step 3: Validation
-    if (!result) {
-      throw new Error(
-        `Comparison failed → "${value1}" ${condition} "${value2}"`
-      );
-    }
+ 
 
-    return {
-      code: 0,
-      value: `✅ Comparison passed → "${value1}" ${condition} "${value2}"`
-    };
+    const finalText = String(textToFill).trim();
 
-  } catch (error) {
-    return {
-      code: 1,
-      value: `❌ Comparison failed: ${
-        error instanceof Error ? error.message : String(error)
-      }`
-    };
-  }
+    const element = await resolveElement(page, baseSelector, step);
+
+ 
+
+    // ✅ Step 1: Focus & type
+
+    await element.click();
+
+    await element.fill('');
+
+    await element.type(finalText, { delay: 120 });
+
+ 
+
+    // ✅ Step 2: Give dropdown time to populate
+
+    await page.waitForTimeout(700);  // critical for backend fetch
+
+ 
+
+    // ✅ Step 3: Use keyboard to select
+
+    await page.waitForTimeout(200);
+
+    await page.keyboard.press('Enter');
+
+ 
+
+    // ✅ Step 4: Validate selection worked
+
+    await page.waitForTimeout(500);
+
+    const actualValue = (await element.inputValue()).trim();
+
+ 
+
+    if (!actualValue) {
+
+      throw new Error(
+
+        `Autocomplete failed: value not selected after Enter`
+
+      );
+
+    }
+
+ 
+
+    return {
+
+      code: 0,
+
+      value: `Selected "${actualValue}" using keyboard autocomplete`
+
+    };
+
+ 
+
+  } catch (error) {
+
+    console.error(`❌ Autocomplete failed for ${step.page}.${step.element}`);
+
+ 
+
+    return {
+
+      code: 1,
+
+      value: `Autocomplete failed: ${
+
+        error instanceof Error ? error.message : String(error)
+
+      }`
+
+    };
+
+  }
+
 }
-export async function dragSplitterAuto(page: Page, step: testStep): Promise<Outcome> {
-  try {
-    const baseSelector = getLocatorString(step);
-    const element = await resolveElement(page, baseSelector, step);
 
-    const box = await element.boundingBox();
-    if (!box) throw new Error("Element not visible");
+export async function selectComboValue(
 
-    const startX = box.x + box.width / 2;
-    const startY = box.y + box.height / 2;
+  page: Page,
 
-    const viewportHeight = page.viewportSize()?.height || 800;
+  step: testStep
 
-    let endY: number;
-
-    // ✅ CONTROL FROM EXCEL
-    if (step.value?.toLowerCase() === "down") {
-      endY = viewportHeight - 5;   // go to bottom
-      console.log("🔽 Dragging DOWN");
-    } else if (step.value?.toLowerCase() === "up") {
-      endY = 0;                   // go to top
-      console.log("🔼 Dragging UP");
-    } else {
-      throw new Error("Value must be 'up' or 'down'");
-    }
-
-    await page.mouse.move(startX, startY);
-    await page.mouse.down();
-    await page.mouse.move(startX, endY, { steps: 25 });
-    await page.mouse.up();
-
-    return {
-      code: 0,
-      value: `Dragged splitter ${step.value}`
-    };
-
-  } catch (error) {
-    return {
-      code: 1,
-      value: `Drag failed: ${error instanceof Error ? error.message : String(error)}`
-    };
-  }
-}
-export async function selectTableRowByPasIdUsingStructure(
-  page: Page,
-  step: testStep
 ): Promise<Outcome> {
-  try {
-    await waitForRoller(page);
 
-    let rawValue = '';
+  try {
 
-    // ✅ Step 1: Extract input
-    if (
-      step.elementText !== null &&
-      step.elementText !== undefined &&
-      String(step.elementText).trim() !== ''
-    ) {
-      rawValue = String(step.elementText).trim();
-    } else if (step.value) {
-      rawValue = String(step.value).trim();
-    }
+    // ✅ Step 1: Resolve and normalize value (string + number safe)
 
-    if (!rawValue) throw new Error('No PAS value provided');
+    const rawValue = resolveTestVariables(step.value);
 
-    // ✅ Step 2: Resolve variables (_ + ${})
-    let searchValue = rawValue;
+    const targetValue = String(rawValue ?? "").trim();
 
-    if (rawValue.startsWith('_')) {
-      console.log(`🔁 Resolving variable: ${rawValue}`);
-      searchValue = resolveTestVariables(rawValue).trim();
-    }
+ 
 
-    searchValue = resolveTestVariables(searchValue).trim();
+    if (!targetValue) {
 
-    if (!searchValue) {
-      throw new Error(`Resolved value is empty for: ${rawValue}`);
-    }
+      throw new Error("Target value is empty or undefined");
 
-    console.log(`🔍 Searching PAS ID: "${searchValue}"`);
+    }
 
-    for (const frame of page.frames()) {
+ 
 
-      let textLocator = frame.locator(`text=${searchValue}`);
+    console.log(`🎯 Target value: ${targetValue}`);
 
-      // ✅ Handle virtual scroll
-      if ((await textLocator.count()) === 0) {
-        const grid = frame.locator('.k-grid-content');
+ 
 
-        if (await grid.count()) {
-          for (let i = 0; i < 20; i++) {
-            await grid.evaluate(el => el.scrollBy(0, 300));
-            await frame.waitForTimeout(250);
+    const input = await resolveElement(page, getLocatorString(step), step);
 
-            if (await textLocator.count()) break;
-          }
-        }
-      }
+ 
 
-      if ((await textLocator.count()) === 0) continue;
+    await waitForRoller(page);
 
-      const textEl = textLocator.first();
-      const textBox = await textEl.boundingBox();
-      if (!textBox) continue;
+ 
 
-      const textY = textBox.y + textBox.height / 2;
+    await input.waitFor({ state: "visible", timeout: 10000 });
 
-      console.log(`📍 PAS found at Y=${textY}`);
+ 
 
-      // ✅ -------------------------------
-      // ✅ 1. Try CHECKBOX (existing logic)
-      // ✅ -------------------------------
-      const checkboxes = frame.locator('input[type="checkbox"]');
-      const cbCount = await checkboxes.count();
+    // ✅ Step 2: Open dropdown via keyboard
 
-      let bestCheckbox: Locator | null = null;
-      let smallestDiff = Number.MAX_VALUE;
+    await input.click();
 
-      for (let i = 0; i < cbCount; i++) {
-        const cb = checkboxes.nth(i);
-        const box = await cb.boundingBox().catch(() => null);
-        if (!box) continue;
+    await input.press("ArrowDown");
 
-        const y = box.y + box.height / 2;
-        const diff = Math.abs(y - textY);
+ 
 
-        if (diff < smallestDiff) {
-          smallestDiff = diff;
-          bestCheckbox = cb;
-        }
-      }
+    let found = false;
 
-      // ✅ If checkbox aligned → use it
-      if (bestCheckbox && smallestDiff < 30) {
-        console.log(`✅ Using checkbox (diff=${smallestDiff})`);
-        await bestCheckbox.check({ force: true });
+    let previousValue = "";
 
-        return {
-          code: 0,
-          value: `Selected PAS row (checkbox): "${searchValue}"`
-        };
-      }
+    const maxAttempts = 50; // covers long dropdowns
 
-      // ✅ ------------------------------------
-      // ✅ 2. NEW: Try clickable ROW CELL
-      // ✅ ------------------------------------
-      const rowCells = frame.locator('td.DRO.handle, td.handle, td[onclick]');
-      const cellCount = await rowCells.count();
+ 
 
-      let bestCell: Locator | null = null;
-      smallestDiff = Number.MAX_VALUE;
+    // ✅ Step 3: Iterate through dropdown values
 
-      for (let i = 0; i < cellCount; i++) {
-        const cell = rowCells.nth(i);
-        const box = await cell.boundingBox().catch(() => null);
-        if (!box) continue;
+    for (let i = 0; i < maxAttempts; i++) {
 
-        const y = box.y + box.height / 2;
-        const diff = Math.abs(y - textY);
+ 
 
-        if (diff < smallestDiff) {
-          smallestDiff = diff;
-          bestCell = cell;
-        }
-      }
+      // ✅ Read currently selected value in combo
 
-      if (bestCell && smallestDiff < 40) {
-        console.log(`✅ Using clickable row cell (diff=${smallestDiff})`);
-        await bestCell.click({ force: true });
+      let currentValue = "";
 
-        return {
-          code: 0,
-          value: `Selected PAS row (click row): "${searchValue}"`
-        };
-      }
-    }
+ 
 
-    throw new Error(`PAS value not found: ${searchValue}`);
+      try {
 
-  } catch (error) {
-    console.error('❌ Selection failed');
+        currentValue = await input.inputValue();  // works for input-based combo
 
-    return {
-      code: 1,
-      value: `Failed: ${
-        error instanceof Error ? error.message : String(error)
-      }`,
-    };
-  }
+      } catch {
+
+        // fallback if not input
+
+        currentValue = await input.innerText();
+
+      }
+
+ 
+
+      currentValue = String(currentValue ?? "").trim();
+
+ 
+
+      console.log(`➡️ Current: ${currentValue}`);
+
+ 
+
+      // ✅ Exact match (string or number)
+
+      if (currentValue.toLowerCase() === targetValue.toLowerCase()) {
+
+        console.log(`✅ Match found: ${currentValue}`);
+
+ 
+
+        await input.press("Enter");   // select
+
+        found = true;
+
+        break;
+
+      }
+
+ 
+
+      // ✅ Prevent infinite loop (end of list)
+
+      if (currentValue === previousValue) {
+
+        console.log("⚠️ Reached end of dropdown list");
+
+        break;
+
+      }
+
+ 
+
+      previousValue = currentValue;
+
+ 
+
+      // ✅ Move to next value
+
+      await input.press("ArrowDown");
+
+      await page.waitForTimeout(120);
+
+    }
+
+ 
+
+    if (!found) {
+
+      throw new Error(`Value "${targetValue}" not found in dropdown`);
+
+    }
+
+ 
+
+    return {
+
+      code: 0,
+
+      value: `✅ Selected combo value: ${targetValue}`
+
+    };
+
+ 
+
+  } catch (error) {
+
+    return {
+
+      code: 1,
+
+      value: `❌ Failed: ${
+
+        error instanceof Error ? error.message : String(error)
+
+      }`
+
+    };
+
+  }
+
 }
-
-export async function ClickIfPresent(page: Page, step: testStep): Promise<void> {
-  try {
-    if (!step.value) {
-      throw new Error('No values provided for dialog handling.');
-    }
-
-    const values = step.value.split('|').map(v => v.trim());
-    const action = values[1]?.toLowerCase() || 'ok';
-
-    const actionTitleMap: Record<string, string[]> = {
-      ok: ['Ok', 'OK'],
-      cancel: ['Cancel'],
-      yes: ['Yes'],
-      no: ['No'],
-      save: ['Save'],
-      close: ['Close'],
-      dismiss: ['Cancel', 'Close'],
-      accept: ['OK', 'Accept']
-    };
-
-    const titles = actionTitleMap[action] || [action];
-
-    console.log(`🔍 Handling dialog action: ${action}`);
-
-    // ✅ Get dialog frames (critical)
-    const frames = page.frames();
-    const dialogFrames = frames.filter(f => {
-      const url = f.url();
-      return url.includes('AppDialog') || url.includes('AppWizardPage');
-    });
-
-    console.log(`📋 Found ${dialogFrames.length} dialog frames`);
-
-    // ============================================================
-    // ✅ STRATEGY 1 → CLICK CORRECT ELEMENT (IMG ✅)
-    // ============================================================
-    for (const title of titles) {
-      for (const frame of dialogFrames) {
-        try {
-          const yesButton = frame.locator(`//img[@title='${title}']`).first();
-
-          if (await yesButton.count() > 0 && await yesButton.isVisible()) {
-            await yesButton.click({ force: true });
-            console.log(`✅ Clicked "${title}" button (img) inside iframe`);
-            await page.waitForTimeout(500);
-            return;
-          }
-
-        } catch {
-          // go to next frame
-        }
-      }
-    }
-
-    // ============================================================
-    // ✅ STRATEGY 2 → JS CLICK fallback (handles tricky UI)
-    // ============================================================
-    for (const title of titles) {
-      for (const frame of dialogFrames) {
-        try {
-          const clicked = await frame.evaluate((buttonTitle: string) => {
-            const img = document.querySelector(`img[title="${buttonTitle}"]`) as HTMLElement | null;
-
-            if (img) {
-              img.click();
-              return true;
-            }
-
-            return false;
-          }, title);
-
-          if (clicked) {
-            console.log(`✅ Clicked "${title}" using JS evaluate`);
-            await page.waitForTimeout(500);
-            return;
-          }
-
-        } catch {
-          // continue
-        }
-      }
-    }
-
-    // ============================================================
-    // ✅ STRATEGY 3 → MAIN PAGE (in case no iframe)
-    // ============================================================
-    for (const title of titles) {
-      try {
-        const btn = page.locator(`//img[@title='${title}']`).first();
-
-        if (await btn.count() > 0 && await btn.isVisible()) {
-          await btn.click({ force: true });
-          console.log(`✅ Clicked "${title}" on main page`);
-          return;
-        }
-      } catch { }
-    }
-
-    // ============================================================
-    // ✅ FINAL FALLBACK → KEYBOARD
-    // ============================================================
-    console.log(`⚠️ No element found → using keyboard fallback`);
-
-    if (['ok', 'yes', 'accept'].includes(action)) {
-      await page.keyboard.press('Enter');
-      console.log(`✅ Pressed Enter`);
-      return;
-    }
-
-    if (['cancel', 'no', 'dismiss', 'close'].includes(action)) {
-      await page.keyboard.press('Escape');
-      console.log(`✅ Pressed Escape`);
-      return;
-    }
-
-    throw new Error(`Dialog button not found for action "${action}"`);
-
-  } catch (error) {
-    console.error('❌ Dialog handling failed:', error);
-    throw error;
-  }
-}
-
-
-type Step = {
-  value?: string;
-  Values?: string;
-};
-
-/**
- * Click bubble by PASID.
- *
- * Examples:
- *  value = PASID-053036
- *
- *  value = _BannerPASIDUpper
- *  runtimeStore["_BannerPASIDUpper"] = "PASID-053036"
- */
-
-export async function clickBubbleByPASID(page: Page, step: any) {
-
-    const rawValue = (step.value || step.Values || '').trim();
-
-    let searchValue = rawValue;
-
-    if (rawValue.startsWith('_')) {
-        console.log(`🔁 Resolving variable: ${rawValue}`);
-        searchValue = resolveTestVariables(rawValue).trim();
-    }
-
-    searchValue = resolveTestVariables(searchValue).trim();
-
-    if (!searchValue) {
-        throw new Error(`Resolved value is empty for: ${rawValue}`);
-    }
-
-    console.log(`🔍 Searching PASID: ${searchValue}`);
-
-    // Search all frames
-    for (const frame of page.frames()) {
-
-        try {
-
-            const pasidElement = frame
-                .locator('.tw-text-mutedblue-idnumber')
-                .filter({ hasText: searchValue })
-                .first();
-
-            const count = await pasidElement.count();
-
-            if (count > 0) {
-
-                console.log(`✅ PASID found in frame: ${frame.url()}`);
-
-                await pasidElement.scrollIntoViewIfNeeded();
-
-                try {
-                    await pasidElement.click();
-                } catch {
-                    await pasidElement.click({ force: true });
-                }
-
-                console.log(`✅ PASID selected: ${searchValue}`);
-                return;
-            }
-
-            // Fallback text search
-            const textLocator = frame.locator(`text=${searchValue}`).first();
-
-            if (await textLocator.count() > 0) {
-
-                console.log(`✅ PASID found via text in frame: ${frame.url()}`);
-
-                await textLocator.scrollIntoViewIfNeeded();
-                await textLocator.click({ force: true });
-
-                return;
-            }
-
-        } catch {
-            // Continue searching next frame
-        }
-    }
-
-    throw new Error(`❌ PASID not found anywhere: ${searchValue}`);
-}
-export async function selectTableRowByIntray(
-  page: Page,
-  step: testStep
-): Promise<Outcome> {
-  try {
-    await waitForRoller(page);
-
-    let rawValue = '';
-
-    if (
-      step.elementText !== null &&
-      step.elementText !== undefined &&
-      String(step.elementText).trim() !== ''
-    ) {
-      rawValue = String(step.elementText).trim();
-    } else if (step.value) {
-      rawValue = String(step.value).trim();
-    }
-
-    if (!rawValue) {
-      throw new Error('No PAS value provided');
-    }
-
-    let searchValue = rawValue;
-
-    if (rawValue.startsWith('_')) {
-      searchValue = resolveTestVariables(rawValue).trim();
-    }
-
-    searchValue = resolveTestVariables(searchValue).trim();
-
-    console.log(`🔍 Searching for PAS ID: ${searchValue}`);
-
-    for (const frame of page.frames()) {
-
-      const rows = frame.locator(
-        'tr.k-table-row.k-master-row'
-      );
-
-      const rowCount = await rows.count();
-
-      for (let i = 0; i < rowCount; i++) {
-
-        const row = rows.nth(i);
-
-        const cells = row.locator('td');
-        const cellCount = await cells.count();
-
-        if (cellCount < 2) {
-          continue;
-        }
-
-        const detailsCell = cells.nth(1);
-
-        // Expand row (3 dots area)
-        await detailsCell.click({ force: true }).catch(() => {});
-
-        await page.waitForTimeout(500);
-
-        const rowText = (await row.textContent()) || '';
-
-        if (!rowText.includes(searchValue)) {
-          continue;
-        }
-
-        console.log(`✅ Matching row found`);
-
-        const checkbox = row.locator(
-          'input.checkbox, input[type="checkbox"]'
-        );
-
-        if ((await checkbox.count()) === 0) {
-          throw new Error(
-            `Checkbox not found for PAS ID "${searchValue}"`
-          );
-        }
-
-        await checkbox.first().check({
-          force: true
-        });
-
-        return {
-          code: 0,
-          value: `Successfully selected row containing "${searchValue}"`
-        };
-      }
-    }
-
-    throw new Error(`PAS value not found: ${searchValue}`);
-
-  } catch (error) {
-    return {
-      code: 1,
-      value: `Failed: ${
-        error instanceof Error ? error.message : String(error)
-      }`
-    };
-  }
-}
-

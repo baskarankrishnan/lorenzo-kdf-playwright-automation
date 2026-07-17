@@ -1,21 +1,23 @@
 ﻿// pageInitiatefluidbalancechart
-export const dte_Startdate = "//img[@id='DP_ICC5' and @title='Enter date']";
-export const dte_Enddate = "//img[@id='DP_ICC10' and @alt='End date']";
+//export const dte_Startdate = "//img[@id='DP_ICC5' and @title='Enter date']";
+//export const dte_Enddate = "//img[@id='DP_ICC10' and @alt='End date']";
 export const btn_Finish = "//td[@title='Finish']";
 export const txt_Unclearfluids = "//input[@typecode='CC_ORAL' and @subtypecode='CC_Unclear fluids']";
+export const txt_Clearfluids ="//input[@type='text' and @typecode='CC_ORAL' and @subtypecode='CC_Clear fluids']"
 export const txt_NormalSaline = "//input[@typecode='CC_Intravenous' and @subtypecode='CC_Normal Saline']";
 export const txt_Spontaneous = "//input[@typecode='CC_URINE' and @subtypecode='CC_Spontaneous']";
+export const icn_Add = "//button[normalize-space()='+']";
 export const icn_Savechart = "//img[@title='Save chart']";
 export const icn_Modifyfluidbalancechart = "//img[@title='Modify fluid balance chart']";
 export const chk_intravenousselect = "(//input[@type='checkbox' and @title='Select row'])[2]";
 export const btn_CancelFB = "//td[@title='Remove route(s)']";
-export const txt_ModifyreasonFB = "//textarea[@dikey='itxtReasonForModification']";
+export const txt_Modifyreason = "//textarea[@title='Enter reason for modification']";
 export const icn_Copyfluidbalancechart = "//img[@title='Copy fluid balance chart']";
 export const btn_Addroutein = "(//button[@title='Add route(s)'])[1]";
 export const chk_SelectrowCopy = "//tr[@class='AlternateRow']//input[@type='checkbox' and @title='Select row']";
-export const cmb_Routein = "//img[@onclick="$_('C38','ImageClick')" and @title='Please select RouteIn']";
-export const chk_Subtype = "//td[@celltype='Text' and @scellindex='2']";
-export const txt_Unclearfluidscopy = "//input[@typecode='CC_ORAL' and @subtypecode='CC_Unclear fluids']";
-export const txt_Dextrosecopy = "//input[@type='text' and @typecode='CC_Intravenous' and @subtypecode="CC_5% Dextrose"]";
-export const txt_Spontaneous2 = "//input[@typecode='CC_URINE' and @subtypecode='CC_Spontaneous']";
+//export const cmb_Routein = "//img[@onclick="$_('C38','ImageClick')" and @title='Please select RouteIn']";
+//export const chk_Subtype = "//td[@celltype='Text' and @scellindex='2']";
+//export const txt_Unclearfluidscopy = "//input[@typecode='CC_ORAL' and @subtypecode='CC_Unclear fluids']";
+//export const txt_Dextrosecopy = "//input[@type='text' and @typecode='CC_Intravenous' and @subtypecode="CC_5% Dextrose"]";
+//export const txt_Spontaneous2 = "//input[@typecode='CC_URINE' and @subtypecode='CC_Spontaneous']";
 export const icn_StrikeoutFBchart = "//img[@title='Strikeout chart']";

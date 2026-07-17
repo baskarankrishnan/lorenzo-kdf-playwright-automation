@@ -6,4 +6,4 @@ export const btn_Find = "//td[@title='Find']";
 export const tbl_selectnote = "//td[@title='Click to select row']";
 export const btn_Next = "//td[@title='Next']";
 export const txt_note = "//canvas[@id='mainCanvas']";
-export const btn_FinishNow = "//td[@title='Finish now']";
+export const btn_FInishnow = "//td[@title='Finish now']";

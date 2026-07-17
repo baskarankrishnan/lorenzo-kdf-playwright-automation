@@ -5,3 +5,4 @@ export const btn_Next = "//span[normalize-space()='Next']";
 export const txt_Priority = "//input[@id='icombobox_Text_C17']";
 export const ico_FinishNow = "//img[@id='ic_I_C9']";
 export const lnkTaskPaneModifyrequest = "//span[normalize-space()='Modify request']";
+export const txt_Requesttype ="//tr[contains(@class,'iILA_Item_WT_H')]"; 

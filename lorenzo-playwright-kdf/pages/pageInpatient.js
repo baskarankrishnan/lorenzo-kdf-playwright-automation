@@ -10,5 +10,4 @@ export const tbl_IPHistoryCurrentview = "//td[@caption='Current View']";
 export const tbl_tbl_IPHistorySelectRow= "//td[img[@alt='Click to select row']]";
 export const tbl_tbl_IPHistoryVerifystatus = "//td[@ival='Booked']";
 export const tbl_IPHistoryCurrentview = "//td[@caption='Current View']";
-export const lnk_Floorplan = "//td[@caption = 'Floor plan']";
-export const lnk_BubbleUnoccupied = "//div[@class = 'no-patient']";
+

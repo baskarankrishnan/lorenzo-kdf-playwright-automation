@@ -3,6 +3,7 @@ import * as BrowserActions from "../core/actionkeywords/browserActions";
 import * as DataActions from "../core/actionkeywords/dataActions";
 import * as AssertActions from "../core/actionkeywords/assertActions";
 import * as LZOActions from "./lorenzoActions";
+import { clearScreenDown } from "readline";
 
 export function getActionKeywordFunction(actionKeyword: string): Function | undefined {
     switch (actionKeyword.toLowerCase()) {
@@ -46,14 +47,13 @@ export function getActionKeywordFunction(actionKeyword: string): Function | unde
             return LZOActions.splitString;
         case 'selectippegboardbyheader':
             return LZOActions.selectIPPegBoardByHeader;
-        case 'selectslotbycurrenttimeop':
-            return LZOActions.selectSlotByCurrentTimeOP;
+        case 'selectslotbycurrenttimedc':
+            return LZOActions.selectSlotByCurrentTimeDC;
         case 'selectslotbycurrenttimedc':
             return LZOActions.selectSlotByCurrentTimeDC;
         case 'selectbookedslotbypatientid':
-            return LZOActions.selectBookedSlotByPatientId;
-            
-
+            return LZOActions.selectBookedSlotByPatientId;             
+ 
         // ELEMENT ACTIONS
         case 'waitforelement':
             return ElementActions.waitForElement;
@@ -74,7 +74,7 @@ export function getActionKeywordFunction(actionKeyword: string): Function | unde
         case 'dblclickelement':
             return ElementActions.dblClickElement;
         case 'rclickelement':
-            return ElementActions.rClickElement;
+            return ElementActions.rClickElement;clearScreenDown
         case 'verifyrecordintable':
             return LZOActions.verifyRecordInTable;
         case 'clickandhandlealert':
@@ -85,28 +85,17 @@ export function getActionKeywordFunction(actionKeyword: string): Function | unde
             return ElementActions.sleep;
         case 'jsclickbytext':
             return ElementActions.jsclickByText;
-        case 'setautocompletefield':
-            return ElementActions.setAutoCompleteField;    
-        case 'clicktab':
-            return ElementActions.clickTab;
-        case 'selectcombovalue':
-            return ElementActions.selectComboValue;
         case 'selecttablerowbyvalue':
-            return ElementActions.selectTableRowByValue;    
-        case 'comparevariables':
-            return ElementActions.compareVariables;
-        case 'dragsplitterauto':
-            return ElementActions.dragSplitterAuto;
-        case 'selecttablerowbypasidusingstructure':
-            return ElementActions.selectTableRowByPasIdUsingStructure;
-        case 'clickifpresent':
-            return ElementActions.ClickIfPresent;  
-        case 'clickbubblebypasid':
-            return ElementActions.clickBubbleByPASID;
-        case 'selecttablerowbyintray':
-            return ElementActions.selectTableRowByIntray;
+            return ElementActions.selectTableRowByValue;
+        case 'setautocompletefill':
+            return ElementActions.setAutoCompleteFill; 
+         case 'selectcombovalue':
+           return ElementActions.selectComboValue;  
+         
+          
 
-        // ASSERTION ACTIONS
+        // ASSERTION ACTIONScls
+
         case 'verifyproperty':
             return AssertActions.verifyProperty;
         case 'verifystyle':
@@ -155,8 +144,6 @@ export function getActionKeywordFunction(actionKeyword: string): Function | unde
             return BrowserActions.refreshCurrentPage;
         case 'maximizebrowser':
             return BrowserActions.maximizeBrowser;
-        case 'getedgebrowser':
-            return BrowserActions.getEdgeBrowser;
 
 
         default:

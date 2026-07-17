@@ -1,2 +1,2 @@
 ﻿// PageQuestionLORENZO
-export const btn_Yes = "//img[@title='Click to confirm the cancellation of the care activity']";
+export const btn_Yes = "//img[@id='ic_I_C0' and @title='Yes']";
