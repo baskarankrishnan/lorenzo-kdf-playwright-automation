@@ -51,4 +51,6 @@ export const txt_Forename = "//input[@dikey='itxtForename']";
 export const txt_City = "//input[@dikey='C53_tA4']";
 export const cmb_Country = "//input[@title='Enter Country']";
 export const btn_Finishnow = "//table//td[@title='Finish now']";
+export const cmb_PrimaryContact = "//img[@title='Select Primary Contact type']";
+export const lnk_Registrationtemporary = "//span[text()='Registration - temporary']";
 export const btn_Cancel = "//form[@name='iShowMessage']//td[@title='Cancel']";

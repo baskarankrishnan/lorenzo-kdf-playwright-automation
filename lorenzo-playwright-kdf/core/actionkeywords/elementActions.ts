@@ -1,4 +1,4 @@
-import { Page, Locator } from "@playwright/test";
+﻿import { Page, Locator } from "@playwright/test";
 import { getLocatorString } from "../utilities/locatorUtils";
 import { testStep, executionContext, Outcome } from "../utilities/interfaceUtils";
 import { resolveTestVariables } from "./dataActions";
@@ -3840,6 +3840,7 @@ export async function clickTab(
     };
   }
 }
+
 export async function selectTableRowByValue(page: Page, step: testStep): Promise<Outcome> {
 
   try {
@@ -3877,7 +3878,6 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
       console.warn(`  ⚠️ Will still attempt to find a row matching the literal text "${searchValue}".`);
     }
  
-
     console.log(`  🔍 Searching for table row containing value: "${searchValue}"`);
 
  
@@ -3911,70 +3911,100 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
     for (const searchPage of allPages) {
 
       const frames = searchPage.frames();
-
+ 
       // ── APPROACH 1: Find text in a frame, then select the row within THAT SAME frame ──
       for (const frame of frames) {
         try {
           const textLocator = frame.locator(`text="${searchValue}"`);
           const textCount = await textLocator.count().catch(() => 0);
           if (textCount === 0) continue;
-
+ 
           console.log(`  📍 Found "${searchValue}" in frame: ${frame.url().substring(0, 80)}`);
-
+ 
           // Get the parent <tr> of the found text (closest ancestor)
           const parentRow = textLocator.first().locator('xpath=ancestor::tr[1]');
           const rowExists = await parentRow.count().catch(() => 0);
           if (rowExists === 0) continue;
-
+ 
           const rowId = await parentRow.first().getAttribute('id').catch(() => 'no-id');
-
+ 
           // Strategy A1: Checkbox grids (Kendo / standard inputs) — check FIRST before Lorenzo
           const checkboxSelectors = [
             "input[aria-label='Select row']",
             "input.k-select-checkbox",
             "input[type='checkbox']",
           ];
-
+ 
           let checkboxFound = false;
-
+ 
+          // ── Deselect OTHER already-selected rows before selecting the target ──
+          // The application may auto-select the first row on load, causing two rows
+          // to be selected when the method selects the target row.
+          // SAFETY: Only deselects rows OTHER than the target row. If the target is
+          // already selected, no deselection occurs (preserves multi-select scripts).
+          try {
+            // Check if the target row's checkbox is already selected
+            let targetAlreadySelected = false;
+            for (const sel of checkboxSelectors) {
+              const targetCb = parentRow.locator(sel).first();
+              if (await targetCb.count().catch(() => 0) > 0) {
+                targetAlreadySelected = await targetCb.isChecked().catch(() => false);
+                break;
+              }
+            }
+ 
+            // Only deselect other rows if the TARGET is NOT already selected
+            // (avoids breaking scripts that intentionally multi-select)
+            if (!targetAlreadySelected) {
+              const parentTable = parentRow.locator('xpath=ancestor::table[1]');
+              if (await parentTable.count().catch(() => 0) > 0) {
+                for (const sel of checkboxSelectors) {
+                  const allCheckboxes = parentTable.locator(sel);
+                  const total = await allCheckboxes.count().catch(() => 0);
+                  for (let ci = 0; ci < total; ci++) {
+                    const isChecked = await allCheckboxes.nth(ci).isChecked().catch(() => false);
+                    if (!isChecked) continue;
+                    // Skip if this checkbox belongs to the target row
+                    const cbRow = allCheckboxes.nth(ci).locator('xpath=ancestor::tr[1]');
+                    const cbRowId = await cbRow.getAttribute('id').catch(() => '');
+                    if (cbRowId && cbRowId === rowId) continue;
+                    console.log(`  🔄 Deselecting pre-selected row (${sel} index ${ci})`);
+                    await allCheckboxes.nth(ci).uncheck({ timeout: 3000 }).catch(() => {});
+                    await page.waitForTimeout(200);
+                  }
+                }
+              }
+            }
+ 
+            // For Lorenzo grids (igRow): deselect OTHER rows with selected="true"
+            if (!targetAlreadySelected && rowId && rowId.startsWith('igRow')) {
+              const igTable = parentRow.locator('xpath=ancestor::table[1]');
+              if (await igTable.count().catch(() => 0) > 0) {
+                const selectedRows = igTable.locator('tr[selected="true"]');
+                const selCount = await selectedRows.count().catch(() => 0);
+                for (let si = 0; si < selCount; si++) {
+                  const selRowId = await selectedRows.nth(si).getAttribute('id').catch(() => '');
+                  // Skip the target row itself
+                  if (selRowId === rowId) continue;
+                  const box = await selectedRows.nth(si).boundingBox().catch(() => null);
+                  if (box) {
+                    console.log(`  🔄 Deselecting pre-selected Lorenzo row (${selRowId})`);
+                    await page.mouse.click(box.x + 15, box.y + box.height / 2);
+                    await page.waitForTimeout(300);
+                  }
+                }
+              }
+            }
+          } catch (deselectErr) {
+            console.log(`  ⚠️ Could not deselect pre-selected rows: ${deselectErr}`);
+          }
+ 
           // First check if checkbox is directly in the row
           for (const sel of checkboxSelectors) {
             const target = parentRow.locator(sel).first();
             const targetCount = await target.count().catch(() => 0);
             if (targetCount === 0) continue;
-
-            // If target is already checked, return immediately (no toggle)
-            const alreadyChecked = await target.isChecked().catch(() => false);
-            if (alreadyChecked) {
-              console.log(`  ✅ Row already selected via ${sel} (checkbox) — no action needed`);
-              return {
-                code: 0,
-                value: `Successfully selected table row containing: "${searchValue}" (${sel}, already selected)`
-              };
-            }
-
-            // Clear any pre-selected rows via Kendo API (silent, no per-row events)
-            // This handles the case where the app auto-selects the first row on load
-            try {
-              await frame.evaluate(() => {
-                const grids = document.querySelectorAll('[data-role="grid"], .k-grid');
-                grids.forEach(el => {
-                  const widget = (el as any).kendoGrid || ((window as any).kendo && (window as any).kendo.widgetInstance(el));
-                  if (widget && widget.clearSelection) {
-                    widget.clearSelection();
-                  }
-                });
-                // Also uncheck all checkboxes directly (in case Kendo API isn't available)
-                document.querySelectorAll('input.k-select-checkbox:checked, input[aria-label="Select row"]:checked').forEach(cb => {
-                  (cb as HTMLInputElement).checked = false;
-                });
-              });
-              await page.waitForTimeout(300);
-              console.log(`  🔄 Cleared pre-selected rows via Kendo API`);
-            } catch (clearErr) {
-              console.log(`  ⚠️ Could not clear pre-selections via Kendo API: ${clearErr}`);
-            }
-
+ 
             await target.check({ timeout: 5000 });
             await page.waitForTimeout(500);
             checkboxFound = true;
@@ -3984,7 +4014,7 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
               value: `Successfully selected table row containing: "${searchValue}" (${sel})`
             };
           }
-
+ 
           // Kendo locked columns: checkbox is in a separate locked table linked by data-uid
           if (!checkboxFound) {
             const dataUid = await parentRow.first().getAttribute('data-uid').catch(() => null);
@@ -3994,7 +4024,7 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
                 const lockedCheckbox = frame.locator(`tr[data-uid="${dataUid}"] ${sel}`).first();
                 const lockedCount = await lockedCheckbox.count().catch(() => 0);
                 if (lockedCount === 0) continue;
-
+ 
                 await lockedCheckbox.check({ timeout: 5000 });
                 await page.waitForTimeout(500);
                 checkboxFound = true;
@@ -4006,7 +4036,7 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
               }
             }
           }
-
+ 
           // Strategy A2: Lorenzo plain grid (tr id starts with "igRow") — use page.mouse.click()
           // Only used when NO checkbox is found in the row (plain grids without checkboxes)
           if (!checkboxFound && rowId && rowId.startsWith('igRow')) {
@@ -4025,7 +4055,7 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
               };
             }
           }
-
+ 
           // Strategy A3: Look for td/img with select title (may exist when row is already selected)
           const selectTitleLocator = parentRow.locator("[title*='select row' i]").first();
           const selectTitleCount = await selectTitleLocator.count().catch(() => 0);
@@ -4043,7 +4073,7 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
               };
             }
           }
-
+ 
           // Strategy B: No select mechanism in row — click the row itself
           await parentRow.first().click({ timeout: 5000 });
           await page.waitForTimeout(500);
@@ -4054,7 +4084,7 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
           };
         } catch { /* continue to next frame */ }
       }
-
+ 
       // ── APPROACH 2 (Legacy Y-coordinate fallback): ──
       // Find text Y coordinate, then find checkbox at same Y
       let textY: number | null = null;
@@ -4181,33 +4211,25 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
             el.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
           });
         }
-
  
-
         await page.waitForTimeout(500);
-
         console.log(`  ✅ Selected table row containing: "${searchValue}"`);
-
         return {
-
           code: 0,
-
           value: `Successfully selected table row containing: "${searchValue}"`
-
         };
-
       }
-
+ 
       // Fallback: No checkbox/select-button found — click the row or cell directly.
       // This handles grids like Patient SFS search results where row-click selects the record.
       console.log(`  ⚠️ No checkbox found. Attempting direct row/cell click for: "${searchValue}"`);
-
+ 
       for (const frame of searchPage.frames()) {
         try {
           const textLocator = frame.locator(`text="${searchValue}"`);
           const textCount = await textLocator.count().catch(() => 0);
           if (textCount === 0) continue;
-
+ 
           // Try clicking the parent <tr> of the matching text
           const parentRow = textLocator.first().locator('xpath=ancestor::tr');
           const rowCount = await parentRow.count().catch(() => 0);
@@ -4220,7 +4242,7 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
               value: `Successfully selected table row containing: "${searchValue}" (row click)`
             };
           }
-
+ 
           // Last resort: click the text element itself
           await textLocator.first().click({ timeout: 5000 });
           await page.waitForTimeout(500);
@@ -4232,14 +4254,14 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
         } catch { /* continue to next frame */ }
       }
     }
-
+ 
     // Fail explicitly — do NOT silently select the first row as fallback
     if (isUnresolvedVar) {
       console.error(`  ⛔ Variable "${searchValue}" was not resolved and no matching row was found.`);
       console.error(`  ⛔ Ensure the variable is set in a prior step (e.g., via captureText or storeValue).`);
       throw new Error(`Unresolved variable "${searchValue}" — cannot select row. Check that the variable is set in a prior KDF step.`);
     }
-
+ 
     console.error(`  ⛔ No table row found containing value: "${searchValue}"`);
     throw new Error(`No table row found containing value: "${searchValue}"`);  
   } catch (error) {
@@ -4250,6 +4272,277 @@ export async function selectTableRowByValue(page: Page, step: testStep): Promise
     };
   }
 }
+export async function selectTableRowByPasIdUsingStructure(
+  page: Page,
+
+  step: testStep
+
+): Promise<Outcome> {
+
+  try {
+
+    const baseSelector = getLocatorString(step);
+
+    await waitForRoller(page);
+ 
+    let rawValue = '';
+ 
+    // ✅ Step 1: Extract input
+    if (
+      step.elementText !== null &&
+      step.elementText !== undefined &&
+      String(step.elementText).trim() !== ''
+    ) {
+      rawValue = String(step.elementText).trim();
+    } else if (step.value) {
+      rawValue = String(step.value).trim();
+    }
+ 
+    if (!rawValue) throw new Error('No PAS value provided');
+ 
+    // ✅ Step 2: Resolve variables (_ + ${})
+    let searchValue = rawValue;
+ 
+    if (rawValue.startsWith('_')) {
+      console.log(`🔁 Resolving variable: ${rawValue}`);
+      searchValue = resolveTestVariables(rawValue).trim();
+    }
+ 
+    searchValue = resolveTestVariables(searchValue).trim();
+ 
+    if (!searchValue) {
+      throw new Error(`Resolved value is empty for: ${rawValue}`);
+    }
+ 
+    console.log(`🔍 Searching PAS ID: "${searchValue}"`);
+ 
+    for (const frame of page.frames()) {
+ 
+      let textLocator = frame.locator(`text=${searchValue}`);
+ 
+      // ✅ Handle virtual scroll
+      if ((await textLocator.count()) === 0) {
+        const grid = frame.locator('.k-grid-content');
+ 
+        if (await grid.count()) {
+          for (let i = 0; i < 20; i++) {
+            await grid.evaluate(el => el.scrollBy(0, 300));
+            await frame.waitForTimeout(250);
+ 
+            if (await textLocator.count()) break;
+          }
+        }
+      }
+ 
+      if ((await textLocator.count()) === 0) continue;
+ 
+      const textEl = textLocator.first();
+      const textBox = await textEl.boundingBox();
+      if (!textBox) continue;
+ 
+      const textY = textBox.y + textBox.height / 2;
+ 
+      console.log(`📍 PAS found at Y=${textY}`);
+ 
+      // ✅ -------------------------------
+      // ✅ 1. Try CHECKBOX (existing logic)
+      // ✅ -------------------------------
+      const checkboxes = frame.locator('input[type="checkbox"]');
+      const cbCount = await checkboxes.count();
+ 
+      let bestCheckbox: Locator | null = null;
+      let smallestDiff = Number.MAX_VALUE;
+ 
+      for (let i = 0; i < cbCount; i++) {
+        const cb = checkboxes.nth(i);
+        const box = await cb.boundingBox().catch(() => null);
+        if (!box) continue;
+ 
+        const y = box.y + box.height / 2;
+        const diff = Math.abs(y - textY);
+ 
+        if (diff < smallestDiff) {
+          smallestDiff = diff;
+          bestCheckbox = cb;
+        }
+      }
+ 
+      // ✅ If checkbox aligned → use it
+      if (bestCheckbox && smallestDiff < 30) {
+        console.log(`✅ Using checkbox (diff=${smallestDiff})`);
+        await bestCheckbox.check({ force: true });
+ 
+        return {
+          code: 0,
+          value: `Selected PAS row (checkbox): "${searchValue}"`
+        };
+      }
+ 
+      // ✅ ------------------------------------
+      // ✅ 2. NEW: Try clickable ROW CELL
+      // ✅ ------------------------------------
+      const rowCells = frame.locator('td.DRO.handle, td.handle, td[onclick]');
+      const cellCount = await rowCells.count();
+ 
+      let bestCell: Locator | null = null;
+      smallestDiff = Number.MAX_VALUE;
+ 
+      for (let i = 0; i < cellCount; i++) {
+        const cell = rowCells.nth(i);
+        const box = await cell.boundingBox().catch(() => null);
+        if (!box) continue;
+ 
+        const y = box.y + box.height / 2;
+        const diff = Math.abs(y - textY);
+ 
+        if (diff < smallestDiff) {
+          smallestDiff = diff;
+          bestCell = cell;
+        }
+      }
+ 
+      if (bestCell && smallestDiff < 40) {
+        console.log(`✅ Using clickable row cell (diff=${smallestDiff})`);
+        await bestCell.click({ force: true });
+ 
+        return {
+          code: 0,
+          value: `Selected PAS row (click row): "${searchValue}"`
+        };
+      }
+    }
+ 
+    throw new Error(`PAS value not found: ${searchValue}`);
+ 
+  } catch (error) {
+    console.error('❌ Selection failed');
+ 
+    return {
+
+      code: 1,
+
+      value: `Autocomplete failed: ${
+
+        error instanceof Error ? error.message : String(error)
+
+      }`
+
+    };
+
+  }
+}
+export async function selectTableRowByIntray(
+  page: Page,
+  step: testStep
+): Promise<Outcome> {
+  try {
+    await waitForRoller(page);
+ 
+    let rawValue = '';
+ 
+    if (
+      step.elementText !== null &&
+      step.elementText !== undefined &&
+      String(step.elementText).trim() !== ''
+    ) {
+      rawValue = String(step.elementText).trim();
+    } else if (step.value) {
+      rawValue = String(step.value).trim();
+    }
+ 
+    if (!rawValue) {
+      throw new Error('No PAS value provided');
+    }
+ 
+    let searchValue = rawValue;
+ 
+    if (rawValue.startsWith('_')) {
+      searchValue = resolveTestVariables(rawValue).trim();
+    }
+ 
+    searchValue = resolveTestVariables(searchValue).trim();
+ 
+    console.log(`🔍 Searching for PAS ID: ${searchValue}`);
+ 
+    for (const frame of page.frames()) {
+ 
+      const rows = frame.locator(
+        'tr.k-table-row.k-master-row'
+      );
+ 
+      const rowCount = await rows.count();
+ 
+      for (let i = 0; i < rowCount; i++) {
+ 
+        const row = rows.nth(i);
+ 
+        const cells = row.locator('td');
+        const cellCount = await cells.count();
+ 
+        if (cellCount < 2) {
+          continue;
+        }
+ 
+        const detailsCell = cells.nth(1);
+ 
+        // Expand row (3 dots area)
+        await detailsCell.click({ force: true }).catch(() => {});
+ 
+        await page.waitForTimeout(500);
+ 
+        const rowText = (await row.textContent()) || '';
+ 
+        if (!rowText.includes(searchValue)) {
+          continue;
+        }
+ 
+        console.log(`✅ Matching row found`);
+ 
+        const checkbox = row.locator(
+          'input.checkbox, input[type="checkbox"]'
+        );
+ 
+        if ((await checkbox.count()) === 0) {
+          throw new Error(
+            `Checkbox not found for PAS ID "${searchValue}"`
+          );
+        }
+ 
+        await checkbox.first().check({
+          force: true
+        });
+ 
+        return {
+          code: 0,
+          value: `Successfully selected row containing "${searchValue}"`
+        };
+      }
+    }
+ 
+    throw new Error(`PAS value not found: ${searchValue}`);
+ 
+  } catch (error) {
+
+    return {
+
+      code: 1,
+
+      value: `❌ Failed: ${
+
+        error instanceof Error ? error.message : String(error)
+
+      }`
+
+    };
+
+  }
+}
+ 
+ 
+ 
+ 
+ 
+ 
 
 
 // --- Restored (carried earlier) ---

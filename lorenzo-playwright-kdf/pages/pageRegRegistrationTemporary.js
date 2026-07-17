@@ -1,0 +1,1 @@
+export const lnk_Registrationtemporary = "//li[@title='Registration - temporary']";

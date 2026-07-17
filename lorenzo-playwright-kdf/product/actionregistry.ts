@@ -119,6 +119,10 @@ export function getActionKeywordFunction(actionKeyword: string): Function | unde
             return ElementActions.clickTab;
         case 'setautocompletefield':
             return ElementActions.setAutoCompleteField;
+        case 'selecttablerowbyintray':
+            return ElementActions.selectTableRowByIntray;
+        case 'selecttablerowbypasidusingstructure':
+            return ElementActions.selectTableRowByPasIdUsingStructure;
 
         // ASSERTION ACTIONS
         case 'verifyproperty':

@@ -5460,23 +5460,13 @@ console.log(`Stored split result in global variable: ${finalVarName} = "${result
 
 }
 
-/**
- * Dynamically selects the appointment slot from the Clinic Overview grid based on current time.
- * Rounds current time DOWN to the nearest 30-minute boundary and computes the full slot range.
- * E.g., 13:07 → selects row with slot "13:00 to 13:30"
- *       11:53 → selects row with slot "11:30 to 12:00"
- *        1:07 → selects row with slot "1:00 to 1:30"
- *
- * Works directly with the Lorenzo appointment grid DOM structure using XPath.
- * Does NOT require Kendo grid selectors.
- *
- * Usage in KDF:
- *   Page: pageClinicOverview  (not used for locator - uses page directly)
- *   Element: tbl_AppointmentGrid (not used - searches entire page)
- *   ActionKeyword: selectSlotByCurrentTime
- *   TableColumnNames: (not used)
- *   Values: (optional) override time in HH:mm format for testing, otherwise uses system clock
- */
+
+
+
+
+
+
+// --- Restored (carried earlier) ---
 export async function selectSlotByCurrentTime(page: Page, step: testStep): Promise<{ code: number; value: string }> {
   try {
     // Determine current time (or use override from Values for testing)
@@ -5700,17 +5690,7 @@ export async function selectSlotByCurrentTime(page: Page, step: testStep): Promi
 }
 
 
-/**
- * Clicks an element that opens a new browser window/popup (e.g., DI Detach Window),
- * waits for the popup to appear, stores it as `_PopupPage` in execution context,
- * and switches focus to the popup so subsequent steps run against it.
- *
- * Usage in KDF:
- *   Page: pageHome (or wherever the trigger element lives)
- *   Element: btn_DetachWindow (the button that opens the popup)
- *   ActionKeyword: clickAndSwitchToPopup
- *   Values: (optional) timeout in ms (default 30000)
- */
+// --- Restored (carried earlier) ---
 export async function clickAndSwitchToPopup(page: Page, step: testStep): Promise<Outcome> {
   try {
     const timeout = step.value ? parseInt(step.value, 10) : 30000;

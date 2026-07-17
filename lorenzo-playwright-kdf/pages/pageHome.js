@@ -25,6 +25,10 @@ export const txt_Clinicname = "//input[@dikey='itxtClinicname']";
 export const SelectSession = "//img[@alt='Click to select row' and @title='Click to select row']";
 export const btn_OK = "//button[@title='OK'][contains(@class, 'Command_Normal')]";
 export const btn_CliOK = "//td[contains(@title,'OK')]";
+export const btn_No = "//td//img[@title='No']";
+export const tab_Clinic = "(//span[@class='T_PL'][normalize-space()='Clinics'])[1]";
+export const txt_Clinicname = "//input[@dikey='itxtClinicname']";
+export const SelectSession = "//img[@alt='Click to select row' and @title='Click to select row']";
 export const btn_OK = "//td[contains(@title,'OK')]";
 export const lnk_Book = "//span[@class='T_PL' and normalize-space(text())='Book']";
 export const lnk_ClinicsSubLink = "//span[normalize-space()='Edit Booking']";
@@ -217,6 +221,7 @@ export const tab_Alerts = "//nobr[text()='Alerts']/parent::td";
 export const tab_Allergies = "//nobr[text()='Allergies/ADRs']/parent::td";
 export const tab_Problems = "//nobr[text()='Problems']/parent::td";
 export const btn_NewProblem = "//td[@title = 'Click to record new problem']";
+export const lnk_Registrationtemporary = "//span[text()='Registration - temporary']";
 
 // pageLIMainViewResource
 export const chk_DisplayInactiveAllergies = "//td[@caption='Display inactive allergies/ADRs']";
@@ -327,3 +332,8 @@ export const lnkSubTaskPaneInTray = "//span[normalize-space()='In-tray']";
 export const lbl_Mycaseload = "//td[@id='pht_SlPMyCaseLoad']";
 export const ico_HO = "//img[contains(@id,'ImgPlusORMinusHO490000017354_child')]";
 export const ico_Mycaseload = "//img[contains(@id,'C0_ImgPlusORMinusMYCLPRF_child')]"
+export const ico_Mycaseload = "//img[contains(@id,'C0_ImgPlusORMinusMYCLPRF_child')]";
+export const btn_PerformTask ="//button[@id='btnPerformTask']";
+export const cmb_Transferaction = "//input[@id='icombobox_Text_C33']";
+export const  btn_Update = "//td[@title='Click here to update']";
+export const ico_intraycaseload = "//div[text() = 'Caseload']";

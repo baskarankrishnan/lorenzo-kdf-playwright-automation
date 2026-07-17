@@ -354,6 +354,14 @@ export const PAGE_REGISTRY: Record<string, PageDefinition> = {
     title: ' alert - LORENZO',
     
     },
+    'pageAllocatetocaseload': {
+        url: '/EPR/AppDialog.aspx?TITLE=Allocate%20to%20caseload%20',
+        title: 'Allocate to caseload - LORENZO',
+    },
+    'pageRegRegistrationTemporary': {
+        url: '/EPR/AppDialog.aspx?TITLE=Registration%20-%20temporary%20-%20LORENZO&__PageName=AppWizardPage.aspx',
+        title: 'Registration - temporary - LORENZO',
+    },
 }
     // 'pageSearchPatient': {
     //     url: '/EPR/APPMAINPAGE',

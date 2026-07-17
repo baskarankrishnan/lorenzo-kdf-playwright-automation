@@ -35,3 +35,4 @@ export const btn_Finishnow = "//td[@title='Finish now']";
 export const btn_Ok = "//button[contains(.,'Ok')]";
 export const btn_Findnow = "//button[contains(.,'Find Now')]";
 export const lbl_PatientBookBanner = "//td[@class='CxtBar_TD6' and contains(.,'WARD')]";
+export const lbl_PatientBookBanner = "//td[@class='CxtBar_TD6' and contains(.,'WARD')]";
