@@ -2799,54 +2799,82 @@ export async function selectComboBox(page: Page, step: testStep): Promise<Outcom
          List ID  : C2L_C14
       */
  
-      const listId = `#${elementId.replace('C2T_', 'C2L_')}`;
- 
       /* ---- Expand dropdown first ---- */
  
       await element.click();
  
-      /* ---- Locate options ---- */
- 
-      const optionSelector = `${listId} li`;
- 
-      const options = await resolveElements(page, optionSelector, step);
- 
-      if (!options.length) {
-        throw new Error('Custom combo options not rendered');
-      }
- 
-      /* ---- Select matching label ---- */
- 
-      if (isIndexSelection) {
-        if (indexToSelect < 0 || indexToSelect >= options.length) {
-          throw new Error(`Index_${indexToSelect + 1} out of range for custom combo (options: ${options.length})`);
+      /* ---- Find + click the matching option entirely in-browser (one round-trip).
+             Avoids resolveElements(), which visits every <li> with per-element
+             isVisible()/isConnected() round-trips — very slow for large lists
+             (e.g. Country ~271 options). ---- */
+
+      const selectInCustomCombo = () => element.evaluate((el, data) => {
+        const doc = (el as HTMLElement).ownerDocument;
+        const listSfx = (el as HTMLInputElement).id.replace('C2T_', 'C2L_');
+        const list = doc.getElementById(listSfx);
+        if (!list) return { state: 'nolist' as const };
+        const items = list.querySelectorAll('li');
+        if (!items.length) return { state: 'norender' as const };
+
+        const getLabel = (li: Element): string => {
+          const lbl = li.querySelector('div label') || li.querySelector('label');
+          return (lbl?.textContent || '').trim();
+        };
+
+        let target: HTMLElement | null = null;
+        if (data.isIndex) {
+          if (data.idx < 0 || data.idx >= items.length) {
+            return { state: 'range' as const, count: items.length };
+          }
+          target = items[data.idx] as HTMLElement;
+        } else {
+          for (let i = 0; i < items.length; i++) {
+            if (getLabel(items[i]) === data.value) { target = items[i] as HTMLElement; break; }
+          }
+          if (!target) {
+            const lc = String(data.value).toLowerCase();
+            for (let i = 0; i < items.length; i++) {
+              if (getLabel(items[i]).toLowerCase() === lc) { target = items[i] as HTMLElement; break; }
+            }
+          }
         }
-        await options[indexToSelect].click();
+
+        if (!target) {
+          const avail: string[] = [];
+          for (let i = 0; i < Math.min(items.length, 50); i++) {
+            const t = getLabel(items[i]); if (t) avail.push(t);
+          }
+          return { state: 'notfound' as const, avail };
+        }
+
+        target.scrollIntoView({ block: 'nearest' });
+        const clickTarget = (target.querySelector('div label') || target.querySelector('label') || target) as HTMLElement;
+        clickTarget.click();
+        return { state: 'ok' as const, value: getLabel(target) };
+      }, { isIndex: isIndexSelection, idx: indexToSelect, value: optionText });
+
+      // Options may render slightly after the expand click; retry briefly (in-browser is fast).
+      let result = await selectInCustomCombo();
+      for (let attempt = 0; attempt < 8 && (result.state === 'norender' || result.state === 'nolist'); attempt++) {
+        await page.waitForTimeout(250);
+        result = await selectInCustomCombo();
+      }
+
+      if (result.state === 'ok') {
         return {
           code: 0,
-          value: `Successfully selected index ${indexToSelect} in custom combo`
+          value: isIndexSelection
+            ? `Successfully selected index ${indexToSelect} in custom combo`
+            : `Successfully selected "${result.value}" in custom combo`
         };
       }
- 
-      for (const opt of options) {
- 
-        const label = opt.locator('div >> label');
- 
-        const labelText =
-          (await label.textContent()?.catch(() => ''))?.trim() || '';
- 
-        if (labelText === optionText) {
- 
-          await opt.click();
- 
-          return {
-            code: 0,
-            value: `Successfully selected "${optionText}" in custom combo`
-          };
-        }
+      if (result.state === 'range') {
+        throw new Error(`Index_${indexToSelect + 1} out of range for custom combo (options: ${result.count})`);
       }
- 
-      throw new Error(`Option "${optionText}" not found in custom combo`);
+      if (result.state === 'notfound') {
+        throw new Error(`Option "${optionText}" not found in custom combo. Available (first 50): ${result.avail.join(', ')}`);
+      }
+      throw new Error('Custom combo options not rendered');
     }
  
     /* =======================================================
