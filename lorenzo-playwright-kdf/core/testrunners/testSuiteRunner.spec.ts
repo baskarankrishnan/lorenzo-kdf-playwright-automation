@@ -113,6 +113,15 @@ test.describe('Test Suite Execution', () => {
 
             suiteFailureTracker.set(suiteKey, false);
 
+            // Reset transient cross-test state after every test. The singleton executionContext
+            // is shared across all tests in this serial worker; `_popupPage` (set by
+            // clickAndSwitchToPopup and read by resolvePageForStep) can otherwise point at a
+            // page from an already-closed context, making the NEXT test fail at startup with
+            // "Target page/context/browser has been closed".
+            test.afterEach(async () => {
+                (executionContext as any)._popupPage = undefined;
+            });
+
             testCases.forEach(({ testcaseId, jiraId, description, author, isDDt, ddtStartRow, ddtEndRow }) => {
                 test(`${testcaseId}`, async ({ page, context, browser }) => {
 
@@ -136,6 +145,10 @@ test.describe('Test Suite Execution', () => {
                         testCase = fileUtils.readTestCasesFromExcel(module, excelName, testcaseId, jiraId, description, author);
                     }
                     executionContext.setCurrentContext(contextKey);
+
+                    // Start each test with a clean transient page reference so nothing from a
+                    // previously-finished test (and its now-closed context) leaks into this one.
+                    (executionContext as any)._popupPage = undefined;
 
                     // Load the TestData sheet embedded in the test case workbook so that any
                     // step with a DatasetColumnName resolves its value from it (row 1 = first
