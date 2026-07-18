@@ -1,4 +1,6 @@
 ﻿// pageLorenzo
+// Task-pane link (My work -> Emergency Department). Was referenced by EC/NursingActivity but missing.
+export const lnk_EmergencyDepartment = "//li[@title='Emergency Department']";
 export const lnk_NewBornDetails = "//td[@id='NewBornDetails']//u";
 export const lbl_modifyAccessPlanEntrySCL = "//span[normalize-space()='Modify access plan entry']";
 export const btn_Ok = "//td[@title='Ok']";
