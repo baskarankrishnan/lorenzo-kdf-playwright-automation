@@ -13,3 +13,4 @@ node_modules/
 
 # Excel test-case backups from login-step fix script
 lorenzo-playwright-kdf/excelFramework/_backup_loginfix_*/
+lorenzo-playwright-kdf/excelFramework/_backup_findrecord_*/
