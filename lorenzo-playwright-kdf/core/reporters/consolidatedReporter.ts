@@ -32,9 +32,13 @@ export function generateConsolidatedReport(
             const commentedSteps = result.steps?.filter((s: any) => s.stepStatus === 2).length || 0;
             const skippedSteps = result.steps?.filter((s: any) => s.stepStatus === 3).length || 0;
 
-            // Calculate relative path to individual report
+            // Calculate relative path to individual report.
+            // The consolidated report is written into the reports folder and
+            // individualReports/ is a sibling SUBFOLDER of it, so the link is
+            // relative to the consolidated report WITHOUT a leading `../`
+            // (a `../` wrongly climbs above the reports folder).
             const individualReportDir = `${excelName}_${executionTimestamp}`;
-            const individualReportPath = `../individualReports/${module}/${individualReportDir}/${testcaseId}.html`;
+            const individualReportPath = `individualReports/${module}/${individualReportDir}/${testcaseId}.html`;
 
             testRowsData.push({
                 no: rowNumber++,
