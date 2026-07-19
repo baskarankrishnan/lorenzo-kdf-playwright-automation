@@ -1,4 +1,5 @@
 ﻿// pageRegRegistration
+export const txt_Surname = "//input[@dikey='itxtSurname']";
 export const txt_Forename = "//input[@dikey='itxtForename']";
 export const txt_City = "//input[@dikey='C53_tA4']";
 export const cmb_Country = "//input[@title='Enter Country']";
