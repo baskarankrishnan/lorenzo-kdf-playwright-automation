@@ -137,7 +137,7 @@
     {
         "page":  "pagePatientSearchResult",
         "element":  "lnkTaskPaneViewEPR",
-        "xpath":  "//li[@title=\u0027View EPR\u0027]"
+        "xpath":  "//li[normalize-space()=\u0027<variable>\u0027]"
     },
     {
         "page":  "pageEPRTab",
