@@ -8,7 +8,7 @@ export const cmb_Country = "//input[@title='Enter Country']";
 export const ico_RegRoadmapTitle = "//td[@class='Cmd_TTE'][@title='Yes']";
 export const lnk_Postalcode = "//img[@title='Please enter Select address type']";
 export const txt_Pincode = "//input[@dikey='iPostCode']";
-export const btn_Find = "//td[@title='Find']";
+export const btn_Find = "//img[@title='Use this to select via address finder']";
 export const tbl_SelectRow = "//table[@id='g_DT1igrdSearch']//tr[@id='igRowigrdSearch_0']/td";
 export const txt_TelephoneHome = "//input[@title='Enter Telephone (home)']";
 export const txt_TelephoneMobile = "//input[@title='Enter Telephone (mobile)']";

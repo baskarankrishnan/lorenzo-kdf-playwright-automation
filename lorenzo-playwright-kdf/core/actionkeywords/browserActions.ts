@@ -198,7 +198,13 @@ export class BrowserFocusTracker {
         try {
             if (page.isClosed()) return;
             await page.waitForLoadState('domcontentloaded', { timeout: 10000 }).catch(() => { });
-            await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => { });
+            // LORENZO is a chatty SPA (background polling) that rarely reaches full
+            // 'networkidle', so a long wait here just burns the whole timeout on EVERY
+            // step's page resolve (~3s x hundreds of steps = many minutes/suite). Keep a
+            // short settle window instead; genuine loads are covered by domcontentloaded
+            // above and by the element-search retry loop. Configurable via PAGE_NETWORKIDLE_MS.
+            const idleMs = Number(process.env.PAGE_NETWORKIDLE_MS) || 800;
+            await page.waitForLoadState('networkidle', { timeout: idleMs }).catch(() => { });
         } catch {
             // Ignore errors
         }

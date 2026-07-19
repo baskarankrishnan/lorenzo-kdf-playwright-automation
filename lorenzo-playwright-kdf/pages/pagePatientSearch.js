@@ -1,5 +1,5 @@
 ﻿// pagePatientSearch
-export const lnk_BookRegistration = "//td[@title='Registration']";
+export const lnk_BookRegistration = "//li[normalize-space()='Registration']";
 export const txt_BookCity = "//input[@dikey='C53_tA4']";
 export const cmb_BookCountry = "//input[@title='Enter Country']";
 export const btn_BookFinishnow = "//table//td[@title='Finish now']";
