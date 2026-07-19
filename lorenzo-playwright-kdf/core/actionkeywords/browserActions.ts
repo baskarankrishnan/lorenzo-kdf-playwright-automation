@@ -340,17 +340,25 @@ export async function resolvePageForStep(
         }
     }
 
-    // Case 3: Page specified and found in registry - resolve normally
-    const resolvedPage = await focusTracker.findPageByDefinition(pageDefinition, timeout);
+    // Case 3: Page specified and found in registry - resolve normally.
+    // NOTE: LORENZO dialogs (Find and book, Registration, Manage referral, EPRView, ...)
+    // render as IFRAMES inside the single APPMAINPAGE page, not as separate browser
+    // pages/tabs. A dialog page definition can therefore never match a real Page object.
+    // Use a short "quick match" window here: genuine separate pages/tabs appear within a
+    // few seconds, whereas SPA iframe dialogs never will — so we fall through quickly to
+    // the LORENZO main-page fallback (Case 4) instead of burning the full timeout (30s)
+    // per step. Configurable via PAGE_MATCH_TIMEOUT_MS.
+    const quickMatchTimeout = Math.min(timeout, Number(process.env.PAGE_MATCH_TIMEOUT_MS) || 4000);
+    const resolvedPage = await focusTracker.findPageByDefinition(pageDefinition, quickMatchTimeout);
 
     if (resolvedPage && !resolvedPage.isClosed()) {
         return resolvedPage;
     }
 
-    // Case 4: Page specified in registry but not currently open
+    // Case 4: Page specified in registry but not currently open (typical for iframe dialogs)
     console.log(`  ⚠️ Page "${stepPageName}" defined but not open, attempting to find LORENZO main page...`);
 
-    const lorenzoPage = await focusTracker.findPageByDefinition(DEFAULT_PAGE_DEFINITION, timeout);
+    const lorenzoPage = await focusTracker.findPageByDefinition(DEFAULT_PAGE_DEFINITION, quickMatchTimeout);
 
     if (lorenzoPage && !lorenzoPage.isClosed()) {
         console.log('  ☑️ Using LORENZO main page as fallback');
