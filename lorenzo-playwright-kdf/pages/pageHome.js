@@ -23,7 +23,7 @@ export const btn_Findrecord = "//span[normalize-space()='Find record']";
 // export const tab_Mywork = "//td[@caption='Patients'][@key='TB_PATNT']";
 export const lbl_popup = "//p['Question - LORENZO']";
 export const btn_Yes = "//td[@title='Yes']";
-export const tab_Clinic = "(//span[@class='T_PL'][normalize-space()='Clinics'])[1]";
+export const tab_Clinic = "//span[@class='T_PL' and normalize-space()='Clinics']";
 export const txt_Clinicname = "//input[@dikey='itxtClinicname']";
 export const SelectSession = "//img[@alt='Click to select row' and @title='Click to select row']";
 // DUPLICATE of btn_OK (superseded by the caseload-section definition later in file; use btn_CliOK for the clinic OK) — commented.
