@@ -4,7 +4,7 @@ export const lnk_RecordAllergy = "//li[normalize-space()='Record allergy/ADR']";
 export const tab_Patients = "//td[@caption='Patients'][@key='TB_PATNT']";
 export const tab_MyWork = "//td[@title='My work']";
 export const tab_InTheatre = "//td[@title='In theatre']";
-export const lnkTaskPaneMyWork = "//div[@atei='Expand Pane - My work']//span[text()='<variable>']";
+export const lnkTaskPaneMyWork = "//span[@class='T_PL' and normalize-space()='<variable>']";
 export const lnkSubTaskPaneInpatient = "(//div[contains(@atei,'Inpatient')]//span[text()='<variable>'])[2]";
 export const lnkSubTaskPaneInpatientWithPAT = "//div[contains(@atei,'Inpatient')]//span[text()='<variable>']";
 export const lnkSubTaskPaneEmerCurrentView = "//div[contains(@atei,'Current view')]//span[text()='<variable>']";
