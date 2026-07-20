@@ -12,7 +12,7 @@ export const lnkSubTaskPaneTheatre = "//div[contains(@atei,'Theatre')]//span[tex
 export const lnkSubTaskPaneMedication = "//div[contains(@atei,'Medication')]//span[text()='<variable>']";
 export const lnkTaskPanePatient = "//span[normalize-space()='Find record']";
 export const txt_Identifier = "//input[@title='Enter an identifier']";
-export const btn_Find = "//button[@title='Click to Find']";
+export const btn_Find = "//button[@title='Find']";
 export const btn_ClinicFind = "//td[@title='Find']";
 export const btn_Logout = "//img[@title='Exit']";
 export const txt_Yes = "//td[@title='Yes']";
