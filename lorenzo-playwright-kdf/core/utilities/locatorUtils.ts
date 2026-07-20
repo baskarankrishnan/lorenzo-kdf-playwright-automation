@@ -14,10 +14,14 @@ export function getLocatorString(step: testStep): string {
     }
     let pageLocators = repository[page];
     if (!pageLocators) {
-        // Case-insensitive fallback: page files may be named `PageXxx.js` (capital P)
-        // while test data references `pageXxx`. The repository is keyed by filename, so
-        // the casing can differ. Page names never collide by case only, so this is safe.
-        const matchKey = Object.keys(repository).find(k => k.toLowerCase() === page.toLowerCase());
+        // Case/whitespace-insensitive fallback: page files may be named `PageXxx.js`
+        // (capital P) or `pageDepartmentMap` while test data references `pageXxx` or
+        // `pageDepartment map` (extra space). The repository is keyed by filename, so
+        // casing and stray spaces can differ. Page names never collide by case or
+        // whitespace alone, so normalizing both is safe.
+        const norm = (s: string) => s.toLowerCase().replace(/\s+/g, '');
+        const target = norm(page);
+        const matchKey = Object.keys(repository).find(k => norm(k) === target);
         if (matchKey) {
             pageLocators = repository[matchKey];
         }
