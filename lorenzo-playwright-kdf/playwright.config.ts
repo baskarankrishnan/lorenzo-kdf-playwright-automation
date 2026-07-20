@@ -80,7 +80,18 @@ export default defineConfig({
         channel: 'msedge',
         viewport: null,
         launchOptions: {
-          args: ['--disable-web-security', '--ignore-certificate-errors', '--start-maximized'],
+          // Memory-reduction flags: the suite reuses one Edge browser across all tests
+          // in the worker; deep KDF workflows (100+ steps, heavy iframes) accumulate
+          // memory and can crash the worker after many tests. These reduce footprint.
+          args: [
+            '--disable-web-security',
+            '--ignore-certificate-errors',
+            '--start-maximized',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--disable-features=CalculateNativeWinOcclusion',
+            '--js-flags=--max-old-space-size=512',
+          ],
         },
       },
     },
