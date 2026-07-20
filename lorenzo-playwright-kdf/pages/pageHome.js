@@ -40,12 +40,12 @@ export const lnk_BookTheatre = "//span[normalize-space()='Book']";
 export const tab_Bookingdetails = "//nobr[normalize-space()='Booking details']";
 export const ink_Modifybooking = "//span[normalize-space()='Modify booking']";
 export const tab_Intheatre = "//td[@title='In theatre']";
-export const btn_Clinicalnote = "//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_15']";
+export const btn_Clinicalnote = "//td[@caption='Cl&inical notes']";
 export const lnk_Createnote = "//span[normalize-space()='Create note']";
 export const sli_Splittericon = "//div[@id='divSplitter']";
 export const txt_Notenameverify = "//label[@dikey='ilblShowTemplateName']";
 export const lnk_printnote = "//span[normalize-space()='Print note']";
-export const btn_Letters = "//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_18']";
+export const btn_Letters = "//td[@caption='Letters']";
 export const lnk_Createdocument = "//li[@key='MN_DOC_CREATE']";
 export const lnk_printdocument = "//span[normalize-space()='Print document']";
 export const txt_Formsnameverify = "//label[@dikey='lblName']";
@@ -91,7 +91,7 @@ export const lnk_EPRRelationships = "//td[@key='TB_RELNS']";
 export const txt_RelRole = "//label[@dikey='ilblRelationship']";
 export const txt_CP = "//nobr[normalize-space(.)='Care providers']";
 export const txt_CPID = "//label[@dikey='ilblMainId']";
-export const btn_GeneraldetailsEPR = "//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_5']";
+export const btn_GeneraldetailsEPR = "//td[@caption='&General Details']";
 export const txt_PASID = "//label[@dikey='lblPatientIdValue']";
 export const txt_PASNUMBER = "(//td[@icn='Identifier'])[3]";
 export const lnk_Identifiers = "//nobr[normalize-space()='Identifiers']";
@@ -115,12 +115,12 @@ export const lnk_CreateReferral = "//span[text()='Create referral']";
 export const btn_TaskEPR = "//td[@key='TB_TASKS']";
 export const txt_TempID = "//label[@id='il_C_C1']";
 export const lbl_popup_Temptofullreg = "//div[@id='txtMessage']";
-export const btn_Forms = "//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_3']";
+export const btn_Forms = "//td[@caption='&Forms']";
 export const btn_Medication = "//td[@key='TB_MEDICATIONBB_P2' and normalize-space()='Medication']";
 export const btn_MedicationClerking = "//span[normalize-space()='Medication clerking']";
 export const lbl_popupReviewmedication = "//div[@id='txtMessage']";
 export const btn_Overview = "//td[@key='TB_SUMRY']";
-export const btn_EPRTab = "//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_14']";
+export const btn_EPRTab = "//td[@caption='&Results Requests']";
 export const lnkSubTaskPaneNewReport= "//span[text()='New report']";
 export const ico_HeadingInfos = "//p[normalize-space(.)='Question - LORENZO']";
 export const lbl_ConfirmationTexts = "//div[@id='txtMessage']";
@@ -235,7 +235,7 @@ export const txt_Alertname = "//td[@icna = 'Risk Name']";
 export const txt_InformationSource = "//td[@icna = 'Information Source']";
 export const txt_AlertStatus = "//td[@icna = 'Status']";
 // Page Related People
-export const btn_RelatedPeople = "//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_9']";
+export const btn_RelatedPeople = "//td[@caption='Re&lated People']";
 export const btn_Cancel = "//button[@id='ic_C_C2']";
 export const lnk_Relationship = "//li[@title='Manage relationships']";
 export const lnk_AdmitTaskPane = "//span[@class='T_PL' and text()='Admit']";
@@ -282,7 +282,7 @@ export const lbl_CareplanName2 = "(//td[@icna = 'CarePlanName'])[2]";
 export const lbl_CareplanStatus2 = "//td[contains(text(),'Careplan template02')]/following-sibling::td[@icna='Status']";
 
 // page EPR tab
-export const tab_Overview = "//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_1']";
+export const tab_Overview = "//td[@caption='&Overview']";
 
 // Task link from EPR
 
