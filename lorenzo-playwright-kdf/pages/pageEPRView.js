@@ -1,5 +1,5 @@
 ﻿// pageEPRView
-export const btn_GeneraldetailsEPR = "//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_5']";
+export const btn_GeneraldetailsEPR = "//td[@caption='&General Details']";
 export const txt_PASID = "//label[@dikey='lblPatientIdValue']";
 export const txt_Surname = "//label[@dikey='lblSurnameValue']";
 export const txt_Forename = "//label[@dikey=lblForenameValue ']";
@@ -20,24 +20,24 @@ export const txt_RelSurname = "//span[@class='hdnowrap' and normalize-space()='A
 export const lnk_ContactInformation = "//nobr[normalize-space()='Contact information']";
 export const txt_Addresstype = "//span[normalize-space()='Usual Address']";
 export const txt_Postalcode = "(//span[@class='hdnowrap'])[8]";
-export const btn_Referral = "//td[@caption='Re&ferrals']";f
+export const btn_Referral = "//td[@caption='Re&ferrals']";
 export const lnk_CreateReferral = "//span[text()='Create referral']";
 export const btn_TaskEPR = "//td[@key='TB_TASKS']";
 export const txt_TempID = "//label[@id='il_C_C1']";
 export const lbl_popup_Temptofullreg = "//div[@id='txtMessage']";
 export const btn_OK = "//td[@title='Ok']";
-export const btn_Forms = "//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_3']";
+export const btn_Forms = "//td[@caption='&Forms']";
 export const btn_Medication = "//td[@key='TB_MEDICATIONBB_P2' and normalize-space()='Medication']";
 export const btn_MedicationClerking = "//span[normalize-space()='Medication clerking']";
 export const lbl_popupReviewmedication = "//div[@id='txtMessage']";
-export const lnk_Observations = "//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_8']";
+export const lnk_Observations = "//td[@caption='Observations']";
 export const btn_HealthIssues = "//td[@tabaccesskey='H']";
 export const btn_ProceduresInterventions = "//td[@tabaccesskey='P']";
 export const btn_Overview = "//td[@key='TB_SUMRY']";
 export const btn_Observations = "//td[text()='Observations']";
 export const btn_CarePlan = "//td[@tabaccesskey='u']";
 export const btn_ClinicalCharts = "//td[text() ='Clinical Charts']";
-export const btn_EPRTab = "//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_14']";
+export const btn_EPRTab = "//td[@caption='&Results Requests']";
 export const btn_AccessplanningEPL = "//td[normalize-space()='Access Planning']";
 export const lbl_createAccessPlanEntrySCL = "(//li[contains(@caption,'Create access plan entry')])[2]";
 export const lbl_PatientBookBanner = "(//td[@class='CxtBar_TD6'])[1]";
