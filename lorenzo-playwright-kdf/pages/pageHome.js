@@ -305,7 +305,7 @@ export const lnkSubTaskPaneCaseloadmanagement = "//span[text()='Caseload managem
 
 //Caseload management
 export const chk_profile = "(//img[@class='Tree_B0AM'])[6]";
-export const btn_OK = "//span[@class='Cmd_AK' and normalize-space()='O']";
+export const btn_OK = "//button[@title='OK']";
 export const lnkSubTaskPaneAllocatetocaseload = "//span[@class='T_PL' and normalize-space()='Allocate to caseload']";
 export const lnkSubTaskPaneModifycaseloadentry = "//span[contains(@class,'T_PL') and normalize-space()='Modify caseload entry']";
 export const chk_Mycaseload = "//tr[@data-uid]//input[@type='checkbox' and contains(@class,'k-select-checkbox')]";
