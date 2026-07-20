@@ -37,14 +37,17 @@ export async function launchUrl(page: Page, step: testStep): Promise<Outcome> {
 
 export async function login(page: Page, step: testStep): Promise<{ code: number; value: string }> {
   try {
-    if (!step.value) throw new Error(`No credentials provided for login`);
+    // Fall back to the standard runtime credentials when a test's login step omits
+    // the value. resolveTestVariables substitutes _USERNAME/_PASSWORD from .env config,
+    // which is how every other test sources its login (username|password format).
+    const loginValue = step.value && String(step.value).trim() ? step.value : '_USERNAME|_PASSWORD';
 
     // Resolve runtime variables in the value
-    const resolvedValue = resolveTestVariables(step.value);
+    const resolvedValue = resolveTestVariables(loginValue);
     const [username, password] = resolvedValue.split('|').map(v => v.trim());
 
     if (!username || !password) {
-      throw new Error(`Invalid login format. Expected: username|password, Got: ${step.value}`);
+      throw new Error(`Invalid login format. Expected: username|password, Got: ${loginValue}`);
     }
 
     checkResult(await setTextBox(page, { ...step, page: 'pageLogin', element: 'txt_Username', value: username }));
