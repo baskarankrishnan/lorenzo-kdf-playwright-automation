@@ -2669,7 +2669,9 @@ export async function selectComboBox(page: Page, step: testStep): Promise<Outcom
  
     let isCommonControl = elementId.startsWith('icombobox_Text_');
     const isCustomControl = elementId.startsWith('C2T_');
-    const isContainerControl = elementId.startsWith('icombobox_Control_');
+    // The @dikey XPath can resolve to the combo's container table (icombobox_Control_<sfx>)
+    // OR its arrow image (icombobox_Image_<sfx>); both redirect to the text input.
+    const isContainerControl = elementId.startsWith('icombobox_Control_') || elementId.startsWith('icombobox_Image_');
  
     /* =======================================================
        CONTAINER CONTROL (@dikey wrapper → redirect to text input)
@@ -2678,7 +2680,7 @@ export async function selectComboBox(page: Page, step: testStep): Promise<Outcom
     if (isContainerControl) {
       // The @dikey XPath resolves to the container table (icombobox_Control_<suffix>).
       // Redirect to the actual text input inside: icombobox_Text_<suffix>
-      const suffix = elementId.replace('icombobox_Control_', '');
+      const suffix = elementId.replace('icombobox_Control_', '').replace('icombobox_Image_', '');
       const textInputId = `#icombobox_Text_${suffix}`;
       const textInput = await resolveElement(page, textInputId, step);
       // Click to expand then select via DOM in same document context
