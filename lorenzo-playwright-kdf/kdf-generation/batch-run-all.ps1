@@ -11,22 +11,24 @@ $summaryFile = Join-Path $repo 'batch-failure-summary.txt'
 "=== BATCH RUN STARTED $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ===" | Set-Content $summaryFile
 
 # Groups of 2 modules per process (safely below the 3-completed-test crash threshold).
-# APE / C&G / CarePlan already analysed (ts 202607192121) -> skipped here.
+# All 31 modules in groups of ~2 (fresh process each to avoid the deep-run accumulation crash).
 $groups = @(
-    @('LSTP_CaseLoad_',    'LSTP_CaseNote_'),
-    @('LSTP_CDC_',         'LSTP_Charts_'),
-    @('LSTP_Contacts_',    'LSTP_CPPView_'),
-    @('LSTP_Daycare_',     'LSTP_DI_'),
-    @('LSTP_EC_',          'LSTP_ePMA_'),
-    @('LSTP_FluidBalance_','LSTP_HealthIssues_'),
-    @('LSTP_IDM_',         'LSTP_IP_'),
-    @('LSTP_Maternity_',   'LSTP_MSI_'),
-    @('LSTP_NursingActivity_','LSTP_Observations_'),
-    @('LSTP_OP_',          'LSTP_Problems_'),
-    @('LSTP_R&R_',         'LSTP_Referral_'),
-    @('LSTP_Reports_',     'LSTP_TaskMgmt_'),
-    @('LSTP_Theatres_',    'LSTP_UserServices_'),
-    @('LSTP_User_Creation_','LSTP_WA_')
+    @('LSTP_APE_',         'LSTP_C&G_'),
+    @('LSTP_CarePlan_',    'LSTP_CaseLoad_'),
+    @('LSTP_CaseNote_',    'LSTP_CDC_'),
+    @('LSTP_Charts_',      'LSTP_Contacts_'),
+    @('LSTP_CPPView_',     'LSTP_Daycare_'),
+    @('LSTP_DI_',          'LSTP_EC_'),
+    @('LSTP_ePMA_',        'LSTP_FluidBalance_'),
+    @('LSTP_HealthIssues_','LSTP_IDM_'),
+    @('LSTP_IP_',          'LSTP_Maternity_'),
+    @('LSTP_MSI_',         'LSTP_NursingActivity_'),
+    @('LSTP_Observations_','LSTP_OP_'),
+    @('LSTP_Problems_',    'LSTP_R&R_'),
+    @('LSTP_Referral_',    'LSTP_Reports_'),
+    @('LSTP_TaskMgmt_',    'LSTP_Theatres_'),
+    @('LSTP_UserServices_','LSTP_User_Creation_'),
+    @('LSTP_WA_')
 )
 
 $env:HEADED = 'false'
