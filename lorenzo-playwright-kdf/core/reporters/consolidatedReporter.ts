@@ -160,7 +160,7 @@ body{font-family:Consolas,Monaco,monospace;background:var(--bg);color:var(--text
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:5px}
 ::-webkit-scrollbar-thumb:hover{background:var(--primary)}
 /* ===== Light theme + Montserrat refresh (visual only — no logic changes) ===== */
-:root{--primary:#5b7fd6;--success:#5aa97a;--danger:#e08585;--warning:#e0b062;--comment:#9aa7b8;--bg:#f6f8fc;--bg-secondary:#eef2f9;--card-bg:#ffffff;--card-hover:#f5f8fd;--text:#3f4d61;--text-muted:#8b98a9;--border:#e9eef6;--shadow:rgba(70,90,130,0.08)}
+:root{--primary:#5b7fd6;--success:#16a34a;--danger:#ef4444;--warning:#f59e0b;--comment:#7c3aed;--bg:#f6f8fc;--bg-secondary:#eef2f9;--card-bg:#ffffff;--card-hover:#f5f8fd;--text:#3f4d61;--text-muted:#8b98a9;--border:#e9eef6;--shadow:rgba(70,90,130,0.08)}
 body,.search-box,.filter-select,.consolidated-table td,.test-steps-table td,.config-value,.data-value,.modal-value,.header-left p,h1,h2,h3,th,button,input,select{font-family:'Montserrat',-apple-system,'Segoe UI',sans-serif}
 body{font-weight:400}
 .header-left h1{text-transform:none;letter-spacing:0.3px;font-weight:600}
@@ -185,12 +185,18 @@ body{font-weight:400}
 .ddt-badge{background:#8f7ad6}
 .metric-icon{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;opacity:1;font-size:0;background:var(--bg-secondary);color:var(--text-muted)}
 .metric-icon svg{width:20px;height:20px}
-.metric-icon.total{background:#eaeefb;color:#5163b8}
-.metric-icon.passed{background:#e8f6ee;color:#4a9d6e}
-.metric-icon.failed{background:#fdecec;color:#d07272}
-.metric-icon.skipped{background:#fdf4e3;color:#c99a4c}
-.metric-icon.commented{background:#f1f4f8;color:#6b7787}
-.metric-icon.rate{background:#eaf0fc;color:#5c7bc0}
+.metric-icon.total{background:#e7edfd;color:#2563eb}
+.metric-icon.passed{background:#e6f6ec;color:#16a34a}
+.metric-icon.failed{background:#fdeaea;color:#ef4444}
+.metric-icon.skipped{background:#fdf1de;color:#f59e0b}
+.metric-icon.commented{background:#f0ecfc;color:#7c3aed}
+.metric-icon.rate{background:#e7edfd;color:#2563eb}
+.metric-card.total .metric-title,.metric-card.total .metric-value,.metric-card.total .metric-label{color:#2563eb}
+.metric-card.passed .metric-title,.metric-card.passed .metric-value,.metric-card.passed .metric-label{color:#16a34a}
+.metric-card.failed .metric-title,.metric-card.failed .metric-value,.metric-card.failed .metric-label{color:#ef4444}
+.metric-card.commented .metric-title,.metric-card.commented .metric-value,.metric-card.commented .metric-label{color:#7c3aed}
+.metric-card.skipped .metric-title,.metric-card.skipped .metric-value,.metric-card.skipped .metric-label{color:#f59e0b}
+.metric-card.rate .metric-title,.metric-card.rate .metric-label{color:#2563eb}
 .title-icon{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;margin-right:10px;color:var(--primary)}
 .title-icon svg{width:26px;height:26px}
 .duration-badge svg{width:13px;height:13px;vertical-align:-2px;margin-right:5px}
@@ -219,27 +225,27 @@ body{font-weight:400}
 
 <div id="dashboard" class="tab-content active">
 <div class="dashboard-grid">
-<div class="metric-card">
+<div class="metric-card total">
 <div class="metric-header"><span class="metric-title">Total Tests</span><span class="metric-icon total"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h6"/></svg></span></div>
 <div class="metric-value">${totalTests}</div>
 <div class="metric-label">Executed</div>
 </div>
-<div class="metric-card">
+<div class="metric-card passed">
 <div class="metric-header"><span class="metric-title">Passed</span><span class="metric-icon passed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span></div>
 <div class="metric-value" style="color:var(--success)">${passedTests}</div>
 <div class="metric-label">Success</div>
 </div>
-<div class="metric-card">
+<div class="metric-card failed">
 <div class="metric-header"><span class="metric-title">Failed</span><span class="metric-icon failed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span></div>
 <div class="metric-value" style="color:var(--danger)">${failedTests}</div>
 <div class="metric-label">Errors</div>
 </div>
-<div class="metric-card">
+<div class="metric-card skipped">
 <div class="metric-header"><span class="metric-title">Skipped</span><span class="metric-icon skipped"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg></span></div>
 <div class="metric-value" style="color:var(--warning)">${skippedTests}</div>
 <div class="metric-label">Bypassed</div>
 </div>
-<div class="metric-card">
+<div class="metric-card rate">
 <div class="metric-header"><span class="metric-title">Pass Rate</span><span class="metric-icon rate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span></div>
 <div class="metric-value" style="color:${getPassRateColor(passedTests, totalTests)}">${getPassRate(passedTests, totalTests)}%</div>
 <div class="metric-label">Success Rate</div>
