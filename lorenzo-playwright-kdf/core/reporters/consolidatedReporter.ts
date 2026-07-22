@@ -69,6 +69,9 @@ export function generateConsolidatedReport(
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${escapeHtml(executionPack)} - Consolidated Test Report</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--primary:#2563eb;--success:#16a34a;--danger:#dc2626;--warning:#f59e0b;--comment:#6b7280;--bg:#f8fafc;--bg-secondary:#f1f5f9;--card-bg:#ffffff;--card-hover:#f8fafc;--text:#0f172a;--text-muted:#64748b;--border:#e2e8f0;--shadow:rgba(0,0,0,0.1)}
@@ -156,6 +159,30 @@ body{font-family:Consolas,Monaco,monospace;background:var(--bg);color:var(--text
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:5px}
 ::-webkit-scrollbar-thumb:hover{background:var(--primary)}
+/* ===== Light theme + Montserrat refresh (visual only — no logic changes) ===== */
+:root{--primary:#5b7fd6;--success:#5aa97a;--danger:#e08585;--warning:#e0b062;--comment:#9aa7b8;--bg:#f6f8fc;--bg-secondary:#eef2f9;--card-bg:#ffffff;--card-hover:#f5f8fd;--text:#3f4d61;--text-muted:#8b98a9;--border:#e9eef6;--shadow:rgba(70,90,130,0.08)}
+body,.search-box,.filter-select,.consolidated-table td,.test-steps-table td,.config-value,.data-value,.modal-value,.header-left p,h1,h2,h3,th,button,input,select{font-family:'Montserrat',-apple-system,'Segoe UI',sans-serif}
+body{font-weight:400}
+.header-left h1{text-transform:none;letter-spacing:0.3px;font-weight:600}
+.header::before{background:linear-gradient(90deg,var(--primary),#9bb6ec,var(--primary));animation:none;opacity:0.85}
+.metric-value{font-weight:700}
+.metric-card,.chart-card,.config-section,.report-table-container,.captured-data-container{border-width:1px;border-radius:12px}
+.status-badge,.duration-badge,.config-badge,.metric-badge,.icon-button{border-width:1px}
+.status-badge.pass{background:#e8f6ee;color:#4a9d6e;border-color:#bfe3cd}
+.status-badge.fail{background:#fdecec;color:#d07272;border-color:#f2c9c9}
+.status-badge.partial,.status-badge.skip{background:#fdf4e3;color:#c99a4c;border-color:#f0dcb4}
+.duration-badge{background:#eaf0fc;color:#5c7bc0;border-color:#cdd9f3}
+.config-badge{background:#f1ecfa;color:#8065c0;border-color:#ddd2f0}
+.test-status.pass,.step-status.pass{background:#e8f6ee;color:#4a9d6e}
+.test-status.fail,.step-status.fail{background:#fdecec;color:#d07272}
+.test-status.skip,.step-status.skip{background:#fdf4e3;color:#cf9a48}
+.step-status.comment{background:#f1f4f8;color:#7b8798}
+.metric-badge.total{background:#eaeefb;color:#5163b8;border-color:#cdd6f5}
+.metric-badge.passed{background:#e8f6ee;color:#4a9d6e;border-color:#bfe3cd}
+.metric-badge.failed{background:#fdecec;color:#d07272;border-color:#f2c9c9}
+.metric-badge.commented{background:#f1f4f8;color:#6b7787;border-color:#dde3ec}
+.metric-badge.skipped{background:#fdf4e3;color:#c99a4c;border-color:#f0dcb4}
+.ddt-badge{background:#8f7ad6}
 </style>
 </head>
 <body>
