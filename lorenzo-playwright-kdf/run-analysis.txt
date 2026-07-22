@@ -1,0 +1,115 @@
+﻿Newest run timestamp: 202607181935  (21 test logs)
+
+=== PER-TEST SUMMARY (worst first) ===
+
+LSTP_HealthIssues_WF001_LSTP_HealthIssues_WF001_202607181935.txt
+  passed: 6 | firstFailStep: ? | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 6 passed: Successfully clicked element: pageInpatient.lbl_Wards
+  detail: [frame HK=FALSE&WACHKSTATUS=&WARETAINCHK=FALSE&] <meta title="" alt="" name="CODE_LANGUAGE" id="">, <meta title="" alt="" name="vs_defaultClientScript" id="">, <form title="" alt="" name="frmPegboard" id="frmPegboard">, 
+
+LSTP_DI_WF001_LSTP_DI_WF001_202607181935.txt
+  passed: 7 | firstFailStep: ? | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 7 passed: Successfully filled element: pageHome.txt_Clinicname with value: "General M
+  detail: [frame NHOLD,CC_RESTRICT&TimeFrame=&PATIENTOID=] <meta title="" alt="" name="GENERATOR" id="">, <meta title="" alt="" name="CODE_LANGUAGE" id="">, <meta title="" alt="" name="vs_defaultClientScript" id="">, <meta title="
+
+LSTP_APE_WF001_LSTP_APE_WF001_202607181935.txt
+  passed: 8 | firstFailStep: ? | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 8 passed: Successfully filled element: pageSearchPatient.txt_Surname with value: "Chr
+  detail: [frame views/search/patientsearchgridtrace.aspx] <meta title="" alt="" name="CODE_LANGUAGE" id="">, <meta title="" alt="" name="vs_defaultClientScript" id="">, <meta title="" alt="" name="vs_targetSchema" id="">, <form t
+
+LSTP_CarePlan_WF001_LSTP_CarePlan_WF001_202607181935.txt
+  passed: 8 | firstFailStep: ? | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 8 passed: Successfully filled element: pagePatientBasicSearch.txt_Surname with value:
+  detail: [frame views/search/patientsearchgridtrace.aspx] <meta title="" alt="" name="CODE_LANGUAGE" id="">, <meta title="" alt="" name="vs_defaultClientScript" id="">, <meta title="" alt="" name="vs_targetSchema" id="">, <form t
+
+LSTP_Charts_WF001_LSTP_Charts_WF001_202607181935.txt
+  passed: 8 | firstFailStep: ? | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 8 passed: Successfully filled element: pagePatientBasicSearch.txt_Surname with value:
+  detail: [frame views/search/patientsearchgridtrace.aspx] <meta title="" alt="" name="CODE_LANGUAGE" id="">, <meta title="" alt="" name="vs_defaultClientScript" id="">, <meta title="" alt="" name="vs_targetSchema" id="">, <form t
+
+LSTP_EC_WF001_LSTP_EC_WF001_202607181935.txt
+  passed: 8 | firstFailStep: ? | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 8 passed: Page stabilized
+  detail:   Γÿæ∩╕Å Using page: "LORENZO" |  | [ERROR]   Γ¥î Failed to click element: pageDepartment map.chk_WardName |  | [ERROR] Γ¥î Step 9 failed: Failed to click element: Page "pageDepartment map" not found in locator repository. | 
+
+LSTP_ePMA_WF001_LSTP_ePMA_WF001_202607181935.txt
+  passed: 8 | firstFailStep: ? | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 8 passed: Successfully clicked element: pageHome.chk_WardName
+  detail: [frame HK=FALSE&WACHKSTATUS=&WARETAINCHK=FALSE&] <meta title="" alt="" name="CODE_LANGUAGE" id="">, <meta title="" alt="" name="vs_defaultClientScript" id="">, <form title="" alt="" name="frmPegboard" id="frmPegboard">, 
+
+LSTP_NursingActivity_WF001_LSTP_NursingActivity_WF001_202607181935.txt
+  passed: 8 | firstFailStep: ? | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 8 passed: Page stabilized
+  detail:   Γÿæ∩╕Å Using page: "LORENZO" |  | [ERROR]   Γ¥î Failed to click element: pageDepartment map.chk_WardName |  | [ERROR] Γ¥î Step 9 failed: Failed to click element: Page "pageDepartment map" not found in locator repository. | 
+
+LSTP_Observations_WF001_LSTP_Observations_WF001_202607181935.txt
+  passed: 8 | firstFailStep: ? | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 8 passed: Successfully filled element: pagePatientBasicSearch.txt_Surname with value:
+  detail: [frame views/search/patientsearchgridtrace.aspx] <meta title="" alt="" name="CODE_LANGUAGE" id="">, <meta title="" alt="" name="vs_defaultClientScript" id="">, <meta title="" alt="" name="vs_targetSchema" id="">, <form t
+
+LSTP_Contacts_WF001_LSTP_Contacts_WF001_202607181935.txt
+  passed: 9 | firstFailStep: ? | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 9 passed: Successfully filled element: pageSearchPatient.txt_Surname with value: "Run
+  detail: [frame views/search/patientsearchgridtrace.aspx] <meta title="" alt="" name="CODE_LANGUAGE" id="">, <meta title="" alt="" name="vs_defaultClientScript" id="">, <meta title="" alt="" name="vs_targetSchema" id="">, <form t
+
+LSTP_IP_WF001_LSTP_IP_WF001_202607181935.txt
+  passed: 9 | firstFailStep: ? | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 9 passed: Successfully clicked element: pageHome.chk_WardName
+  detail: [frame HK=FALSE&WACHKSTATUS=&WARETAINCHK=FALSE&] <meta title="" alt="" name="CODE_LANGUAGE" id="">, <meta title="" alt="" name="vs_defaultClientScript" id="">, <form title="" alt="" name="frmPegboard" id="frmPegboard">, 
+
+LSTP_MSI_WF001_LSTP_MSI_WF001_202607181935.txt
+  passed: 9 | firstFailStep: ? | category: OTHER | 'no valid page' x0
+  lastPassed: Step 9 passed: Page stabilized
+  detail:   Γÿæ∩╕Å Using page: "Registration - temporary - LORENZO" |  | [ERROR]   Γ¥î Failed to verify property '' for element: pageRegConfirmationpopup.lbl_ConfirmationTextTemp |  | [ERROR] Γ¥î Step 10 failed: Failed to verify property:
+
+LSTP_IDM_WF001_LSTP_IDM_WF001_202607181935.txt
+  passed: 24 | firstFailStep: ? | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 24 passed: Page stabilized
+  detail: [frame eID=41ba81d6-9526-4915-929b-d6e038acae3a] <meta title="" alt="" name="CODE_LANGUAGE" id="">, <meta title="" alt="" name="vs_defaultClientScript" id="">, <meta title="" alt="" name="vs_targetSchema" id="">, <meta t
+
+LSTP_CaseNote_WF001_LSTP_CaseNote_WF001_202607181935.txt
+  passed: 39 | firstFailStep: 39 | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 38 passed: Page stabilized
+  detail:   ΓÜá∩╕Å Popup button not found (may not have appeared): pageWarningLORENZO.btn_PopUpNo |  | [ERROR] Γ¥î Step 39 failed: Popup button not found (optional/conditional): btn_PopUpNo |  | [ERROR] Γ¥î LSTP_CaseNote_WF001: Test faile
+
+LSTP_CDC_WF001_LSTP_CDC_WF001_202607181935.txt
+  passed: 62 | firstFailStep: ? | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 66 passed: Successfully waited for 1 second(s)
+  detail: [frame P_ISOKClicked=True&IP_ISOKClicked=False&] <meta title="" alt="" name="CODE_LANGUAGE" id="">, <meta title="" alt="" name="vs_defaultClientScript" id="">, <form title="" alt="" name="frmPegboard" id="frmPegboard">, 
+
+LSTP_CaseLoad_WF001_LSTP_CaseLoad_WF001_202607181935.txt
+  passed: 96 | firstFailStep: ? | category: OTHER | 'no valid page' x0
+  lastPassed: Step 97 passed: Successfully verified property 'exists' for element: PageMycaseload.lnkSub
+  detail: [ERROR]   Γ¢ö No table row found containing value: "PASID-053262" |  | [ERROR]   Γ¥î Failed to select table row by value |  | [ERROR] Γ¥î Step 98 failed: Failed to select table row: No table row found containing value: "PASID-
+
+LSTP_FluidBalance_WF001_LSTP_FluidBalance_WF001_202607181935.txt
+  passed: 110 | firstFailStep: ? | category: TIMING | 'no valid page' x0
+  lastPassed: Step 117 passed: Page stabilized
+  detail: [frame TN1_ToolTip=&BTN2_ToolTip=&BTN3_ToolTip=] <head title="" alt="" name="" id="Head1">, <meta title="" alt="" name="GENERATOR" id="">, <meta title="" alt="" name="CODE_LANGUAGE" id="">, <meta title="" alt="" name="vs
+
+LSTP_CPPView_WF001_LSTP_CPPView_WF001_202607181935.txt
+  passed: 111 | firstFailStep: ? | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 113 passed: Successfully waited for 1 second(s)
+  detail:   ├ó╦£ΓÇÿ├»┬╕┬Å  Element pageHIALRRecordallergy.txt_Allergen found in iframe on: Record allergy/ADR - LORENZO |  | [ERROR] Γ¥î Autocomplete failed for pageHIALRRecordallergy.txt_Allergen |  | [ERROR] Γ¥î Step 114 failed: Autocomple
+
+LSTP_Daycare_WF001_LSTP_Daycare_WF001_202607181935.txt
+  passed: 112 | firstFailStep: ? | category: TIMING | 'no valid page' x0
+  lastPassed: Step 119 passed: Page stabilized
+  detail: [frame TN1_ToolTip=&BTN2_ToolTip=&BTN3_ToolTip=] <head title="" alt="" name="" id="Head1">, <meta title="" alt="" name="GENERATOR" id="">, <meta title="" alt="" name="CODE_LANGUAGE" id="">, <meta title="" alt="" name="vs
+
+LSTP_Maternity_WF001_LSTP_Maternity_WF001_202607181935.txt
+  passed: 112 | firstFailStep: ? | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 119 passed: Selected "Maternal choice" using keyboard autocomplete
+  detail:   ├ó╦£ΓÇÿ├»┬╕┬Å  Element pageManagecurrentpregnancyrecordLORENZO.txt_Gravida found in iframe on: Manage current pregnancy record - LORENZO |  | [ERROR]   Γ¥î Failed to fill element: pageManagecurrentpregnancyrecordLORENZO.txt_Gra
+
+LSTP_C_G_WF001_LSTP_C_G_WF001_202607181935.txt
+  passed: 126 | firstFailStep: 133 | category: LOCATOR | 'no valid page' x0
+  lastPassed: Step 132 passed: Successfully clicked element: pageHome.img_But
+  detail: [frame eID=8f046db7-8ab0-41d1-b28f-fee622d63e2a] <meta title="" alt="" name="vs_showGrid" id="">, <meta title="" alt="" name="GENERATOR" id="">, <meta title="" alt="" name="CODE_LANGUAGE" id="">, <meta title="" alt="" na
+
+=== CATEGORY TOTALS ===
+  LOCATOR: 17 test(s)
+  OTHER: 2 test(s)
+  TIMING: 2 test(s)
+
+Total steps passed across run: 888

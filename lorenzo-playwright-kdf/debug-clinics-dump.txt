@@ -1,0 +1,6 @@
+app: http://ws008416.dedalus.lan/webclient_sso/EPR/APPMAINPAGE.AS
+Clinics(span.T_PL): sel=//span[@class='T_PL' and normalize-space()='Clinics'] | count=2 visible=2
+EmergencyDept(li): sel=//li[normalize-space()='Emergency Department'] | count=1 visible=1
+EmergencyDept(span.T_PL): sel=//span[@class='T_PL' and normalize-space()='Emergency Department'] | count=1 visible=1
+Referrals(span.T_PL): sel=//span[@class='T_PL' and normalize-space()='Referrals'] | count=1 visible=1
+CLICKED Clinics OK; url changed=false

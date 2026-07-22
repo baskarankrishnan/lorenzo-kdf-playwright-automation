@@ -1,0 +1,54 @@
+=== BATCH RUN STARTED 2026-07-20 16:09:40 ===
+
+=== PER-TEST RESULTS (from logs modified in last 3h) ===
+debug-eprid_spec_ts_open_patient_EPR_by_identifier_202607201543 | passed=0 | firstFail=
+debug-eprid_spec_ts_open_patient_EPR_by_identifier_202607201545 | passed=0 | firstFail=
+debug-eprid_spec_ts_open_patient_EPR_by_identifier_202607201546 | passed=0 | firstFail=
+debug-eprid_spec_ts_open_patient_EPR_by_identifier_202607201548 | passed=0 | firstFail=
+debug-eprid_spec_ts_open_patient_EPR_by_identifier_202607201550 | passed=0 | firstFail=
+debug-eprid_spec_ts_open_patient_EPR_by_identifier_202607201552 | passed=0 | firstFail=
+debug-eprtabs_spec_ts_inspect_EPR_tabs_202607201448 | passed=0 | firstFail=
+debug-eprtabs_spec_ts_inspect_EPR_tabs_202607201532 | passed=0 | firstFail=
+debug-eprtabs_spec_ts_inspect_EPR_tabs_202607201536 | passed=0 | firstFail=
+debug-eprtabs_spec_ts_inspect_EPR_tabs_202607201539 | passed=0 | firstFail=
+debug-gridrow_spec_ts_inspect_patient_result_grid_row_202607201537 | passed=0 | firstFail=
+debug-patients_spec_ts_search_existing_patients_202607201434 | passed=0 | firstFail=
+debug-psearch_spec_ts_inspect_patient_search_view_202607201534 | passed=0 | firstFail=
+debug-psfind_spec_ts_inspect_patient_search_Find_202607201436 | passed=0 | firstFail=
+LSTP_APE_WF001_LSTP_APE_WF001_202607201609 | passed=20 | firstFail=Step 21 failed: Failed to click element: Element not found for pageRegRegistration.tbl_SelectRow: xpath=//table[@id='g_DT1igrdSearch']//tr[@id='igRowigrdSearch_0']/td after 30000ms
+LSTP_C_G_WF001_LSTP_C_G_WF001_202607201609 | passed=126 | firstFail=Step 133 failed: Element not found for pageHome.cmb_Status: xpath=//input[@title = 'Select status'] after 30000ms
+LSTP_CarePlan_WF001_LSTP_CarePlan_WF001_202607201619 | passed=17 | firstFail=Step 18 failed: Failed to click element: Element not found for pageRegRegistration.tbl_SelectRow: xpath=//table[@id='g_DT1igrdSearch']//tr[@id='igRowigrdSearch_0']/td after 30000ms
+LSTP_CaseLoad_WF001_LSTP_CaseLoad_WF001_202607201438 | passed=32 | firstFail=Step 34 failed: Failed to click element: Element not found for pageEPRView.btn_Referral: xpath=//td[@caption='Re&ferrals'] after 30000ms
+LSTP_CaseLoad_WF001_LSTP_CaseLoad_WF001_202607201442 | passed=32 | firstFail=Step 34 failed: Failed to click element: Element not found for pageEPRView.btn_Referral: xpath=//td[@caption='Re&ferrals'] after 30000ms
+LSTP_CaseLoad_WF001_LSTP_CaseLoad_WF001_202607201619 | passed=32 | firstFail=Step 34 failed: Failed to click element: Element not found for pageEPRView.btn_Referral: xpath=//td[@caption='Re&ferrals'] after 30000ms
+LSTP_CaseNote_WF001_LSTP_CaseNote_WF001_202607201632 | passed=62 | firstFail=Step 63 failed: Failed to fill element: Element not found for pageManageReferral.dte_ReferralAcceptedDateTime: xpath=//tr[@id='trMngReferralDate']//input[@type='text'] after 30000ms
+LSTP_CDC_WF001_LSTP_CDC_WF001_202607201555 | passed=62 | firstFail=Step 66 failed: Failed to click element: Element not found for pageEPRView.btn_Forms: xpath=//td[@caption='&Forms'] after 30000ms
+LSTP_CDC_WF001_LSTP_CDC_WF001_202607201632 | passed=62 | firstFail=Step 66 failed: Failed to click element: Element not found for pageEPRView.btn_Forms: xpath=//td[@caption='&Forms'] after 30000ms
+LSTP_Charts_WF001_LSTP_Charts_WF001_202607201640 | passed=17 | firstFail=Step 18 failed: Failed to click element: Element not found for pageRegRegistration.tbl_SelectRow: xpath=//table[@id='g_DT1igrdSearch']//tr[@id='igRowigrdSearch_0']/td after 30000ms
+LSTP_Contacts_WF001_LSTP_Contacts_WF001_202607201640 | passed=16 | firstFail=Step 17 failed: Failed to fill element: Element not found for pageRegRegistration.txt_City: xpath=//input[@dikey='C53_tA4'] after 30000ms
+LSTP_CPPView_WF001_LSTP_CPPView_WF001_202607201643 | passed=89 | firstFail=Step 92 failed: Failed to click element: Element not found for pageHome.btn_RelatedPeople: xpath=//td[@id='ieprtab_Tab_C5_iepr_Tabs_C5_9'] after 30000ms
+LSTP_Daycare_WF001_LSTP_Daycare_WF001_202607201643 | passed=112 | firstFail=Step 120 failed: Failed to click element: Element not found for pageBookAppointment.img_referralsfs: xpath=//img[@title='Search and select the referral'] after 30000ms
+LSTP_DI_WF001_LSTP_DI_WF001_202607201438 | passed=7 | firstFail=Step 8 failed: Failed to click element: Element not found for pageHome.btn_Find: xpath=//td[@class='Cmd_TTE' and normalize-space()='Find'] after 30000ms
+LSTP_DI_WF001_LSTP_DI_WF001_202607201442 | passed=9 | firstFail=Step 10 failed: Failed to click element: Element "Select session" not found for page "pageHome" in locator repository.
+LSTP_DI_WF001_LSTP_DI_WF001_202607201656 | passed=9 | firstFail=Step 10 failed: Failed to click element: Element "Select session" not found for page "pageHome" in locator repository.
+LSTP_EC_WF001_LSTP_EC_WF001_202607201656 | passed=8 | firstFail=Step 9 failed: Failed to click element: Element not found for pageDepartment map.chk_WardName: xpath=//span[text() = 'Emergency Care Ward']/../preceding-sibling::td/img[@title = 'Check the value'] after 30000ms
+LSTP_ePMA_WF001_LSTP_ePMA_WF001_202607201657 | passed=27 | firstFail=Step 30 failed: Failed to get text from element: Element not found for pageFindandbook.lbl_PatientBookBanner: (//td[@class='CxtBar_TD6'])[1] after 30000ms
+LSTP_HealthIssues_WF001_LSTP_HealthIssues_WF001_202607201659 | passed=6 | firstFail=Step 7 failed: Failed to click element: Element not found for pageInpatient.chk_WardName: xpath=//tr[.//span[normalize-space(text()) = 'Ward A']]/td[@imgtype='CheckBox']//img after 30000ms
+LSTP_IDM_WF001_LSTP_IDM_WF001_202607201659 | passed=24 | firstFail=Step 25 failed: Failed to click element: Element not found for pageRegRegistration.tbl_SelectRow: xpath=//table[@id='g_DT1igrdSearch']//tr[@id='igRowigrdSearch_0']/td after 30000ms
+LSTP_IP_WF001_LSTP_IP_WF001_202607201701 | passed=28 | firstFail=Step 31 failed: Failed to get text from element: Element not found for pageFindandbook.lbl_PatientBookBanner: (//td[@class='CxtBar_TD6'])[1] after 30000ms
+LSTP_Maternity_WF001_LSTP_Maternity_WF001_202607201701 | passed=86 | firstFail=Step 93 failed: Failed to click element: Element not found for pageAdmitIPAdmitRoadCG.btn_Finish: xpath=//td[@title="Finish"] after 30000ms
+LSTP_MSI_WF001_LSTP_MSI_WF001_202607201709 | passed=9 | firstFail=Step 10 failed: Failed to verify property: Property is required for verifyProperty action
+LSTP_NursingActivity_WF001_LSTP_NursingActivity_WF001_202607201709 | passed=8 | firstFail=Step 9 failed: Failed to click element: Element not found for pageDepartment map.chk_WardName: xpath=//span[text() = 'Majors']/../preceding-sibling::td/img[@title = 'Check the value'] after 30000ms
+LSTP_Observations_WF001_LSTP_Observations_WF001_202607201710 | passed=17 | firstFail=Step 18 failed: Failed to click element: Element not found for pageRegRegistration.tbl_SelectRow: xpath=//table[@id='g_DT1igrdSearch']//tr[@id='igRowigrdSearch_0']/td after 30000ms
+LSTP_OP_WF001_LSTP_OP_WF001_202607201710 | passed=127 | firstFail=
+LSTP_Problems_WF001_LSTP_Problems_WF001_202607201719 | passed=12 | firstFail=
+LSTP_R_R_WF001_LSTP_R_R_WF001_202607201555 | passed=90 | firstFail=Step 98 failed: Failed to click element: Element not found for pageEPRView.btn_EPRTab: xpath=//td[@caption='&Results Requests'] after 30000ms
+LSTP_R_R_WF001_LSTP_R_R_WF001_202607201719 | passed=86 | firstFail=Step 93 failed: Failed to click element: Element not found for pageAdmitIPAdmitRoadCG.btn_Finish: xpath=//td[@title="Finish"] after 30000ms
+LSTP_Referral_WF001_LSTP_Referral_WF001_202607201726 | passed=29 | firstFail=Step 30 failed: Failed to click element: Element not found for pageEPRView.btn_Referral: xpath=//td[@caption='Re&ferrals'] after 30000ms
+LSTP_Reports_WF001_LSTP_Reports_WF001_202607201726 | passed=16 | firstFail=Step 17 failed: Failed to verify property: Element not found for pageNewReportLORENZO.lbl_ReportName: xpath=//label[normalize-space()=': Admission List By name_Referrer Report'] after 30000ms
+LSTP_TaskMgmt_FloorPlan_WF001_LSTP_TaskMgmt_FloorPlan_WF001_202607201729 | passed=5 | firstFail=Step 6 failed: Failed to click element: Element not found for pageHome.lnkSubTaskPaneInpatient: (//div[contains(@atei,'Inpatient')]//span[text()='Inpatient'])[2] after 30000ms
+LSTP_Theatres_WF001_LSTP_Theatres_WF001_202607201729 | passed=26 | firstFail=Step 29 failed: Failed to get text from element: Element not found for pageFindandbook.lbl_PatientBookBanner: (//td[@class='CxtBar_TD6'])[1] after 30000ms
+LSTP_User_Creation_WF001_LSTP_User_Creation_WF001_202607201732 | passed=3 | firstFail=Step 4 failed: Failed to click element: Element not found for pageSysconfig.tab_Users: xpath=//td[@id='iapptab_Tab_C244' and text()='Users'] after 30000ms
+LSTP_UserServices_WF001_LSTP_UserServices_WF001_202607201732 | passed=0 | firstFail=
+LSTP_WA_WF001_LSTP_WA_WF001_202607201732 | passed=35 | firstFail=Step 39 failed: Failed to click element: Element not found for pageFindandbook.lnk_Bookslot: (//input[@aria-label='Select row'])[4] after 30000ms
+=== BATCH RUN FINISHED 2026-07-20 17:34:46 ===

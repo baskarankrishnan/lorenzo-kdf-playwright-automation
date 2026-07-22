@@ -1,0 +1,2 @@
+clicked dialog Find in finder frame
+dialogFindClicked=true

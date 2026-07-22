@@ -1,0 +1,6 @@
+app: http://ws008416.dedalus.lan/webclient_sso/EPR/APPMAINPAGE.ASPX
+span.T_PL items: ["Manage my profile","Access planning","Background jobs","CAB management view","CAB manual resolution view","CAB service ID","Care plan templates","Caseload management","Clinics","Coding","Confidential seals","Contacts","Contracting assignment","Contracting exceptions","Day Care","Diary","Emergency Department","Horizon based scheduling","Inpatient","In-tray","LORENZO extract","Manage diary permission","Manage scanned documents","Manage Working Profile","Medication administration","Merge/Unmerge worklist","Patient review","Prescriptions","Referrals","Registers","Reporting services","Schedule manager","Specimen worklist","Subject access request","Team management","Theatre","View my requests and results","Volume management","Clinics","Message acknowledge audit view"]
+app tabs: [{"caption":"My work","key":"TB_MYWRK","title":"My work"},{"caption":"Patients","key":"TB_PATNT","title":"Patients"},{"caption":"In theatre","key":"TB_FS_MAIN_THEATRES","title":"In theatre"}]
+clicked My work tab
+CLICKED Inpatient (new locator) OK
+after Inpatient click -> hasWardsLabel=false headings=["Action","My work"]

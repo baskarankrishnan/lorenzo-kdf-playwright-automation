@@ -1,0 +1,21 @@
+- generic [ref=f1e1]:
+  - generic [ref=f1e2]: LIFE FLOWS THROUGH OUR SOFTWARE
+  - heading "OpenID Native" [level=1] [ref=f1e7]
+  - generic [ref=f1e9]:
+    - generic [ref=f1e10]:
+      - generic [ref=f1e11]: Username
+      - textbox "Username" [active] [ref=f1e12]
+    - generic [ref=f1e14]:
+      - generic [ref=f1e15]: Password
+      - textbox "Password" [ref=f1e16]
+    - link "Forgot my password" [ref=f1e19] [cursor=pointer]:
+      - /url: /OIDCPortal/Logon/ForgotPassword?client_id=8771463320368657183&response_type=code&redirect_uri=http%3A%2F%2Fws008416.dedalus.lan%2Fwebclient_sso%2Fssoredirect.aspx&scope=openid%20profile%20&state=329e9fdb-0b00-4609-81a0-a88cf46f13fc&grant_types=authorization_code&nonce=fZjllNTQ1MGEtMzliYi00OTI4LTkyZjAtYjQ3Y2ExNTVmNTFifjU4ZmZjZGVmLWNhZjMtNGU5Ny1iZTE0LThhZmI5Y2ViZmFkOF5hMDE2MDg3NS0yYTEwLTRjYTEtOGUwMy01NTRhYjA5ZTE3MWF%20YTAxNjA4NzUtMmExMC00Y2ExLThlMDMtNTU0YWIwOWUxNzFhb&IDProvider=oidnatlogon
+    - generic [ref=f1e20]:
+      - text: Before using this app, you can review OpenID Native's
+      - link "privacy policy" [ref=f1e21] [cursor=pointer]:
+        - /url: https://www.dedalus.com/global/en/privacy/
+      - text: .
+    - generic [ref=f1e22]:
+      - button "Login" [ref=f1e23] [cursor=pointer]
+      - button "Clear" [ref=f1e24] [cursor=pointer]
+  - generic [ref=f1e25]: © 2004-2024 Dedalus. All rights reserved.

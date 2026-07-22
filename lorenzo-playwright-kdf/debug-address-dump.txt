@@ -1,0 +1,10 @@
+logged in: http://ws008416.dedalus.lan/webclient_sso/EPR/APPMAINPAGE.AS
+surname=Zztest9000
+Patients tab: true
+Find record: true
+fill surname: true
+click Find: false
+click Registration: true
+fill postcode: true
+click address finder: true
+[frame:frDialog] {"grids":[{"id":"g_CTLigrdSearch","cls":" hdnDisB","rowCount":19,"firstRowId":"g_TRColHdrigrdSearch","sampleRowHtml":"<tr id=\"g_TRColHdrigrdSearch\" class=\"hdrht4\"><td class=\"hdrBC\" width=\"26\"><div class=\"G_Div1\" id=\"g_DH1igrdSearch\" width=\"26\"><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tbody><tr class=\"hdrht4\"><td class=\"G_CH hdrBC hdrwd6 hdnPd2\"><"},{"id":"g_DT1igrdSearch","cls":"G_TFDH hdrBgf","rowCount":0},{"id":"g_DT2igrdSearch","cls":"hdrBgf hdnTL hdofhd","rowCount":0},{"id":"g_DT1igrdSearch","cls":"G_TFDH hdrBgf hdnvat","rowCount":1,"firstRowId":"","sampleRowHtml":"<tr><td class=\"G_LE hdnalc hdrBd hdrht13\" title=\"There are no records to show\">There are no records to show</td></tr>"},{"id":"g_NSCigrdSearch","cls":"G_TFDH hdnvat","rowCount":1,"firstRowId":"","sampleRowHtml":"<tr><td>&nbsp;</td></tr>"},{"id":"DP_CTg_EDTPigrdSearch","cls":"visible_Style tbl_LFXD","rowCount":1,"firstRowId":"","sampleRowHtml":"<tr><td style=\" height:18px;\" id=\"DP_IHg_EDTPigrdSearch\" class=\"DP_IA\"><input type=\"text\" spellcheck=\"false\" aria-autocomplete=\"none\" size=\"83\" id=\"DP_Vg_EDTPigrdSearch\" name=\"DP_Vg_EDTPigrdSearch\" onfocus=\"g_EDTPigrdSearch.Focus()\" onblur="},{"id":"itimebox_Control_g_ETBXigrdSearch","cls":"TimeBox_Border","rowCount":2,"firstRowId":"","sampleRowHtml":"<tr><td><img class=\"iTB_Img\" id=\"itimebox_Down_g_ETBXigrdSearch\" src=\"/WebClient_SSO/images/AFW_UpDn_Down.gif\" alt=\"Down Arrow\" tooltip=\"Down Arrow\" onclick=\"$_('g_ETBXigrdSearch','OnClick',false)\" onmouseover=\"$_('g_ETBXigrdSearch','MouseM"}],"selectRowImgs":[],"cityInputs":[]}

@@ -1,0 +1,88 @@
+GRIDROW {
+ "frame": "edalus.lan/webclient_sso/EPR/APPMAINPAGE.ASPX",
+ "rowId": "",
+ "rowOnclick": "",
+ "rowOndbl": "",
+ "cells": [
+  {
+   "tag": "TD",
+   "cls": "L_P",
+   "title": "PASID-052503",
+   "onclick": null,
+   "ondbl": null,
+   "text": "PASID-052503"
+  },
+  {
+   "tag": "TD",
+   "cls": "",
+   "title": null,
+   "onclick": null,
+   "ondbl": null,
+   "text": "PASID-052503"
+  }
+ ]
+}
+GRIDROW {
+ "frame": "rch/patientbasicsearch.aspx?Viewcode=VW_PTSRC",
+ "rowId": "trSelectedCriteria",
+ "rowOnclick": "",
+ "rowOndbl": "",
+ "cells": [
+  {
+   "tag": "TD",
+   "cls": "IDM_InLStyles_1861",
+   "title": null,
+   "onclick": null,
+   "ondbl": null,
+   "text": "Your selected se"
+  },
+  {
+   "tag": "TD",
+   "cls": "IDM_S6",
+   "title": null,
+   "onclick": null,
+   "ondbl": null,
+   "text": "Your selected se"
+  },
+  {
+   "tag": "TD",
+   "cls": "IDM_S8",
+   "title": null,
+   "onclick": null,
+   "ondbl": null,
+   "text": "All patients, wh"
+  }
+ ]
+}
+GRIDROW {
+ "frame": "anagement/views/search/PatientSearchGrid.aspx",
+ "rowId": "trSelectedCriteria",
+ "rowOnclick": "",
+ "rowOndbl": "",
+ "cells": [
+  {
+   "tag": "TD",
+   "cls": "",
+   "title": null,
+   "onclick": null,
+   "ondbl": null,
+   "text": "Your selected se"
+  },
+  {
+   "tag": "TD",
+   "cls": "BlueBorderWithBGC",
+   "title": null,
+   "onclick": null,
+   "ondbl": null,
+   "text": "Your selected se"
+  },
+  {
+   "tag": "TD",
+   "cls": "BlueBorderWithBGC",
+   "title": null,
+   "onclick": null,
+   "ondbl": null,
+   "text": "All patients,  w"
+  }
+ ]
+}

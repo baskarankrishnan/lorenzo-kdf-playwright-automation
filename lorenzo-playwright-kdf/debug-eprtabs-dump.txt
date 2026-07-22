@@ -1,0 +1,4 @@
+viewEPR=false
+opened=true
+EPRTABS {"frame":"edalus.lan/webclient_sso/EPR/APPMAINPAGE.ASPX","tabs":[{"id":"iapptab_Tab_C240","caption":"My work","title":"My work","text":"My work"},{"id":"iapptab_Tab_C241","caption":"Patients","title":"Patients","text":"Patients"},{"id":"iapptab_Tab_C242","caption":"In theatre","title":"In theatre","text":"In theatre"}]}
+EPRTABS {"frame":"&MOVINGTOEPRVIEWS=no&&PVC=VW_PTLST|VW_PTLSTMN","tabs":[{"id":"fTb_C30","caption":"Basic search","title":null,"text":"Basic search"},{"id":"fTb_C31","caption":"Advanced search","title":null,"text":"Advanced search"}]}

@@ -1,0 +1,78 @@
+goto http://WS008416.dedalus.lan/webclient_sso/extlogon.aspx?idp=oidnatlogon&IsClientInfoNotRequired=true
+submitted classic login
+waiting for LORENZO app window...
+  attempt 0: pages=2 app.title="LORENZO" app.url=http://ws008416.dedalus.lan/webclient_sso/EPR/APPMAINPAGE.ASPX
+LORENZO main found
+clicked My work tab
+
+=== DUMP ===
+{
+  "inpatient": [
+    {
+      "tag": "SPAN",
+      "id": "",
+      "cls": "T_PL",
+      "title": null,
+      "atei": null,
+      "parentTag": "LI",
+      "parentTitle": "Inpatient",
+      "xpath": "/td[1]/div[1]/div[3]/div[1]/div[1]/ul[1]/li[18]/span[1]",
+      "outer": "<span class=\"T_PL\" style=\"position: relative; top: -4px;\">Inpatient</span>"
+    }
+  ],
+  "panes": [
+    {
+      "tag": "DIV",
+      "atei": "Expand Pane - Standard LORENZO",
+      "id": "itC_C17",
+      "visible": true
+    },
+    {
+      "tag": "DIV",
+      "atei": "Expand Pane - My LORENZO",
+      "id": "itC_C18",
+      "visible": false
+    },
+    {
+      "tag": "DIV",
+      "atei": "Expand Pane - My work",
+      "id": "itC_C19",
+      "visible": true
+    },
+    {
+      "tag": "DIV",
+      "atei": "Expand Pane - Intray List & Details",
+      "id": "itC_C20",
+      "visible": false
+    },
+    {
+      "tag": "DIV",
+      "atei": " External links",
+      "id": "itC_C21",
+      "visible": false
+    }
+  ],
+  "myworkContainers": [
+    {
+      "tag": "DIV",
+      "title": "",
+      "atei": "Expand Pane - My work",
+      "id": "itC_C19",
+      "html": "<div id=\"itC_C19\" cttp=\"\" title=\"\" style=\"width:162px;\" class=\"T_BO T_AS\" locked=\"False\" sttp=\"True\" imtb=\"../images/AFW_TaskPane_TitleArea1.gif\" imep=\"/WebClient_SSO/images/AFW_Expand.gif\" imeh=\"/WebClient_SSO/images/AFW_ExpandOver.gif\" imcp=\"/WebClient_SSO/images/AFW_Collapse.gif\" imch=\"/WebClient"
+    },
+    {
+      "tag": "DIV",
+      "title": "My work",
+      "atei": null,
+      "id": "itT_C19",
+      "html": "<div id=\"itT_C19\" onmouseover=\"C19.TMO()\" onmouseout=\"C19.TOt();\" onclick=\"C19.TOC();\" caption=\"My work\" title=\"My work\"><h2 id=\"itTH_C19\" tabindex=\"0\" title=\"\" class=\"T_TT\">My work</h2></div>"
+    },
+    {
+      "tag": "TD",
+      "title": "My work",
+      "atei": null,
+      "id": "iapptab_Tab_C240",
+      "html": "<td id=\"iapptab_Tab_C240\" class=\" ATBTB AppTab_Selected ATBVIS ATBOR\" background=\"/WebClient_SSO/Images/iTabBtnSelected110x24.png\" tabindex=\"0\" selected=\"true\" key=\"TB_MYWRK\" caption=\"My work\" url=\"../user services/views/intray/intray.aspx?ViewCode=VW_DOLST\" enabled=\"true\" frametitle=\"To do List\" on"
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+clicked Emergency Department=true
+WARDS {
+ "frame": "edalus.lan/webclient_sso/EPR/APPMAINPAGE.ASPX",
+ "wardSpans": [
+  {
+   "text": "Emergency Current View",
+   "cls": "ToolbarButton_TDS",
+   "hasRow": true,
+   "rowHasCheckbox": false,
+   "cbTitle": null,
+   "cbImgtype": null
+  },
+  {
+   "text": "Forward",
+   "cls": "ToolbarButton_TDS",
+   "hasRow": true,
+   "rowHasCheckbox": false,
+   "cbTitle": null,
+   "cbImgtype": null
+  },
+  {
+   "text": "Forward",
+   "cls": "",
+   "hasRow": true,
+   "rowHasCheckbox": false,
+   "cbTitle": null,
+   "cbImgtype": null
+  },
+  {
+   "text": "Emergency Department",
+   "cls": "T_PL",
+   "hasRow": true,
+   "rowHasCheckbox": false,
+   "cbTitle": null,
+   "cbImgtype": null
+  }
+ ],
+ "imgtypesSample": []
+}
+WARDS {
+ "frame": "epartmentMap.aspx?FROMECCURRENTVIEW=&Time=463",
+ "wardSpans": [
+  {
+   "text": "AEward01",
+   "cls": "Tree_Span",
+   "hasRow": true,
+   "rowHasCheckbox": true,
+   "cbTitle": "Check the value",
+   "cbImgtype": "CheckBox"
+  },
+  {
+   "text": "AEward02",
+   "cls": "Tree_Span",
+   "hasRow": true,
+   "rowHasCheckbox": true,
+   "cbTitle": "Check the value",
+   "cbImgtype": "CheckBox"
+  },
+  {
+   "text": "Arthropathy Emergency Unit",
+   "cls": "Tree_Span",
+   "hasRow": true,
+   "rowHasCheckbox": true,
+   "cbTitle": "Check the value",
+   "cbImgtype": "CheckBox"
+  },
+  {
+   "text": "Arthropathy Emergency Room",
+   "cls": "Tree_Span",
+   "hasRow": true,
+   "rowHasCheckbox": true,
+   "cbTitle": "Check the value",
+   "cbImgtype": "CheckBox"
+  },
+  {
+   "text": "ATNA Emergency Unit",
+   "cls": "Tree_Span",
+   "hasRow": true,
+   "rowHasCheckbox": true,
+   "cbTitle": "Check the value",
+   "cbImgtype": "CheckBox"
+  },
+  {
+   "text": "Bone marrow ward Emergency Unit",
+   "cls": "Tree_Span",
+   "hasRow": true,
+   "rowHasCheckbox": true,
+   "cbTitle": "Check the value",
+   "cbImgtype": "CheckBox"
+  },
+  {
+   "text": "Bone marrow ward Emergency Room",
+   "cls": "Tree_Span",
+   "hasRow": true,
+   "rowHasCheckbox": true,
+   "cbTitle": "Check the value",
+   "cbImgtype": "CheckBox"
+  },
+  {
+   "text": "Cardio Emergency ward",
+   "cls": "Tree_Span",
+   "hasRow": true,
+   "rowHasCheckbox": true,
+   "cbTitle": "Check the value",
+   "cbImgtype": "CheckBox"
+  },
+  {
+   "text": "Cardio Emergency Room01",
+   "cls": "Tree_Span",
+   "hasRow": true,
+   "rowHasCheckbox": true,
+   "cbTitle": "Check the value",
+   "cbImgtype": "CheckBox"
+  },
+  {
+   "text": "Catastrophe EC Ward",
+   "cls": "Tree_Span",
+   "hasRow": true,
+   "rowHasCheckbox": true,
+   "cbTitle": "Check the value",
+   "cbImgtype": "CheckBox"
+  },
+  {
+   "text": "Crisis AE Ward",
+   "cls": "Tree_Span",
+   "hasRow": true,
+   "rowHasCheckbox": true,
+   "cbTitle": "Check the value",
+   "cbImgtype": "CheckBox"
+  },
+  {
+   "text": "Emergency Floor",
+   "cls": "Tree_Span",
+   "hasRow": true,
+   "rowHasCheckbox": true,
+   "cbTitle": "Check the value",
+   "cbImgtype": "CheckBox"
+  }
+ ],
+ "imgtypesSample": [
+  "CheckBox"
+ ]
+}
+WARDS {
+ "frame": "GE_AND_STREAM=TRUE&FROM_EC_VIEW=TRUE&&Time=49",
+ "wardSpans": [
+  {
+   "text": "Ward-Location/Specialty",
+   "cls": "k-cell-inner",
+   "hasRow": true,
+   "rowHasCheckbox": false,
+   "cbTitle": null,
+   "cbImgtype": null
+  },
+  {
+   "text": "Ward-Location/Specialty",
+   "cls": "k-link",
+   "hasRow": true,
+   "rowHasCheckbox": false,
+   "cbTitle": null,
+   "cbImgtype": null
+  },
+  {
+   "text": "Ward-Location/Specialty",
+   "cls": "k-column-title",
+   "hasRow": true,
+   "rowHasCheckbox": false,
+   "cbTitle": null,
+   "cbImgtype": null
+  }
+ ],
+ "imgtypesSample": []
+}
+WARDS {
+ "frame": "orplanlegendview.aspx?LAUNCH_FROM=Currentview",
+ "wardSpans": [
+  {
+   "text": "Emergency Care",
+   "cls": "",
+   "hasRow": true,
+   "rowHasCheckbox": false,
+   "cbTitle": null,
+   "cbImgtype": null
+  }
+ ],
+ "imgtypesSample": []
+}

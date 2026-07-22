@@ -1,0 +1,84 @@
+[s.lan/webclient_sso/EPR/APPMAINPAGE.ASPX] [
+ {
+  "tag": "SPAN",
+  "cls": "T_PL",
+  "id": "",
+  "title": "",
+  "text": "Find record",
+  "vis": true,
+  "disabled": null,
+  "xpath": "/div[3]/div[1]/div[1]/ul[1]/li[3]/span[1]"
+ },
+ {
+  "tag": "TD",
+  "cls": "TaskPanelBorder AMP_TD6",
+  "id": "",
+  "title": "",
+  "text": "Find recordAuthorise",
+  "vis": true,
+  "disabled": null,
+  "xpath": "/td[1]/div[1]/table[1]/tbody[1]/tr[4]/td[1]"
+ }
+]
+[iapptab_Frame_1_C24] [
+ {
+  "tag": "TD",
+  "cls": "",
+  "id": "",
+  "title": "",
+  "text": "Find\n\n   var C7 = ne",
+  "vis": true,
+  "disabled": null,
+  "xpath": "/tr[5]/td[1]/table[1]/tbody[1]/tr[1]/td[4]"
+ },
+ {
+  "tag": "BUTTON",
+  "cls": "Cmd_BC Command_Disabled",
+  "id": "ic_C_C7",
+  "title": "",
+  "text": "Find",
+  "vis": true,
+  "disabled": true,
+  "xpath": "/td[1]/table[1]/tbody[1]/tr[1]/td[4]/button[1]"
+ },
+ {
+  "tag": "TD",
+  "cls": "Cmd_TTE",
+  "id": "",
+  "title": "",
+  "text": "Find",
+  "vis": true,
+  "disabled": null,
+  "xpath": "/td[4]/button[1]/table[1]/tbody[1]/tr[1]/td[2]"
+ },
+ {
+  "tag": "TD",
+  "cls": "",
+  "id": "tddFindExt",
+  "title": "",
+  "text": "Find external\n\n   va",
+  "vis": true,
+  "disabled": null,
+  "xpath": "/tr[5]/td[1]/table[1]/tbody[1]/tr[1]/td[5]"
+ },
+ {
+  "tag": "BUTTON",
+  "cls": "Cmd_BC Command_Normal   C",
+  "id": "ic_C_C8",
+  "title": "Click to find external",
+  "text": "Find external",
+  "vis": true,
+  "disabled": null,
+  "xpath": "/td[1]/table[1]/tbody[1]/tr[1]/td[5]/button[1]"
+ },
+ {
+  "tag": "TD",
+  "cls": "Cmd_TTE",
+  "id": "",
+  "title": "Click to find external",
+  "text": "Find external",
+  "vis": true,
+  "disabled": null,
+  "xpath": "/td[5]/button[1]/table[1]/tbody[1]/tr[1]/td[2]"
+ }
+]

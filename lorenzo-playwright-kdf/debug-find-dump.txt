@@ -1,0 +1,30 @@
+clicked Clinics
+[frame:ifrmSearchCriteria] [
+ {
+  "tag": "BUTTON",
+  "cls": "Cmd_BC Command_Normal ",
+  "id": "ic_C_C20",
+  "title": "Find",
+  "text": "Find",
+  "vis": true,
+  "xpath": "/tr[11]/td[1]/table[1]/tbody[1]/tr[1]/td[1]/button[1]"
+ },
+ {
+  "tag": "IMG",
+  "cls": "",
+  "id": "ic_I_C20",
+  "title": "Find",
+  "text": "",
+  "vis": true,
+  "xpath": "/td[1]/button[1]/table[1]/tbody[1]/tr[1]/td[1]/img[1]"
+ },
+ {
+  "tag": "TD",
+  "cls": "Cmd_TT",
+  "id": "",
+  "title": "Find",
+  "text": "Find",
+  "vis": true,
+  "xpath": "/tr[1]/td[1]/button[1]/table[1]/tbody[1]/tr[1]/td[2]"
+ }
+]
