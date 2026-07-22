@@ -183,19 +183,31 @@ body{font-weight:400}
 .metric-badge.commented{background:#f1f4f8;color:#6b7787;border-color:#dde3ec}
 .metric-badge.skipped{background:#fdf4e3;color:#c99a4c;border-color:#f0dcb4}
 .ddt-badge{background:#8f7ad6}
+.metric-icon{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;opacity:1;font-size:0;background:var(--bg-secondary);color:var(--text-muted)}
+.metric-icon svg{width:20px;height:20px}
+.metric-icon.total{background:#eaeefb;color:#5163b8}
+.metric-icon.passed{background:#e8f6ee;color:#4a9d6e}
+.metric-icon.failed{background:#fdecec;color:#d07272}
+.metric-icon.skipped{background:#fdf4e3;color:#c99a4c}
+.metric-icon.commented{background:#f1f4f8;color:#6b7787}
+.metric-icon.rate{background:#eaf0fc;color:#5c7bc0}
+.title-icon{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;margin-right:10px;color:var(--primary)}
+.title-icon svg{width:26px;height:26px}
+.duration-badge svg{width:13px;height:13px;vertical-align:-2px;margin-right:5px}
+.icon-button svg{width:15px;height:15px;vertical-align:-2px}
 </style>
 </head>
 <body>
 <div class="container">
 <div class="header">
 <div class="header-left">
-<h1>📊 ${escapeHtml(executionPack)} - Consolidated Report</h1>
+<h1><span class="title-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>${escapeHtml(executionPack)} - Consolidated Report</h1>
 <p>Execution Timestamp: ${escapeHtml(executionTimestamp)}</p>
 <p>Start: ${formatDateTime(executionMetrics.startTime)} | End: ${formatDateTime(executionMetrics.endTime)}</p>
 </div>
 <div class="header-right">
 <span class="config-badge">Continue On Failure: ${continueOnFailure ? 'YES' : 'NO'}</span>
-<span class="duration-badge">⏱ ${executionMetrics.totalDuration}</span>
+<span class="duration-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${executionMetrics.totalDuration}</span>
 <span class="status-badge ${getOverallStatusClass(passedTests, failedTests, totalTests)}">${getOverallStatusText(passedTests, failedTests, totalTests)}</span>
 </div>
 </div>
@@ -208,27 +220,27 @@ body{font-weight:400}
 <div id="dashboard" class="tab-content active">
 <div class="dashboard-grid">
 <div class="metric-card">
-<div class="metric-header"><span class="metric-title">Total Tests</span><span class="metric-icon">📋</span></div>
+<div class="metric-header"><span class="metric-title">Total Tests</span><span class="metric-icon total"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h6"/></svg></span></div>
 <div class="metric-value">${totalTests}</div>
 <div class="metric-label">Executed</div>
 </div>
 <div class="metric-card">
-<div class="metric-header"><span class="metric-title">Passed</span><span class="metric-icon">✓</span></div>
+<div class="metric-header"><span class="metric-title">Passed</span><span class="metric-icon passed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span></div>
 <div class="metric-value" style="color:var(--success)">${passedTests}</div>
 <div class="metric-label">Success</div>
 </div>
 <div class="metric-card">
-<div class="metric-header"><span class="metric-title">Failed</span><span class="metric-icon">✗</span></div>
+<div class="metric-header"><span class="metric-title">Failed</span><span class="metric-icon failed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span></div>
 <div class="metric-value" style="color:var(--danger)">${failedTests}</div>
 <div class="metric-label">Errors</div>
 </div>
 <div class="metric-card">
-<div class="metric-header"><span class="metric-title">Skipped</span><span class="metric-icon">⏭</span></div>
+<div class="metric-header"><span class="metric-title">Skipped</span><span class="metric-icon skipped"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg></span></div>
 <div class="metric-value" style="color:var(--warning)">${skippedTests}</div>
 <div class="metric-label">Bypassed</div>
 </div>
 <div class="metric-card">
-<div class="metric-header"><span class="metric-title">Pass Rate</span><span class="metric-icon">%</span></div>
+<div class="metric-header"><span class="metric-title">Pass Rate</span><span class="metric-icon rate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span></div>
 <div class="metric-value" style="color:${getPassRateColor(passedTests, totalTests)}">${getPassRate(passedTests, totalTests)}%</div>
 <div class="metric-label">Success Rate</div>
 </div>
@@ -339,7 +351,7 @@ window.onclick=function(event){if(event.target.classList.contains('modal')){even
 </html>`;
 
     const consolidatedReportPath = path.join(reportDir, `${executionPack}_ConsolidatedReport.html`);
-    fs.writeFileSync(consolidatedReportPath, htmlContent, 'utf-8');
+    fs.writeFileSync(consolidatedReportPath, '\uFEFF' + htmlContent, 'utf-8');
     console.log(`✅ Consolidated HTML report generated: ${consolidatedReportPath}`);
 
     // PlaceHolder for function to generate AI Summary
@@ -374,7 +386,7 @@ function generateTestRows(testRowsData: any[]): string {
 <button class="icon-button" onclick="showTestInfo(${index})" title="View Details">ℹ</button>
 </td>
 <td style="text-align:center">
-<a href="${test.reportPath}" class="icon-button" title="Open Report" target="_blank">📄</a>
+<a href="${test.reportPath}" class="icon-button" title="Open Report" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
 </td>
 </tr>`;
     });
