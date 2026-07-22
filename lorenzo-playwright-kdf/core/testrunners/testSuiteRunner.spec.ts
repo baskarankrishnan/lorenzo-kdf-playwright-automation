@@ -69,8 +69,8 @@ if (process.env.LOCATOR_REPOSITORY_SOURCE === 'excel') {
 }
 executionContext.addSuiteVariable('LOCATOR_REPOSITORY', locatorRepository);
 
-const individualDir = process.env.INDIVIDUAL_REPORT_PATH || '';
-const tempReportsDir = process.env.TEMP_TEST_RESULTS_PATH || '';
+const individualDir = process.env.INDIVIDUAL_REPORT_PATH || './reports/individualReports';
+const tempReportsDir = process.env.TEMP_TEST_RESULTS_PATH || './reports/temp/testResults';
 const continueOnFailure = process.env.CONTINUE_ON_FAILURE !== 'false';
 
 if (!fs.existsSync(tempReportsDir)) fs.mkdirSync(tempReportsDir, { recursive: true });
@@ -108,7 +108,9 @@ test.describe('Test Suite Execution', () => {
         test.describe.serial(`${excelName}`, () => {
             const { module, testCases } = excelData;
             const contextKey = `${module}_${excelName}`;
-            const excelReportDir = path.join(individualDir, module, `${excelName}_${executionTimestamp}`);
+            // One folder per module/excel (NO run timestamp) so each run overwrites
+            // the same individual report rather than accumulating a new copy.
+            const excelReportDir = path.join(individualDir, module, `${excelName}`);
             const suiteKey = `${module}_${excelName}`;
 
             suiteFailureTracker.set(suiteKey, false);

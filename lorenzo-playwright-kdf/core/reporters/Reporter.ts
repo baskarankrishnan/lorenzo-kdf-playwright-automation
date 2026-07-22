@@ -97,10 +97,10 @@ class ConsolidatedReporter implements Reporter {
             return;
         }
 
-        const tempReportsDir = process.env.TEMP_TEST_RESULTS_PATH || '';
-        const consolidatedDir = process.env.CONSOLIDATED_REPORT_PATH || '';
-        const capturedDataDir = process.env.CAPTURED_DATA_PATH || '';
-        const consoleLogsDir = process.env.CONSOLE_LOGS_PATH || '';
+        const tempReportsDir = process.env.TEMP_TEST_RESULTS_PATH || './reports/temp/testResults';
+        const consolidatedDir = process.env.CONSOLIDATED_REPORT_PATH || './reports';
+        const capturedDataDir = process.env.CAPTURED_DATA_PATH || './reports/capturedData';
+        const consoleLogsDir = process.env.CONSOLE_LOGS_PATH || './reports/temp/consoleLogs';
 
         // Ensure directories exist
         if (!fs.existsSync(consolidatedDir)) {
@@ -280,13 +280,9 @@ class ConsolidatedReporter implements Reporter {
      * by the single runner itself, so they are intentionally not repeated here).
      */
     private generateConsolidatedForSingle() {
-        const tempReportsDir = process.env.TEMP_TEST_RESULTS_PATH || '';
-        const consolidatedDir = process.env.CONSOLIDATED_REPORT_PATH || '';
+        const tempReportsDir = process.env.TEMP_TEST_RESULTS_PATH || './reports/temp/testResults';
+        const consolidatedDir = process.env.CONSOLIDATED_REPORT_PATH || './reports';
 
-        if (!consolidatedDir) {
-            console.warn('⚠️ CONSOLIDATED_REPORT_PATH not set - skipping consolidated report for single run');
-            return;
-        }
         if (!fs.existsSync(consolidatedDir)) {
             fs.mkdirSync(consolidatedDir, { recursive: true });
         }

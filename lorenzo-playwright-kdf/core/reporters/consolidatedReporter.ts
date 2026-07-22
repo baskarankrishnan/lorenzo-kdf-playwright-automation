@@ -32,12 +32,10 @@ export function generateConsolidatedReport(
             const commentedSteps = result.steps?.filter((s: any) => s.stepStatus === 2).length || 0;
             const skippedSteps = result.steps?.filter((s: any) => s.stepStatus === 3).length || 0;
 
-            // Calculate relative path to individual report.
-            // The consolidated report is written into the reports folder and
-            // individualReports/ is a sibling SUBFOLDER of it, so the link is
-            // relative to the consolidated report WITHOUT a leading `../`
-            // (a `../` wrongly climbs above the reports folder).
-            const individualReportDir = `${excelName}_${executionTimestamp}`;
+            // Link to the per-module individual report. The folder is named by
+            // module/excel only (NO run timestamp) so each run OVERWRITES the same
+            // file instead of piling up a new copy every execution.
+            const individualReportDir = `${excelName}`;
             const individualReportPath = `individualReports/${module}/${individualReportDir}/${testcaseId}.html`;
 
             testRowsData.push({
@@ -313,7 +311,7 @@ window.onclick=function(event){if(event.target.classList.contains('modal')){even
 </body>
 </html>`;
 
-    const consolidatedReportPath = path.join(reportDir, `${executionPack}_${executionTimestamp}.html`);
+    const consolidatedReportPath = path.join(reportDir, `${executionPack}_ConsolidatedReport.html`);
     fs.writeFileSync(consolidatedReportPath, htmlContent, 'utf-8');
     console.log(`✅ Consolidated HTML report generated: ${consolidatedReportPath}`);
 
