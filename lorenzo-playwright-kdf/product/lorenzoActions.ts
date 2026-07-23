@@ -4,7 +4,6 @@ import { setTextBox, clickElement, resolveElement, resolveElements, sleep, click
 import { waitForRoller, waitForSeconds } from "../core/actionkeywords/browserActions";
 import { resolveTestVariables } from "../core/actionkeywords/dataActions";
 import { getLocatorString } from "../core/utilities/locatorUtils";
-import { error } from "jquery";
 import { chromium } from "@playwright/test";
 
 // Helper function to check action results

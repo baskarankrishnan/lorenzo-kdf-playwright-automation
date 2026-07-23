@@ -4,7 +4,6 @@ import { setTextBox, setAutoCompleteField, clickElement, resolveElement, resolve
 import { waitForRoller, waitForSeconds } from "../core/actionkeywords/browserActions";
 import { resolveTestVariables } from "../core/actionkeywords/dataActions";
 import { getLocatorString } from "../core/utilities/locatorUtils";
-import { error } from "jquery";
 
 // Helper function to check action results
 function checkResult(result: { code: number; value: string }) {

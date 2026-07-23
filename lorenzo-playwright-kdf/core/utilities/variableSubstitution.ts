@@ -1,5 +1,17 @@
-import { format } from 'date-fns';
 import * as os from 'os';
+
+// Minimal native date formatter (replaces the date-fns `format` dependency).
+// Supports only the tokens used below: dd, MMM, yyyy, HH, mm.
+const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function formatDate(date: Date, pattern: string): string {
+    const pad2 = (n: number): string => n.toString().padStart(2, '0');
+    return pattern
+        .replace('yyyy', date.getFullYear().toString())
+        .replace('MMM', MONTHS_SHORT[date.getMonth()])
+        .replace('dd', pad2(date.getDate()))
+        .replace('HH', pad2(date.getHours()))
+        .replace('mm', pad2(date.getMinutes()));
+}
 
 /**
  * Dynamic variable substitution system
@@ -70,9 +82,9 @@ export function substituteVariables(
 
     // Built-in variables
     const builtInVariables: Record<string, string> = {
-        _currentDate: format(now, 'dd-MMM-yyyy'),
-        _currentTime: format(now, 'HH:mm'),
-        _currentDateTime: format(now, 'dd-MMM-yyyy HH:mm'),
+        _currentDate: formatDate(now, 'dd-MMM-yyyy'),
+        _currentTime: formatDate(now, 'HH:mm'),
+        _currentDateTime: formatDate(now, 'dd-MMM-yyyy HH:mm'),
         _currentDevice: os.hostname(),
         _randomNumber: generateRandomNumber(6),
         _randomString: generateRandomString(8),
