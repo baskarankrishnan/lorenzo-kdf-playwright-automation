@@ -51,5 +51,5 @@ export const btn_Finish = "//td[@title='Finish']";
 export const cmb_Selectaction = "//img[@title='Select the action to be performed on the referral']";
 export const icn_SFS = "//img[@title='Select the episode name']";
 export const btn_BookFinish = " //td[@title='Finish now']";
-export const dte_ReferralAcceptedDateTime = "//tr[@id='trMngReferralDate']//input[@type='text']",
+export const dte_ReferralAcceptedDateTime = "//tr[@id='trMngReferralDate']//input[@type='text']";
 export const tbl_OPPegboardGrid = "//table//div[@id='g_JSCTLC7']";
