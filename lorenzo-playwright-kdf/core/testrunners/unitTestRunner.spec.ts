@@ -135,7 +135,7 @@ test.describe('Unit Test Case Runner', () => {
         console.log('================================\n');
     });
 
-    test.only(`${TEST_CONFIG.testcaseId}`, async () => {
+    test(`${TEST_CONFIG.testcaseId}`, async () => {
         executionStartTime = new Date();
         const testStartTime = new Date();
         const contextKey = `${TEST_CONFIG.module}_${TEST_CONFIG.excelName}`;
