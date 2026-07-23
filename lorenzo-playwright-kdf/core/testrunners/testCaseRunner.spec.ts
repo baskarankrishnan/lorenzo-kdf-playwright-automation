@@ -139,9 +139,6 @@ test.describe('Test Case Runner', () => {
                             );
                         }
                     }
-                            );
-                        }
-                    }
 
                     // ✅ RESOLVE PAGE BEFORE EXECUTION
                     const activePage = await resolvePageForStep(step.page, focusTracker);
