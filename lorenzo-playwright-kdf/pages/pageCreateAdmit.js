@@ -9,6 +9,6 @@ export const txt_DOB = "//input[@class='DP_TB_Text']";
 export const btn_Find = "//button[@title='Click to Find']";
 export const lnk_Registration = "//td[normalize-space(.)='Registration']";
 export const lbl_NHSnumber = "//label[normalize-space(.)='NHS Number']";
-export const txt_City = "//input[@dikey='C53_tA4']";
+export const txt_City = "//input[@title='Enter City']";
 export const cmb_Country = "//input[@title='Enter Country']";
 export const btn_Finishnow = "//table//td[@title='Finish now']";

@@ -270,7 +270,12 @@ test.describe('Test Suite Execution', () => {
                                     }
 
                                     if (result && typeof result === 'object' && 'code' in result) {
-                                        if (result.code !== 0) {
+                                        if (result.code === 2) {
+                                            // Soft-skip (e.g. conditional popup that did not appear) — do NOT fail/stop.
+                                            outcome = 2;
+                                            returnText = result.value || 'Step skipped (conditional)';
+                                            console.log(`⏭ Step ${step.stepNo} skipped: ${returnText}`);
+                                        } else if (result.code !== 0) {
                                             outcome = 1;
                                             testStatus = 1;
                                             stopExecution = true;

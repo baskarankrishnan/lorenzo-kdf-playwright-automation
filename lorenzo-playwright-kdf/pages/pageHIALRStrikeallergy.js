@@ -1,6 +1,6 @@
 // pageRegistration
 export const txt_Forename = "//input[@dikey='itxtForename']";
-export const txt_City = "//input[@dikey='C53_tA4']";
+export const txt_City = "//input[@title='Enter City']";
 export const cmb_Country = "//input[@title='Enter Country']";
 export const btn_Finishnow = "//table//td[@title='Finish now']";
 export const ico_RegRoadmapTitle = "//td[@class='Cmd_TTE'][@title='Yes']";

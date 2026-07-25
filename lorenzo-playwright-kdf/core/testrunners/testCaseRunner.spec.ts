@@ -14,9 +14,9 @@ import * as path from 'path';
 
 // ✅ Test Case Configuration
 const TEST_CONFIG = {
-    module: 'IP',
-    excelName: 'TESTLorenzo-001',
-    testcaseId: 'LSTP_IP_WF001',
+    module: 'APE',
+    excelName: 'LSTP_APE_WF001',
+    testcaseId: 'LSTP_APE_WF001',
     jiraId: '',
     description: '',
     author: '',
@@ -81,6 +81,10 @@ test.describe('Test Case Runner', () => {
         }
         executionContext.setCurrentContext(contextKey);
 
+        // Start with a clean transient page reference (matches testSuiteRunner) so nothing
+        // from a prior context leaks into resolvePageForStep.
+        (executionContext as any)._popupPage = undefined;
+
         // Load embedded TestData sheet for DatasetColumnName resolution (row 1 = first data row).
         const testDataMap = fileUtils.readTestDataFromExcel(TEST_CONFIG.module, TEST_CONFIG.excelName, 1);
 
@@ -92,6 +96,20 @@ test.describe('Test Case Runner', () => {
         let stopExecution = false;
 
         console.log(`📋 Executing ${testCase.testSteps.length} steps\n`);
+
+        // ✅ Navigate to the application URL so the first step (login) has a loaded page
+        //    to act on. Matches testSuiteRunner/unitRunner; without this the page stays at
+        //    about:blank and step 1 fails ("Page was closed").
+        if (page.url() === 'about:blank') {
+            const appUrl = process.env.URL || process.env.APP_URL || '';
+            if (appUrl) {
+                console.log(`🌐 Navigating to app URL: ${appUrl}`);
+                await page.goto(appUrl, { waitUntil: 'domcontentloaded' });
+                await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => { });
+            } else {
+                console.warn('⚠️ No app URL configured (.env URL or APP_URL) - first step may fail');
+            }
+        }
 
         // ✅ Execute steps
         for (const step of testCase.testSteps) {
@@ -164,7 +182,12 @@ test.describe('Test Case Runner', () => {
 
                     // ✅ Check result
                     if (result && typeof result === 'object' && 'code' in result) {
-                        if (result.code !== 0) {
+                        if (result.code === 2) {
+                            // Soft-skip (e.g. conditional popup that did not appear) — do NOT fail/stop.
+                            outcome = 2;
+                            returnText = result.value || 'Step skipped (conditional)';
+                            console.log(`  ⏭ SKIPPED: ${returnText}`);
+                        } else if (result.code !== 0) {
                             outcome = 1;
                             testStatus = 1;
                             stopExecution = true;

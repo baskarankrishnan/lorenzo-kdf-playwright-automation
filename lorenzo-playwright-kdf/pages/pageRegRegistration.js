@@ -1,7 +1,7 @@
 ﻿// pageRegRegistration
 export const txt_Surname = "//input[@dikey='itxtSurname']";
 export const txt_Forename = "//input[@dikey='itxtForename']";
-export const txt_City = "//input[@dikey='C53_tA4']";
+export const txt_City = "//input[@title='Enter City']";
 export const cmb_Country = "//input[@title='Enter Country']";
 // DUPLICATE of btn_Finishnow — superseded by the title-ancestor definition later in file; commented.
 // export const btn_Finishnow = "//table//td[@title='Finish now']";
