@@ -13,11 +13,22 @@ function checkResult(result: { code: number; value: string }) {
 
 export async function launchUrl(page: Page, step: testStep): Promise<Outcome> {
   try {
-    let url = step?.value?.trim();
-    if (!step.value) {
-      url = process.env.URL || '';
+    const explicit = !!(step?.value && String(step.value).trim());
+    const url = explicit ? String(step.value).trim() : (process.env.URL || '');
+
+    // Avoid a SECOND navigation to the same Lorenzo app. The runner pre-navigates to the app
+    // URL before step 1, which establishes the SSO session. Navigating here again to the same
+    // host makes Lorenzo report "Existing session is already open" (the automation conflicts
+    // with its own first navigation). A manual login navigates exactly once and works — so when
+    // we're falling back to the default URL and the page has already been launched, skip the
+    // redundant goto. An EXPLICIT step value (a specific URL) always navigates.
+    if (!explicit && page.url() && page.url() !== 'about:blank') {
+      console.log(`launchUrl: already launched at ${page.url()} — skipping redundant navigation (prevents duplicate SSO session)`);
+      await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => { });
+      return { code: 0, value: `Skipped redundant navigation (already at ${page.url()})` };
     }
-    await page.goto(url as string, { waitUntil: 'domcontentloaded' });
+
+    await page.goto(url, { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('networkidle', { timeout: 30000 });
     console.log(`Navigated to ${url}`);
     return {
@@ -48,6 +59,24 @@ export async function login(page: Page, step: testStep): Promise<{ code: number;
     if (!username || !password) {
       throw new Error(`Invalid login format. Expected: username|password, Got: ${loginValue}`);
     }
+
+    // Detect the "Existing session is already open" info dialog (server-side single-session
+    // lock from a session that was not cleanly closed). Do NOT click Ok — in this environment
+    // Ok closes the new window ("For security reasons, close this window"). Instead, fail fast
+    // with a clear, actionable message so the stale session can be released (log out / timeout).
+    try {
+      await resolveElement(
+        page,
+        "//*[contains(normalize-space(.),'Existing session is already open') or contains(normalize-space(.),'For security reasons')]",
+        { ...step, elementText: '' } as testStep,
+        5000
+      );
+      return {
+        code: 1,
+        value: 'Login blocked: an existing Lorenzo session is already open for this user. ' +
+          'Release it first (log out of the other session or wait for it to time out), then re-run.'
+      };
+    } catch { /* no existing-session lock — proceed to normal login */ }
 
     checkResult(await setTextBox(page, { ...step, page: 'pageLogin', element: 'txt_Username', value: username }));
     await waitForRoller(page);
@@ -85,6 +114,145 @@ export async function login(page: Page, step: testStep): Promise<{ code: number;
   } catch (error) {
     console.error('❌ Login failed:', error);
     return { code: 1, value: `Login failed: ${error instanceof Error ? error.message : String(error)}` };
+  }
+}
+
+/**
+ * logout — best-effort session release.
+ *
+ * Lorenzo enforces a single active session per user. If a run ends without logging out, the
+ * server-side session stays open and BLOCKS the next login ("Existing session is already open").
+ * This clicks the Exit control and confirms any exit prompt so the session is released cleanly.
+ *
+ * It always returns a soft outcome (never code:1) so it can be used as a teardown without ever
+ * failing a test. Usable as an Excel keyword ('logout') and from the runners' afterEach hook.
+ */
+export async function logout(page: Page, step: testStep): Promise<Outcome> {
+  const tryFind = async (selector: string, timeout: number): Promise<Locator | null> => {
+    try {
+      return await resolveElement(page, selector, { ...step, elementText: '' } as testStep, timeout);
+    } catch {
+      return null;
+    }
+  };
+  try {
+    if (page.isClosed()) return { code: 2, value: 'Logout skipped: page already closed' };
+    await waitForRoller(page).catch(() => { });
+
+    const exit = await tryFind("//img[@title='Exit'] | //img[@alt='Exit'] | //td[@title='Exit']", 8000);
+    if (!exit) return { code: 2, value: 'Logout: Exit control not found (already logged out?)' };
+    await exit.click({ timeout: 5000 }).catch(() => { });
+    await waitForRoller(page).catch(() => { });
+
+    // Confirm the exit prompt if one appears ("Are you sure you want to exit? Yes").
+    const yes = await tryFind("(//td[@title='Yes'] | //img[@title='Yes'])[1]", 4000);
+    if (yes) {
+      await yes.click({ timeout: 4000 }).catch(() => { });
+      await waitForRoller(page).catch(() => { });
+    }
+    console.log('✅ Logged out (Lorenzo session released)');
+    return { code: 0, value: 'Logged out (session released)' };
+  } catch (error) {
+    return { code: 2, value: `Logout best-effort failed: ${error instanceof Error ? error.message : String(error)}` };
+  }
+}
+
+/**
+ * launchRegistration — deterministic patient-registration launcher.
+ *
+ * After the patient search + Find, the Lorenzo PDS (Spine) trace runs. In environments
+ * where the PDS service is misconfigured/unreachable the trace TIMES OUT and the app shows:
+ *   "Question - LORENZO: Sorry, the PDS Trace has timed out. Would you like to try again? Yes/No"
+ * Clicking Yes just retries the trace (times out again — an infinite loop), so this keyword
+ * clicks NO to decline the retry and proceed with local registration.
+ *
+ * It then opens Registration deterministically:
+ *   1) prefer the "Registration" link in the search-result task pane, else
+ *   2) fall back to launching "Registration" from the left sidebar (task pane),
+ * and finally handles the "Explain Consent" review dialog deterministically (clicks Ok).
+ *
+ * Selectors are declared as constants below so they can be tuned after a live run without
+ * touching the control flow. Each dialog is OPTIONAL (handled only when actually present),
+ * which keeps the step deterministic regardless of whether PDS/consent prompts appear.
+ */
+export async function launchRegistration(page: Page, step: testStep): Promise<Outcome> {
+  const log = (m: string) => console.log(`  [launchRegistration] ${m}`);
+
+  // --- Deterministic selectors (adjust here if the app markup differs) ---
+  const SEL_PDS_TIMEOUT = "//*[contains(normalize-space(.),'PDS Trace has timed out')]";
+  const SEL_BTN_NO = "(//td[@title='No'] | //img[@title='No'])[1]";
+  const SEL_REG_LINK_SEARCH = "//li[normalize-space()='Registration']";
+  const SEL_REG_LINK_SIDEBAR = "(//span[normalize-space()='Registration'] | //td[normalize-space(.)='Registration'] | //a[normalize-space()='Registration'])[1]";
+  const SEL_CONSENT_PROMPT = "//*[contains(normalize-space(.),'consent')]";
+  const SEL_CONSENT_OK = "(//td[@title='Ok'] | //td[@title='OK'] | //img[@title='Ok'])[1]";
+
+  // Resolve a raw selector across all frames/pages; return null instead of throwing when absent.
+  const tryFind = async (selector: string, timeout: number): Promise<Locator | null> => {
+    try {
+      return await resolveElement(page, selector, { ...step, elementText: '' } as testStep, timeout);
+    } catch {
+      return null;
+    }
+  };
+
+  try {
+    await waitForRoller(page).catch(() => { });
+
+    // 1) PDS Trace timeout → click No (decline retry) so we don't loop on the failing trace.
+    const pdsPrompt = await tryFind(SEL_PDS_TIMEOUT, 15000);
+    if (pdsPrompt) {
+      const noBtn = await tryFind(SEL_BTN_NO, 5000);
+      if (!noBtn) {
+        return { code: 1, value: 'PDS Trace timeout dialog present but the No button was not found' };
+      }
+      log('PDS Trace timeout dialog detected → clicking No');
+      await noBtn.click();
+      await waitForRoller(page).catch(() => { });
+    } else {
+      log('No PDS Trace timeout dialog (continuing to Registration)');
+    }
+
+    // 2) Launch Registration: prefer the search-result link, else the sidebar.
+    let opened = false;
+    const regSearch = await tryFind(SEL_REG_LINK_SEARCH, 5000);
+    if (regSearch) {
+      log('Registration link found in search results → clicking');
+      await regSearch.click();
+      opened = true;
+    } else {
+      const regSidebar = await tryFind(SEL_REG_LINK_SIDEBAR, 8000);
+      if (regSidebar) {
+        log('Registration link not in results → launching from sidebar');
+        await regSidebar.click();
+        opened = true;
+      }
+    }
+    if (!opened) {
+      return { code: 1, value: 'Could not launch Registration (neither search-result link nor sidebar link found)' };
+    }
+    await waitForRoller(page).catch(() => { });
+
+    // 3) Explain Consent review dialog → click Ok deterministically (only when present).
+    const consentPrompt = await tryFind(SEL_CONSENT_PROMPT, 8000);
+    if (consentPrompt) {
+      const consentOk = await tryFind(SEL_CONSENT_OK, 5000);
+      if (consentOk) {
+        log('Explain Consent dialog detected → clicking Ok');
+        await consentOk.click();
+        await waitForRoller(page).catch(() => { });
+      } else {
+        log('Consent text present but Ok button not found (continuing)');
+      }
+    } else {
+      log('No Explain Consent dialog (continuing)');
+    }
+
+    return { code: 0, value: 'Registration launched (PDS timeout + Explain Consent handled deterministically)' };
+  } catch (error) {
+    return {
+      code: 1,
+      value: `launchRegistration failed: ${error instanceof Error ? error.message : String(error)}`
+    };
   }
 }
 

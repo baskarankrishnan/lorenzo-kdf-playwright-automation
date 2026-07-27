@@ -193,7 +193,7 @@ body{font-weight:400}
 <div class="config-item"><div class="config-label">Start Time</div><div class="config-value">${formatDateTime(testResult.startTime)}</div></div>
 <div class="config-item"><div class="config-label">End Time</div><div class="config-value">${formatDateTime(testResult.endTime)}</div></div>
 <div class="config-item"><div class="config-label">Duration</div><div class="config-value">${testResult.duration}</div></div>
-<div class="config-item"><div class="config-label">Executed By</div><div class="config-value">${escapeHtml(process.env.EXECUTED_BY || 'Automation')}</div></div>
+<div class="config-item"><div class="config-label">Executed By</div><div class="config-value">${escapeHtml(process.env.EXECUTED_BY || 'Baskaran Krishnan')}</div></div>
 
 </div>
 </div>

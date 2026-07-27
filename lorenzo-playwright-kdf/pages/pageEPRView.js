@@ -1,6 +1,8 @@
 ﻿// pageEPRView
 export const btn_GeneraldetailsEPR = "//td[@caption='&General Details']";
-export const txt_PASID = "//label[@dikey='lblPatientIdValue']";
+// PAS ID shown in the patient banner as a <nobr> containing 'Pasid-053451'.
+// The former //label[@dikey='lblPatientIdValue'] locator did not exist in the DOM.
+export const txt_PASID = "//nobr[contains(.,'Pasid-')]";
 export const txt_Surname = "//label[@dikey='lblSurnameValue']";
 export const txt_Forename = "//label[@dikey=lblForenameValue ']";
 export const txt_Gender = "//label[@dikey=lblGenderValue ']";

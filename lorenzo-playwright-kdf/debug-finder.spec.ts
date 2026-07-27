@@ -29,20 +29,33 @@ test('inspect address finder dialog', async ({ page, context }) => {
   await act(app, "//input[@dikey='itxtSurname']", 'fill', surname); await app.waitForTimeout(1000);
   await act(app, "//td[@class='Cmd_TTE' and normalize-space()='Find']", 'click'); await app.waitForTimeout(4000);
   await act(app, "//li[normalize-space()='Registration']", 'click'); await app.waitForTimeout(5000);
-  const pc = await act(app, "//input[@dikey='iPostCode']", 'fill', 'SW1A 1AA'); await app.waitForTimeout(1500);
-  const fnd = await act(app, "//img[@title='Use this to select via address finder']", 'click'); await app.waitForTimeout(6000);
-  log('postcode=' + pc + ' finderClicked=' + fnd);
+  // Fill City + Postcode on the reg form, then open finder
+  await act(app, "//input[@title='Enter City']", 'fill', 'Solihull'); await app.waitForTimeout(800);
+  const pc = await act(app, "//input[@dikey='iPostCode']", 'fill', 'B91 3DL'); await app.waitForTimeout(1500);
+  await act(app, "//li[normalize-space()='Registration']", 'click'); await app.waitForTimeout(5000);
+  // Fill City + Postcode on the reg form, then open finder
+  await act(app, "//input[@title='Enter City']", 'fill', 'Solihull'); await app.waitForTimeout(800);
+  const pc = await act(app, "//input[@dikey='iPostCode']", 'fill', 'B91 3DL'); await app.waitForTimeout(1500);
+  await act(app, "//td[@title='Next']", 'click'); await app.waitForTimeout(3000);
+  await act(app, "//td[@title='Ok']", 'click'); await app.waitForTimeout(7000);
+  log('postcode=' + pc + ' pages=' + context.pages().length);
 
-  // Dump the frDialog contents: inputs, buttons, and current grid rows
-  for (const fr of app.frames()) {
-    if (!/frDialog|Dialog|Address|address/i.test(fr.name() + fr.url())) continue;
-    const res = await fr.evaluate(() => {
-      const inputs = Array.from(document.querySelectorAll('input[type=text],input:not([type])')).map((i: any) => ({ dikey: i.getAttribute('dikey'), id: i.id, title: i.title, val: i.value })).slice(0, 15);
-      const buttons = Array.from(document.querySelectorAll('button,td[title],img[title]')).map((b: any) => ({ tag: b.tagName, title: b.getAttribute('title'), text: (b.textContent || '').trim().slice(0, 15) })).filter((b: any) => /find|search|ok|go/i.test((b.title || '') + b.text)).slice(0, 12);
-      const dataRows = Array.from(document.querySelectorAll("tr[id*='igRow'], tr[id*='Row']")).map((r: any) => ({ id: r.id, text: (r.textContent || '').trim().slice(0, 50) })).slice(0, 10);
-      return { frame: location.href.slice(-50), inputs, buttons, dataRows };
-    }).catch(() => null);
-    if (res) log(JSON.stringify(res, null, 1));
+  // Dump EVERY page + EVERY frame's Ok/Cancel/Close candidates so we can pinpoint the
+  // Address SFS finder Cancel vs the app-bar Cancel.
+  let pi = 0;
+  for (const pg of context.pages()) {
+    let pu = ''; try { pu = pg.url(); } catch { }
+    for (const fr of pg.frames()) {
+      const res = await fr.evaluate(() => {
+        const cands = Array.from(document.querySelectorAll('button,td,img,a,div,span')).filter((b: any) => {
+          return /^(ok|cancel|close)$/i.test((b.getAttribute('title') || '').trim()) || /^(ok|cancel|close)$/i.test((b.textContent || '').trim());
+        }).map((b: any) => ({ tag: b.tagName, title: b.getAttribute('title'), cls: b.className, id: b.id, text: (b.textContent || '').trim().slice(0, 10), html: (b.outerHTML || '').slice(0, 150) })).slice(0, 20);
+        const hasSfs = /Address SFS/i.test(document.body ? document.body.innerText : '');
+        return { count: cands.length, hasSfs, cands };
+      }).catch(() => null);
+      if (res && (res.count > 0 || res.hasSfs)) log(`PAGE[${pi}] ${pu.slice(-45)} FRAME ${fr.url().slice(-55)} sfs=${res.hasSfs} ` + JSON.stringify(res.cands, null, 1));
+    }
+    pi++;
   }
   fs.writeFileSync('debug-finder-dump.txt', out.join('\n'), 'utf-8');
 });

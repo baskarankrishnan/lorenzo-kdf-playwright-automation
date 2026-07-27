@@ -10,6 +10,21 @@ export const lnk_Postalcode = "//img[@title='Please enter Select address type']"
 export const txt_Pincode = "//input[@dikey='iPostCode']";
 export const btn_Find = "//img[@title='Use this to select via address finder']";
 export const tbl_SelectRow = "//table[@id='g_DT1igrdSearch']//tr[@id='igRowigrdSearch_0']/td";
+// Address SFS finder dialog (opens on Next -> "Please validate the address" -> Ok).
+// Criteria fields map to itxtFld1..itxtFld6 in the dialog frame.
+export const txt_AddrPremises = "//input[@dikey='itxtFld1']";
+export const txt_AddrStreet = "//input[@dikey='itxtFld2']";
+export const txt_AddrLocality = "//input[@dikey='itxtFld3']";
+export const txt_AddrCity = "//input[@dikey='itxtFld4']";
+export const txt_AddrCounty = "//input[@dikey='itxtFld5']";
+export const txt_AddrPostcode = "//input[@dikey='itxtFld6']";
+export const btn_AddrFind = "(//button[@title='Find'] | //img[@title='Find'] | //td[normalize-space(.)='Find'])[1]";
+export const btn_AddrClear = "(//button[@title='Clear'] | //img[@title='Clear'] | //td[normalize-space(.)='Clear'])[1]";
+// Finder Cancel: the SFS dialog's command-bar cells are Cmd_TTE with EMPTY title and the label
+// as text (Ok/Cancel/Find/Clear). The app-bar Cancel, in contrast, has title='Cancel'. So anchor
+// the finder Cancel to the finder Ok BY TEXT (app-bar has no "Ok"), never the bottom app-bar Cancel.
+export const btn_AddrCancel = "(//td[normalize-space(.)='Ok']/ancestor::table[1]//td[normalize-space(.)='Cancel'] | //td[normalize-space(.)='Ok']/following::td[normalize-space(.)='Cancel'][1])[1]";
+export const btn_AddrOk = "(//td[@title='Ok'] | //td[normalize-space(.)='Ok'] | //img[@title='Ok'])[1]";
 export const txt_TelephoneHome = "//input[@title='Enter Telephone (home)']";
 export const txt_TelephoneMobile = "//input[@title='Enter Telephone (mobile)']";
 export const txt_TelephoneWork = "//input[@title='Enter Telephone (work)']";

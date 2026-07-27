@@ -1,0 +1,10 @@
+logged in: http://ws008416.dedalus.lan/webclient_sso/EPR/APPMAINPAGE.AS
+surname=Zztest9899
+Patients tab: true
+Find record: true
+fill surname: true
+fill forename: true
+click Find: false
+click Registration: true
+[frame:edalus.lan/webclient_sso/EPR/APPMAINPAGE.ASPX] {"inputs":[{"dikey":null,"id":"C2T_C27","title":"","name":"C2T_C27","val":""}],"selects":[]}
+[frame:ifauxtab_Frame_0_C3] {"inputs":[{"dikey":null,"id":"C2T_C2","title":"Select an identifier association","name":"C2T_C2","val":"Patient identifier"},{"dikey":null,"id":"icombobox_Text_C4","title":"Select an  identifier type","name":"icombobox_Text_C4","val":"(Any)"},{"dikey":"itxtIdentifier","id":"it_C_C6","title":"Enter an identifier","name":null,"val":""},{"dikey":"itxtSurname","id":"it_C_C9","title":"Enter a surname value","name":null,"val":"Zztest9899"},{"dikey":"itxtForename","id":"it_C_C11","title":"Enter a  forename value","name":null,"val":"John"},{"dikey":null,"id":"C2T_C14","title":"Enter a gender value","name":"C2T_C14","val":"(Any)"},{"dikey":null,"id":"DP_VC16","title":null,"name":"DP_VC16","val":"DD/MM/YYYY"},{"dikey":"iPostCode","id":"it_C_C18","title":"Select or Enter a postcode","name":null,"val":""}],"selects":[{"tag":"IMG","dikey":null,"id":"ic_I_C19","title":"Use this to select via address finder"}]}

@@ -1,0 +1,6 @@
+﻿
+> coreframework@1.0.0 test
+> cross-env USE_CONSOLIDATED_REPORTER=true EXECUTION_TYPE=single npx playwright test core/testrunners/testCaseRunner.spec.ts --project=edge
+
+[dotenv@17.2.3] injecting env (25) from .env -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒôí add observability to secrets: https://dotenvx.com/ops

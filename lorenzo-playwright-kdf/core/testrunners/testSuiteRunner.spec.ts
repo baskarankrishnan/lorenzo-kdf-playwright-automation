@@ -8,6 +8,7 @@ import { resolveTestVariables, resolveDatasetVariable } from '../actionkeywords/
 import { BrowserFocusTracker, resolvePageForStep } from '../actionkeywords/browserActions';
 import * as databaseUtils from '../utilities/databaseUtils';
 import * as pageLoaderUtils from '../utilities/pageLoaderUtils';
+import { logout } from '../../product/lorenzoActions';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -120,7 +121,14 @@ test.describe('Test Suite Execution', () => {
             // clickAndSwitchToPopup and read by resolvePageForStep) can otherwise point at a
             // page from an already-closed context, making the NEXT test fail at startup with
             // "Target page/context/browser has been closed".
-            test.afterEach(async () => {
+            test.afterEach(async ({ page }) => {
+                // Best-effort logout so the Lorenzo single-session lock is released between tests
+                // (prevents "Existing session is already open" blocking the next login). Never fails.
+                try {
+                    if (page && !page.isClosed()) {
+                        await logout(page, { page: 'pageHome', element: 'btn_Logout', elementText: '', value: '' } as any);
+                    }
+                } catch { /* ignore teardown errors */ }
                 (executionContext as any)._popupPage = undefined;
             });
 

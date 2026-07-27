@@ -274,7 +274,7 @@ body{font-weight:400}
 <div class="config-item"><div class="config-label">End Time</div><div class="config-value">${formatDateTime(executionMetrics.endTime)}</div></div>
 <div class="config-item"><div class="config-label">Continue On Failure</div><div class="config-value">${continueOnFailure ? 'YES' : 'NO'}</div></div>
 <div class="config-item"><div class="config-label">Timestamp</div><div class="config-value">${escapeHtml(executionTimestamp)}</div></div>
-<div class="config-item"><div class="config-label">Executed By</div><div class="config-value">${escapeHtml(process.env.EXECUTED_BY || 'Automation')}</div></div>
+<div class="config-item"><div class="config-label">Executed By</div><div class="config-value">${escapeHtml(process.env.EXECUTED_BY || 'Baskaran Krishnan')}</div></div>
 </div>
 </div>
 </div>

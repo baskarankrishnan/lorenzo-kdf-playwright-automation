@@ -1,0 +1,27 @@
+﻿[dotenv@17.2.3] injecting env (25) from .env -- tip: ≡ƒöÉ encrypt with Dotenvx: https://dotenvx.com
+
+SyntaxError: C:\Users\bkrishnan6\ORBIS PAS UKI-LZO\lorenzo-playwright-kdf\debug-finder.spec.ts: Identifier 'pc' has already been declared. (38:8)
+
+[0m [90m 36 |[39m   [90m// Fill City + Postcode on the reg form, then open finder[39m
+ [90m 37 |[39m   [36mawait[39m act(app[33m,[39m [32m"//input[@title='Enter City']"[39m[33m,[39m [32m'fill'[39m[33m,[39m [32m'Solihull'[39m)[33m;[39m [36mawait[39m app[33m.[39mwaitForTimeout([35m800[39m)[33m;[39m
+[31m[1m>[22m[39m[90m 38 |[39m   [36mconst[39m pc [33m=[39m [36mawait[39m act(app[33m,[39m [32m"//input[@dikey='iPostCode']"[39m[33m,[39m [32m'fill'[39m[33m,[39m [32m'B91 3DL'[39m)[33m;[39m [36mawait[39m app[33m.[39mwaitForTimeout([35m1500[39m)[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 39 |[39m   [36mawait[39m act(app[33m,[39m [32m"//td[@title='Next']"[39m[33m,[39m [32m'click'[39m)[33m;[39m [36mawait[39m app[33m.[39mwaitForTimeout([35m3000[39m)[33m;[39m
+ [90m 40 |[39m   [36mawait[39m act(app[33m,[39m [32m"//td[@title='Ok']"[39m[33m,[39m [32m'click'[39m)[33m;[39m [36mawait[39m app[33m.[39mwaitForTimeout([35m7000[39m)[33m;[39m
+ [90m 41 |[39m   log([32m'postcode='[39m [33m+[39m pc [33m+[39m [32m' pages='[39m [33m+[39m context[33m.[39mpages()[33m.[39mlength)[33m;[39m[0m
+
+   at debug-finder.spec.ts:38
+
+  36 |   // Fill City + Postcode on the reg form, then open finder
+  37 |   await act(app, "//input[@title='Enter City']", 'fill', 'Solihull'); await app.waitForTimeout(800);
+> 38 |   const pc = await act(app, "//input[@dikey='iPostCode']", 'fill', 'B91 3DL'); await app.waitForTimeout(1500);
+     |        ^
+  39 |   await act(app, "//td[@title='Next']", 'click'); await app.waitForTimeout(3000);
+  40 |   await act(app, "//td[@title='Ok']", 'click'); await app.waitForTimeout(7000);
+  41 |   log('postcode=' + pc + ' pages=' + context.pages().length);
+
+Error: No tests found.
+Make sure that arguments are regular expressions matching test files.
+You may need to escape symbols like "$" or "*" and quote the arguments.
+
+

@@ -9,14 +9,15 @@ import { resolveTestVariables, resolveDatasetVariable } from '../actionkeywords/
 import { BrowserFocusTracker, resolvePageForStep } from '../actionkeywords/browserActions';
 import * as databaseUtils from '../utilities/databaseUtils';
 import * as pageLoaderUtils from '../utilities/pageLoaderUtils';
+import { logout } from '../../product/lorenzoActions';
 import * as fs from 'fs';
 import * as path from 'path';
 
 // ✅ Test Case Configuration
 const TEST_CONFIG = {
-    module: 'APE',
-    excelName: 'LSTP_APE_WF001',
-    testcaseId: 'LSTP_APE_WF001',
+    module: 'Contacts',
+    excelName: 'LSTP_Contacts_WF001',
+    testcaseId: 'LSTP_Contacts_WF001',
     jiraId: '',
     description: '',
     author: '',
@@ -39,6 +40,16 @@ if (!fs.existsSync(tempReportsDir)) fs.mkdirSync(tempReportsDir, { recursive: tr
 
 test.describe('Test Case Runner', () => {
     test.setTimeout(3600000); // 1 hour
+
+    // Best-effort logout after every test so the Lorenzo single-session lock is released and the
+    // next run isn't blocked by an "Existing session is already open" dialog. Never fails the test.
+    test.afterEach(async ({ page }) => {
+        try {
+            if (page && !page.isClosed()) {
+                await logout(page, { page: 'pageHome', element: 'btn_Logout', elementText: '', value: '' } as any);
+            }
+        } catch { /* ignore teardown errors */ }
+    });
 
     test(`${TEST_CONFIG.testcaseId}`, async ({ page, context, browser }) => { // fixtures
 

@@ -4,7 +4,7 @@ export const txt_Forename = "//input[@dikey='itxtForename']";
 export const cmb_Gender = "//label[text()='Gender']";
 export const lbl_Gender = "//input[@title='Enter a gender value']";
 export const txt_DOB = "//input[@class='DP_TB_Text']";
-export const btn_Find = "//button[@title='Click to Find']";
+export const btn_Find = "(//td[@title='Find'] | //button[@title='Click to Find'] | //td[normalize-space(.)='Find'])[1]";
 export const cmb_identifiertype = "//img[@title='Select an  identifier type']";
 export const txt_Identifier = "//input[@title='Enter an identifier']";
 export const lbl_Identifier = "//label[@title='Identifier']";
