@@ -184,9 +184,18 @@ export async function launchRegistration(page: Page, step: testStep): Promise<Ou
     "//*[contains(normalize-space(.),'PDS') and contains(normalize-space(.),'timed out')]",
     "//*[contains(normalize-space(.),'Would you like to try again')]"
   ];
+  const SEL_PDS_CREATE_NEW = [
+    "//*[contains(normalize-space(.),'No candidate records match')]",
+    "//*[contains(normalize-space(.),'create a new registration')]",
+    "//*[contains(normalize-space(.),'Would you like to create a new registration')]"
+  ];
   const SEL_BTN_NO = [
     "(//td[@title='No'] | //img[@title='No'])[1]",
     "(//button[normalize-space()='No'] | //a[normalize-space()='No'])[1]"
+  ];
+  const SEL_BTN_YES = [
+    "(//td[@title='Yes'] | //img[@title='Yes'])[1]",
+    "(//button[normalize-space()='Yes'] | //a[normalize-space()='Yes'])[1]"
   ];
 
   // Registration can be exposed in results, task panes, or Admit/Book side links.
@@ -265,6 +274,25 @@ export async function launchRegistration(page: Page, step: testStep): Promise<Ou
     return null;
   };
 
+  const acceptCreateNewRegistrationIfPresent = async (phase: string): Promise<Outcome | null> => {
+    const createNewPrompt = await findAny(SEL_PDS_CREATE_NEW, 6000);
+    if (!createNewPrompt) {
+      return null;
+    }
+
+    const yesBtn = await findAny(SEL_BTN_YES, 5000);
+    if (!yesBtn) {
+      return { code: 1, value: `Create-new-registration prompt present in ${phase} but Yes button was not found` };
+    }
+
+    log(`Create-new-registration prompt detected in ${phase} → clicking Yes`);
+    await yesBtn.click().catch(async () => {
+      await yesBtn.click({ force: true });
+    });
+    await waitStable();
+    return null;
+  };
+
   const launchViaSidebarSearch = async (): Promise<boolean> => {
     const searchBox = await findAny(SEL_NAV_SEARCH_BOX, 3000);
     if (!searchBox) return false;
@@ -288,6 +316,9 @@ export async function launchRegistration(page: Page, step: testStep): Promise<Ou
     const pdsPre = await dismissPdsRetryIfPresent('pre-launch');
     if (pdsPre) return pdsPre;
 
+    const createNewPre = await acceptCreateNewRegistrationIfPresent('pre-launch');
+    if (createNewPre) return createNewPre;
+
     // Prefer the Registration entry from search results (Find/Book/Admit), then sidebar.
     let opened = await clickIfFound(SEL_REG_RESULTS, 5000, 'Registration link found in results area');
     if (!opened) {
@@ -305,6 +336,9 @@ export async function launchRegistration(page: Page, step: testStep): Promise<Ou
 
     const pdsPost = await dismissPdsRetryIfPresent('post-launch');
     if (pdsPost) return pdsPost;
+
+    const createNewPost = await acceptCreateNewRegistrationIfPresent('post-launch');
+    if (createNewPost) return createNewPost;
 
     const consentPrompt = await tryFind(SEL_CONSENT_PROMPT, 8000);
     if (consentPrompt) {
