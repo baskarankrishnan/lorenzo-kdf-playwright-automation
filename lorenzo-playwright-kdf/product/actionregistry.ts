@@ -16,6 +16,10 @@ export function getActionKeywordFunction(actionKeyword: string): Function | unde
             return LZOActions.logout;
         case 'launchregistration':
             return LZOActions.launchRegistration;
+        case 'launchregistrationadaptive':
+            return LZOActions.launchRegistration;
+        case 'launchpatientregistration':
+            return LZOActions.launchRegistration;
         case 'selectmenu':
             return LZOActions.selectMenu;
         case 'handledialog':

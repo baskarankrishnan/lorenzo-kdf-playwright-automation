@@ -178,13 +178,43 @@ export async function logout(page: Page, step: testStep): Promise<Outcome> {
 export async function launchRegistration(page: Page, step: testStep): Promise<Outcome> {
   const log = (m: string) => console.log(`  [launchRegistration] ${m}`);
 
-  // --- Deterministic selectors (adjust here if the app markup differs) ---
-  const SEL_PDS_TIMEOUT = "//*[contains(normalize-space(.),'PDS Trace has timed out')]";
-  const SEL_BTN_NO = "(//td[@title='No'] | //img[@title='No'])[1]";
-  const SEL_REG_LINK_SEARCH = "//li[normalize-space()='Registration']";
-  const SEL_REG_LINK_SIDEBAR = "(//span[normalize-space()='Registration'] | //td[normalize-space(.)='Registration'] | //a[normalize-space()='Registration'])[1]";
+  // PDS timeout prompts can vary by workflow (Find Record / Book / Admit entry paths).
+  const SEL_PDS_TIMEOUTS = [
+    "//*[contains(normalize-space(.),'PDS Trace has timed out')]",
+    "//*[contains(normalize-space(.),'PDS') and contains(normalize-space(.),'timed out')]",
+    "//*[contains(normalize-space(.),'Would you like to try again')]"
+  ];
+  const SEL_BTN_NO = [
+    "(//td[@title='No'] | //img[@title='No'])[1]",
+    "(//button[normalize-space()='No'] | //a[normalize-space()='No'])[1]"
+  ];
+
+  // Registration can be exposed in results, task panes, or Admit/Book side links.
+  const SEL_REG_RESULTS = [
+    "//li[normalize-space()='Registration']",
+    "//td[@title='Registration']",
+    "//a[normalize-space()='Registration']"
+  ];
+  const SEL_REG_SIDEBAR = [
+    "(//span[normalize-space()='Registration'] | //td[normalize-space(.)='Registration'] | //a[normalize-space()='Registration'])[1]",
+    "(//span[contains(@class,'T_PL') and normalize-space()='Registration'])[1]",
+    "(//li[@title='Registration']//span | //li[@caption='Registration']//span)[1]"
+  ];
+  const SEL_NAV_SEARCH_BOX = [
+    "(//input[contains(translate(@placeholder,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'search')])[1]",
+    "(//input[contains(translate(@title,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'search')])[1]",
+    "(//input[contains(@class,'search')])[1]"
+  ];
+
   const SEL_CONSENT_PROMPT = "//*[contains(normalize-space(.),'consent')]";
-  const SEL_CONSENT_OK = "(//td[@title='Ok'] | //td[@title='OK'] | //img[@title='Ok'])[1]";
+  const SEL_CONSENT_OK = [
+    "(//td[@title='Ok'] | //td[@title='OK'] | //img[@title='Ok'])[1]",
+    "(//button[normalize-space()='Ok'] | //button[normalize-space()='OK'])[1]"
+  ];
+
+  const waitStable = async () => {
+    await waitForRoller(page).catch(() => { });
+  };
 
   // Resolve a raw selector across all frames/pages; return null instead of throwing when absent.
   const tryFind = async (selector: string, timeout: number): Promise<Locator | null> => {
@@ -195,51 +225,96 @@ export async function launchRegistration(page: Page, step: testStep): Promise<Ou
     }
   };
 
-  try {
-    await waitForRoller(page).catch(() => { });
-
-    // 1) PDS Trace timeout → click No (decline retry) so we don't loop on the failing trace.
-    const pdsPrompt = await tryFind(SEL_PDS_TIMEOUT, 15000);
-    if (pdsPrompt) {
-      const noBtn = await tryFind(SEL_BTN_NO, 5000);
-      if (!noBtn) {
-        return { code: 1, value: 'PDS Trace timeout dialog present but the No button was not found' };
-      }
-      log('PDS Trace timeout dialog detected → clicking No');
-      await noBtn.click();
-      await waitForRoller(page).catch(() => { });
-    } else {
-      log('No PDS Trace timeout dialog (continuing to Registration)');
+  const findAny = async (selectors: string[], timeout: number): Promise<Locator | null> => {
+    for (const sel of selectors) {
+      const loc = await tryFind(sel, timeout);
+      if (loc) return loc;
     }
+    return null;
+  };
 
-    // 2) Launch Registration: prefer the search-result link, else the sidebar.
-    let opened = false;
-    const regSearch = await tryFind(SEL_REG_LINK_SEARCH, 5000);
-    if (regSearch) {
-      log('Registration link found in search results → clicking');
-      await regSearch.click();
-      opened = true;
-    } else {
-      const regSidebar = await tryFind(SEL_REG_LINK_SIDEBAR, 8000);
-      if (regSidebar) {
-        log('Registration link not in results → launching from sidebar');
-        await regSidebar.click();
-        opened = true;
+  const clickIfFound = async (selectors: string[], timeout: number, reason: string): Promise<boolean> => {
+    const loc = await findAny(selectors, timeout);
+    if (!loc) return false;
+    log(`${reason} → clicking`);
+    await loc.click().catch(async () => {
+      await loc.click({ force: true });
+    });
+    await waitStable();
+    return true;
+  };
+
+  const dismissPdsRetryIfPresent = async (phase: string): Promise<Outcome | null> => {
+    // Some pages re-show the retry prompt after navigation transitions; absorb up to 2 times.
+    for (let i = 0; i < 2; i++) {
+      const pdsPrompt = await findAny(SEL_PDS_TIMEOUTS, 6000);
+      if (!pdsPrompt) {
+        if (i === 0) log(`No PDS timeout dialog in ${phase}`);
+        return null;
       }
+      const noBtn = await findAny(SEL_BTN_NO, 5000);
+      if (!noBtn) {
+        return { code: 1, value: `PDS timeout dialog present in ${phase} but No button was not found` };
+      }
+      log(`PDS timeout dialog detected in ${phase} → clicking No`);
+      await noBtn.click().catch(async () => {
+        await noBtn.click({ force: true });
+      });
+      await waitStable();
+    }
+    return null;
+  };
+
+  const launchViaSidebarSearch = async (): Promise<boolean> => {
+    const searchBox = await findAny(SEL_NAV_SEARCH_BOX, 3000);
+    if (!searchBox) return false;
+
+    log('Trying sidebar search fallback with term "Registration"');
+    await searchBox.click().catch(() => { });
+    await searchBox.fill('').catch(() => { });
+    await searchBox.fill('Registration').catch(async () => {
+      await page.keyboard.press('Control+A').catch(() => { });
+      await page.keyboard.type('Registration');
+    });
+    await page.keyboard.press('Enter').catch(() => { });
+    await waitStable();
+
+    return clickIfFound(SEL_REG_RESULTS.concat(SEL_REG_SIDEBAR), 6000, 'Registration found via sidebar search');
+  };
+
+  try {
+    await waitStable();
+
+    const pdsPre = await dismissPdsRetryIfPresent('pre-launch');
+    if (pdsPre) return pdsPre;
+
+    // Prefer the Registration entry from search results (Find/Book/Admit), then sidebar.
+    let opened = await clickIfFound(SEL_REG_RESULTS, 5000, 'Registration link found in results area');
+    if (!opened) {
+      opened = await clickIfFound(SEL_REG_SIDEBAR, 7000, 'Registration link found in sidebar');
     }
     if (!opened) {
-      return { code: 1, value: 'Could not launch Registration (neither search-result link nor sidebar link found)' };
+      opened = await launchViaSidebarSearch();
     }
-    await waitForRoller(page).catch(() => { });
+    if (!opened) {
+      return {
+        code: 1,
+        value: 'Could not launch Registration from results, sidebar, or sidebar-search fallback'
+      };
+    }
 
-    // 3) Explain Consent review dialog → click Ok deterministically (only when present).
+    const pdsPost = await dismissPdsRetryIfPresent('post-launch');
+    if (pdsPost) return pdsPost;
+
     const consentPrompt = await tryFind(SEL_CONSENT_PROMPT, 8000);
     if (consentPrompt) {
-      const consentOk = await tryFind(SEL_CONSENT_OK, 5000);
+      const consentOk = await findAny(SEL_CONSENT_OK, 5000);
       if (consentOk) {
         log('Explain Consent dialog detected → clicking Ok');
-        await consentOk.click();
-        await waitForRoller(page).catch(() => { });
+        await consentOk.click().catch(async () => {
+          await consentOk.click({ force: true });
+        });
+        await waitStable();
       } else {
         log('Consent text present but Ok button not found (continuing)');
       }
@@ -247,7 +322,10 @@ export async function launchRegistration(page: Page, step: testStep): Promise<Ou
       log('No Explain Consent dialog (continuing)');
     }
 
-    return { code: 0, value: 'Registration launched (PDS timeout + Explain Consent handled deterministically)' };
+    return {
+      code: 0,
+      value: 'Registration launched with adaptive PDS ON/OFF fallback (results/sidebar/search)'
+    };
   } catch (error) {
     return {
       code: 1,
