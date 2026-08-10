@@ -1,0 +1,10 @@
+[
+  {
+    "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx",
+    "module": "Contacts",
+    "step": 21,
+    "column": "Element",
+    "oldValue": "btn_OK",
+    "newValue": "btn_AddrOk"
+  }
+]

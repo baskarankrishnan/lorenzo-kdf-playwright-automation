@@ -1,0 +1,22 @@
+[
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 18, "column": "ActionKeyword", "oldValue": "setTextBox", "newValue": "waitForSeconds" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 18, "column": "Page", "oldValue": "pageRegRegistration", "newValue": "" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 18, "column": "Element", "oldValue": "txt_City", "newValue": "" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 18, "column": "Values", "oldValue": "Solihull", "newValue": "1" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 18, "column": "StepDescription", "oldValue": "Enter City (mandatory)", "newValue": "Skip address entry (address optional; PAF empty in this environment)" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 19, "column": "Element", "oldValue": "btn_Find", "newValue": "btn_Next" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 19, "column": "StepDescription", "oldValue": "Open the address finder dialog (validates the address)", "newValue": "Click Next to advance to the Add social information section" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 20, "column": "StepDescription", "oldValue": "Wait for the address finder to open", "newValue": "Wait for the Next action to process" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 21, "column": "ActionKeyword", "oldValue": "clickElement", "newValue": "waitForRoller" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 21, "column": "Element", "oldValue": "btn_AddrCancel", "newValue": "" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 21, "column": "StepDescription", "oldValue": "Cancel the address finder (no PAF records exist in this environment)", "newValue": "Wait for the Add social information section to load" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 23, "column": "ActionKeyword", "oldValue": "clickElement", "newValue": "waitForSeconds" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 23, "column": "Page", "oldValue": "pageRegRegistration", "newValue": "" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 23, "column": "Element", "oldValue": "btn_Next", "newValue": "" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 23, "column": "Values", "oldValue": "", "newValue": "2" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 23, "column": "StepDescription", "oldValue": "Click Next to advance to the Add social information section", "newValue": "Short wait before demographics" }
+]

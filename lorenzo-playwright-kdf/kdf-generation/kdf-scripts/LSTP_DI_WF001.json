@@ -366,7 +366,7 @@
   {
     "StepNo": 29,
     "StepDescription": "Handle NHS number allocation popup - click Yes",
-    "Page": "pageRegRegistration",
+    "Page": "pageWarning - LORENZO",
     "Element": "btn_NHSYes",
     "ElementText": "",
     "ActionKeyword": "clickElement",
@@ -379,7 +379,7 @@
   {
     "StepNo": 30,
     "StepDescription": "Handle NHS previous number popup - click No",
-    "Page": "pageRegRegistration",
+    "Page": "pageQuestion - LORENZO",
     "Element": "btn_NHSNo",
     "ElementText": "",
     "ActionKeyword": "clickElement",

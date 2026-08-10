@@ -1,0 +1,9 @@
+logged in: http://ws008416.dedalus.lan/webclient_sso/EPR/APPMAINPAGE.AS
+surname=Zztest2979
+city: false
+open finder: true
+frDialog found: true
+PHASE1 {"inputs":[{"dikey":"itxtFld1","id":"it_C_itxtFld1","title":"","name":null},{"dikey":"itxtFld2","id":"it_C_itxtFld2","title":"","name":null},{"dikey":"itxtFld3","id":"it_C_itxtFld3","title":"","name":null},{"dikey":"itxtFld4","id":"it_C_itxtFld4","title":"","name":null},{"dikey":"itxtFld5","id":"it_C_itxtFld5","title":"","name":null},{"dikey":"itxtFld6","id":"it_C_itxtFld6","title":"","name":null},{"dikey":null,"id":"C2T_iCmbCountry","title":"(Any)","name":"C2T_iCmbCountry"}],"btns":[{"cls":"Cmd_TTE","title":"Clear","text":"Clear"},{"cls":"Cmd_TTE","title":"Find","text":"Find"},{"cls":"Cmd_TTE","title":"","text":"Ok"},{"cls":"Cmd_TTE","title":"Cancel","text":"Cancel"}]}
+postcode filled via: input[dikey='itxtFld6']
+finder Find clicked: true
+PHASE3 {"rowCount":11,"rows":[{"id":"g_TRColHdrigrdSearch","text":"Premises nameHouse number & street nameLocalityCityCountyCountryPostcodePAFKey"},{"id":"","text":"Premises nameHouse number & street nameLocalityCityCountyCountryPostcodePAFKey"},{"id":"","text":"Premises name"},{"id":"","text":"House number & street name"},{"id":"","text":"Locality"},{"id":"","text":"City"},{"id":"","text":"County"},{"id":"","text":"Country"}]}

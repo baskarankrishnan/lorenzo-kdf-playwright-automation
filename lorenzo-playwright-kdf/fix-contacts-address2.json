@@ -1,0 +1,13 @@
+[
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 19, "column": "Element", "oldValue": "lnk_Postalcode", "newValue": "btn_Find" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 19, "column": "StepDescription", "oldValue": "Click on Postal Code lookup", "newValue": "Open the address finder dialog" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 20, "column": "Element", "oldValue": "txt_Pincode", "newValue": "txt_AddrPostcode" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 20, "column": "StepDescription", "oldValue": "Enter Postal Code", "newValue": "Enter Postcode in the address finder" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 21, "column": "Element", "oldValue": "btn_Find", "newValue": "btn_AddrFind" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 21, "column": "StepDescription", "oldValue": "Click Find to search address", "newValue": "Click Find inside the address finder" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 24, "column": "Element", "oldValue": "btn_OK", "newValue": "btn_AddrOk" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 24, "column": "StepDescription", "oldValue": "Click OK to confirm address", "newValue": "Click OK in the address finder" }
+]

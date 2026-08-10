@@ -1,0 +1,27 @@
+[
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 19, "column": "ActionKeyword", "oldValue": "selectComboBox", "newValue": "clickElement" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 19, "column": "Element", "oldValue": "cmb_Country", "newValue": "lnk_Postalcode" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 19, "column": "StepDescription", "oldValue": "Select patient country of registration", "newValue": "Click on Postal Code lookup" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 20, "column": "ActionKeyword", "oldValue": "launchRegistration", "newValue": "setTextBox" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 20, "column": "Element", "oldValue": "btn_Next", "newValue": "txt_Pincode" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 20, "column": "Values", "oldValue": "", "newValue": "B91 3DL" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 20, "column": "StepDescription", "oldValue": "Click Next to proceed to the second section of the registration roadmap", "newValue": "Enter Postal Code" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 21, "column": "Element", "oldValue": "btn_AddrOk", "newValue": "btn_Find" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 21, "column": "Condition", "oldValue": "optional", "newValue": "" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 21, "column": "StepDescription", "oldValue": "Dismiss validate-address dialog (Ok = save anyway)", "newValue": "Click Find to search address" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 22, "column": "ActionKeyword", "oldValue": "clickElement", "newValue": "waitForRoller" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 22, "column": "Element", "oldValue": "btn_AddrCancel", "newValue": "" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 22, "column": "Condition", "oldValue": "optional", "newValue": "" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 22, "column": "StepDescription", "oldValue": "Cancel the address finder dialog", "newValue": "Wait for address results" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 23, "column": "ActionKeyword", "oldValue": "waitForRoller", "newValue": "clickElement" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 23, "column": "Element", "oldValue": "", "newValue": "tbl_SelectRow" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 23, "column": "StepDescription", "oldValue": "Wait after cancelling address finder", "newValue": "Select address from table" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 24, "column": "ActionKeyword", "oldValue": "waitForRoller", "newValue": "clickElement" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 24, "column": "Element", "oldValue": "", "newValue": "btn_OK" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 24, "column": "StepDescription", "oldValue": "Wait for address validation", "newValue": "Click OK to confirm address" }
+]

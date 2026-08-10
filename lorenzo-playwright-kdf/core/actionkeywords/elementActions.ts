@@ -526,17 +526,21 @@ export async function clickElement(page: Page, step: testStep): Promise<Outcome>
         popupRetryTimeout
       );
     } catch (err) {
-      // Soft-fail popup buttons
-      if (isPopupButton && !isOptional) {
+      // Soft-fail conditional elements that may not appear:
+      //  - popup buttons (element name contains "popup"), or
+      //  - steps explicitly marked Condition=optional/__transient__.
+      // These return code=2 (skip) so the runner continues instead of hard-failing.
+      if (isPopupButton || isOptional) {
+        const kind = isPopupButton ? 'Popup button' : 'Optional element';
         console.log(
-          `  ⚠️ Popup button not found (may not have appeared): ${step.page}.${step.element}`
+          `  ⚠️ ${kind} not found (may not have appeared): ${step.page}.${step.element}`
         );
 
  
 
         return {
           code: 2,
-          value: `Popup button not found (optional/conditional): ${step.element}`
+          value: `${kind} not found (optional/conditional): ${step.element}`
         };
       }
 

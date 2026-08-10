@@ -1,0 +1,218 @@
+[
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\C&G\\LSTP_C&G_WF001.xlsx",
+    "module": "C&G",
+    "step": 165,
+    "column": "Element",
+    "oldValue": "btn-Finish",
+    "newValue": "btnFinish"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\CarePlan\\LSTP_CarePlan_WF001.xlsx",
+    "module": "CarePlan",
+    "step": 21,
+    "column": "Element",
+    "oldValue": "txt_ TelephoneHome",
+    "newValue": "txt_TelephoneHome"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\CarePlan\\LSTP_CarePlan_WF001.xlsx",
+    "module": "CarePlan",
+    "step": 22,
+    "column": "Element",
+    "oldValue": "txt_ TelephoneMobile",
+    "newValue": "txt_TelephoneMobile"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\CarePlan\\LSTP_CarePlan_WF001.xlsx",
+    "module": "CarePlan",
+    "step": 23,
+    "column": "Element",
+    "oldValue": "txt_ TelephoneEmail",
+    "newValue": "txt_TelephoneEmail"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\CarePlan\\LSTP_CarePlan_WF001.xlsx",
+    "module": "CarePlan",
+    "step": 64,
+    "column": "Element",
+    "oldValue": "cmb_intended management",
+    "newValue": "cmb_intendedManagement"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\CaseLoad\\LSTP_CaseLoad_WF001.xlsx",
+    "module": "CaseLoad",
+    "step": 171,
+    "column": "Element",
+    "oldValue": "lnkSubTaskPaneIn-tray",
+    "newValue": "lnkSubTaskPaneInTray"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Charts\\LSTP_Charts_WF001.xlsx",
+    "module": "Charts",
+    "step": 21,
+    "column": "Element",
+    "oldValue": "txt_ TelephoneHome",
+    "newValue": "txt_TelephoneHome"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Charts\\LSTP_Charts_WF001.xlsx",
+    "module": "Charts",
+    "step": 22,
+    "column": "Element",
+    "oldValue": "txt_ TelephoneMobile",
+    "newValue": "txt_TelephoneMobile"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Charts\\LSTP_Charts_WF001.xlsx",
+    "module": "Charts",
+    "step": 23,
+    "column": "Element",
+    "oldValue": "txt_ TelephoneEmail",
+    "newValue": "txt_TelephoneEmail"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Charts\\LSTP_Charts_WF001.xlsx",
+    "module": "Charts",
+    "step": 65,
+    "column": "Element",
+    "oldValue": "cmb_intended management",
+    "newValue": "cmb_intendedManagement"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Charts\\LSTP_Charts_WF001.xlsx",
+    "module": "Charts",
+    "step": 73,
+    "column": "Element",
+    "oldValue": "btn_Clinical Charts",
+    "newValue": "btn_ClinicalCharts"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Charts\\LSTP_Charts_WF001.xlsx",
+    "module": "Charts",
+    "step": 75,
+    "column": "Element",
+    "oldValue": "btn_Clinical Charts",
+    "newValue": "btn_ClinicalCharts"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\DI\\LSTP_DI_WF001.xlsx",
+    "module": "DI",
+    "step": 35,
+    "column": "Element",
+    "oldValue": "cmb_Appointment type",
+    "newValue": "cmb_AppointmentType"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\HealthIssues\\LSTP_HealthIssues_WF001.xlsx",
+    "module": "HealthIssues",
+    "step": 38,
+    "column": "Element",
+    "oldValue": "cmb_intended management",
+    "newValue": "cmb_intendedManagement"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\NursingActivity\\LSTP_NursingActivity_WF001.xlsx",
+    "module": "NursingActivity",
+    "step": 30,
+    "column": "Element",
+    "oldValue": "txt_ TelephoneHome",
+    "newValue": "txt_TelephoneHome"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\NursingActivity\\LSTP_NursingActivity_WF001.xlsx",
+    "module": "NursingActivity",
+    "step": 31,
+    "column": "Element",
+    "oldValue": "txt_ TelephoneMobile",
+    "newValue": "txt_TelephoneMobile"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\NursingActivity\\LSTP_NursingActivity_WF001.xlsx",
+    "module": "NursingActivity",
+    "step": 32,
+    "column": "Element",
+    "oldValue": "txt_ TelephoneEmail",
+    "newValue": "txt_TelephoneEmail"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Observations\\LSTP_Observations_WF001.xlsx",
+    "module": "Observations",
+    "step": 21,
+    "column": "Element",
+    "oldValue": "txt_ TelephoneHome",
+    "newValue": "txt_TelephoneHome"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Observations\\LSTP_Observations_WF001.xlsx",
+    "module": "Observations",
+    "step": 22,
+    "column": "Element",
+    "oldValue": "txt_ TelephoneMobile",
+    "newValue": "txt_TelephoneMobile"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Observations\\LSTP_Observations_WF001.xlsx",
+    "module": "Observations",
+    "step": 23,
+    "column": "Element",
+    "oldValue": "txt_ TelephoneEmail",
+    "newValue": "txt_TelephoneEmail"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Observations\\LSTP_Observations_WF001.xlsx",
+    "module": "Observations",
+    "step": 65,
+    "column": "Element",
+    "oldValue": "cmb_intended management",
+    "newValue": "cmb_intendedManagement"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Problems\\LSTP_Problems_WF001.xlsx",
+    "module": "Problems",
+    "step": 24,
+    "column": "Element",
+    "oldValue": "txt_ TelephoneHome",
+    "newValue": "txt_TelephoneHome"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Problems\\LSTP_Problems_WF001.xlsx",
+    "module": "Problems",
+    "step": 25,
+    "column": "Element",
+    "oldValue": "txt_ TelephoneMobile",
+    "newValue": "txt_TelephoneMobile"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Problems\\LSTP_Problems_WF001.xlsx",
+    "module": "Problems",
+    "step": 26,
+    "column": "Element",
+    "oldValue": "txt_ TelephoneEmail",
+    "newValue": "txt_TelephoneEmail"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\TaskMgmt_FloorPlan\\LSTP_TaskMgmt_FloorPlan_WF001.xlsx",
+    "module": "TaskMgmt_FloorPlan",
+    "step": 45,
+    "column": "Element",
+    "oldValue": "cmb_intended management",
+    "newValue": "cmb_intendedManagement"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\TaskMgmt_FloorPlan\\LSTP_TaskMgmt_FloorPlan_WF001.xlsx",
+    "module": "TaskMgmt_FloorPlan",
+    "step": 60,
+    "column": "Element",
+    "oldValue": "icn_task recipients",
+    "newValue": "icn_taskRecipients"
+  },
+  {
+    "file": "C:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\TaskMgmt_FloorPlan\\LSTP_TaskMgmt_FloorPlan_WF001.xlsx",
+    "module": "TaskMgmt_FloorPlan",
+    "step": 113,
+    "column": "Element",
+    "oldValue": "btn_Finish nowCP",
+    "newValue": "btn_FinishNowCP"
+  }
+]

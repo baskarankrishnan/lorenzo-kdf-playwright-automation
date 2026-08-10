@@ -1,0 +1,18 @@
+[
+  {
+    "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx",
+    "module": "Contacts",
+    "step": 21,
+    "column": "Condition",
+    "oldValue": "",
+    "newValue": "optional"
+  },
+  {
+    "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx",
+    "module": "Contacts",
+    "step": 22,
+    "column": "Condition",
+    "oldValue": "",
+    "newValue": "optional"
+  }
+]

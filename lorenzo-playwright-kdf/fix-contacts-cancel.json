@@ -1,0 +1,24 @@
+[
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 19, "column": "Element", "oldValue": "btn_Find", "newValue": "btn_Next" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 19, "column": "StepDescription", "oldValue": "Open the address finder dialog", "newValue": "Click Next to trigger the address validation prompt" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 20, "column": "ActionKeyword", "oldValue": "setTextBox", "newValue": "waitForSeconds" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 20, "column": "Page", "oldValue": "pageRegRegistration", "newValue": "" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 20, "column": "Element", "oldValue": "txt_AddrPostcode", "newValue": "" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 20, "column": "Values", "oldValue": "B91 3DL", "newValue": "4" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 20, "column": "StepDescription", "oldValue": "Enter Postcode in the address finder", "newValue": "Wait for the address validation prompt to appear" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 21, "column": "Element", "oldValue": "btn_AddrFind", "newValue": "btn_AddrOk" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 21, "column": "StepDescription", "oldValue": "Click Find inside the address finder", "newValue": "Click Ok on the validate-address prompt (opens the address finder)" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 22, "column": "StepDescription", "oldValue": "Wait for address results", "newValue": "Wait for the address finder to open" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 23, "column": "Element", "oldValue": "tbl_SelectRow", "newValue": "btn_AddrCancel" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 23, "column": "StepDescription", "oldValue": "Select address from table", "newValue": "Cancel the address finder" },
+
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 24, "column": "ActionKeyword", "oldValue": "clickElement", "newValue": "waitForSeconds" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 24, "column": "Page", "oldValue": "pageRegRegistration", "newValue": "" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 24, "column": "Element", "oldValue": "btn_AddrOk", "newValue": "" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 24, "column": "Values", "oldValue": "", "newValue": "3" },
+  { "file": "c:\\Users\\bkrishnan6\\ORBIS PAS UKI-LZO\\lorenzo-playwright-kdf\\excelFramework\\testcases\\Contacts\\LSTP_Contacts_WF001.xlsx", "module": "Contacts", "step": 24, "column": "StepDescription", "oldValue": "Click OK in the address finder", "newValue": "Wait after cancelling the address finder" }
+]

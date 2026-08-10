@@ -1,0 +1,21 @@
+logged in: true
+on reg form (city visible): 0
+city filled: false
+--- Next#1 ---
+Next#1 clicked: false
+validate dialog: false
+social reached: false
+--- click Ok ---
+Ok clicked: false
+validate dialog after Ok: false
+finder open after Ok: false
+social after Ok: false
+--- Next#2 ---
+Next#2 clicked: false
+validate dialog after Next#2: false
+social after Next#2: false
+--- try dialog Cancel ---
+dialog Cancel clicked: false
+social after dialog Cancel: false
+Next#3 clicked: false
+social after Next#3: false

@@ -9,7 +9,7 @@ export const ico_RegRoadmapTitle = "//td[@class='Cmd_TTE'][@title='Yes']";
 export const lnk_Postalcode = "//img[@title='Please enter Select address type']";
 export const txt_Pincode = "//input[@dikey='iPostCode']";
 export const btn_Find = "//img[@title='Use this to select via address finder']";
-export const tbl_SelectRow = "//table[@id='g_DT1igrdSearch']//tr[@id='igRowigrdSearch_0']/td";
+export const tbl_SelectRow = "(//table[contains(@id,'igrdSearch')]//tr[contains(@id,'igRow')][1]/td[1] | //table[contains(@id,'Search')]//tr[contains(@id,'igRow')][1]/td[1] | //tr[contains(@id,'igRow')][1]/td[1])[1]";
 // Address SFS finder dialog (opens on Next -> "Please validate the address" -> Ok).
 // Criteria fields map to itxtFld1..itxtFld6 in the dialog frame.
 export const txt_AddrPremises = "//input[@dikey='itxtFld1']";
@@ -48,7 +48,7 @@ export const btn_ClickSelectCareprovider = "//input[@title='Click to select a ca
 export const txt_Identifier = "//input[@title='Enter the identifier']";
 export const btn_FindNow = "//td[@title='Click to execute the selected search criteria']";
 export const btn_OkCP = "//td[@title='Click to add the selected care providers(s)']";
-export const btn_OK = "//td[@title='Ok']";
+export const btn_OK = "(//td[@title='Ok'] | //td[@title='OK'] | //button[@title='OK'] | //button[@title='Ok'] | //td[normalize-space()='Ok'] | //td[normalize-space()='OK'])[1]";
 export const btn_Finish = "//td[@title='Finish']";
 // DUPLICATE (superseded by definitions later in file) — commented.
 // export const cmb_PrimaryContact = "//input[@title='Select Primary Contact type']";
@@ -68,4 +68,4 @@ export const txt_CPTeam = "//input[@accesskey='Y'][@title='Select a Care provide
 export const btn_Finishnow = "//title[contains(text(),'Registration - LORENZO')]/ancestor::html//td[@title='Finish now']";
 export const cmb_PrimaryContact = "//img[@title='Select Primary Contact type']";
 export const lnk_Registrationtemporary = "//span[text()='Registration - temporary']";
-export const btn_Cancel = "//form[@name='iShowMessage']//td[@title='Cancel']";
+export const btn_Cancel = "(//form[@name='iShowMessage']//td[@title='Cancel'] | //td[@title='Cancel'] | //button[@title='Cancel'] | //td[normalize-space()='Cancel'])[1]";

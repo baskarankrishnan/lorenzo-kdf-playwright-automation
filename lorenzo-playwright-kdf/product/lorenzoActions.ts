@@ -157,6 +157,26 @@ export async function logout(page: Page, step: testStep): Promise<Outcome> {
   }
 }
 
+export async function launchBrowserProfile(page: Page, step: testStep): Promise<Outcome> {
+  try {
+    const profileId = step.value && String(step.value).trim() ? String(step.value).trim() : 'default';
+
+    // The Playwright runners already own browser/context creation. This keyword exists in some
+    // KDF scripts to model manual browser-profile switching; in framework execution we treat it as
+    // a logical profile boundary and continue with the managed page/context for the current run.
+    console.log(`launchBrowserProfile: using managed Playwright context for profile ${profileId}`);
+    return {
+      code: 0,
+      value: `Using managed Playwright browser context for profile ${profileId}`
+    };
+  } catch (error) {
+    return {
+      code: 1,
+      value: `Failed to launch browser profile: ${error instanceof Error ? error.message : String(error)}`
+    };
+  }
+}
+
 /**
  * launchRegistration — deterministic patient-registration launcher.
  *
@@ -176,6 +196,7 @@ export async function logout(page: Page, step: testStep): Promise<Outcome> {
  * which keeps the step deterministic regardless of whether PDS/consent prompts appear.
  */
 export async function launchRegistration(page: Page, step: testStep): Promise<Outcome> {
+  let activePage = page;
   const log = (m: string) => console.log(`  [launchRegistration] ${m}`);
 
   // PDS timeout prompts can vary by workflow (Find Record / Book / Admit entry paths).
@@ -190,12 +211,28 @@ export async function launchRegistration(page: Page, step: testStep): Promise<Ou
     "//*[contains(normalize-space(.),'Would you like to create a new registration')]"
   ];
   const SEL_BTN_NO = [
-    "(//td[@title='No'] | //img[@title='No'])[1]",
-    "(//button[normalize-space()='No'] | //a[normalize-space()='No'])[1]"
+    "//img[@title='No'] | //td[@title='No']",
+    "//button[normalize-space()='No'] | //a[normalize-space()='No']",
+    "//*[self::td or self::img or self::button or self::a or self::span][translate(normalize-space(@title),'NO','no')='no']",
+    "//*[self::td or self::button or self::a or self::span][translate(normalize-space(.),'NO','no')='no']",
+    "//input[translate(normalize-space(@value),'NO','no')='no']"
   ];
   const SEL_BTN_YES = [
-    "(//td[@title='Yes'] | //img[@title='Yes'])[1]",
-    "(//button[normalize-space()='Yes'] | //a[normalize-space()='Yes'])[1]"
+    "//td[@class='Cmd_TTE'][@title='Yes'] | //button[@title='Yes'] | //img[@title='Yes'] | //td[@title='Yes']",
+    "//button[normalize-space()='Yes'] | //a[normalize-space()='Yes'] | //td[normalize-space()='Yes']",
+    "//*[self::td or self::img or self::button or self::a or self::span][translate(normalize-space(@title),'YES','yes')='yes']",
+    "//*[self::td or self::button or self::a or self::span][translate(normalize-space(.),'YES','yes')='yes']",
+    "//input[translate(normalize-space(@value),'YES','yes')='yes']"
+  ];
+  const REL_BTN_NO = [
+    ".//*[self::td or self::img or self::button or self::a or self::span][translate(normalize-space(@title),'NO','no')='no']",
+    ".//*[self::td or self::button or self::a or self::span][translate(normalize-space(.),'NO','no')='no']",
+    ".//input[translate(normalize-space(@value),'NO','no')='no']"
+  ];
+  const REL_BTN_YES = [
+    ".//*[self::td or self::img or self::button or self::a or self::span][translate(normalize-space(@title),'YES','yes')='yes']",
+    ".//*[self::td or self::button or self::a or self::span][translate(normalize-space(.),'YES','yes')='yes']",
+    ".//input[translate(normalize-space(@value),'YES','yes')='yes']"
   ];
 
   // Registration can be exposed in results, task panes, or Admit/Book side links.
@@ -221,14 +258,48 @@ export async function launchRegistration(page: Page, step: testStep): Promise<Ou
     "(//button[normalize-space()='Ok'] | //button[normalize-space()='OK'])[1]"
   ];
 
+  const getAllOpenPages = (): Page[] => {
+    const rootContext = activePage.context();
+    const browser = rootContext.browser();
+    const contexts = browser ? browser.contexts() : [rootContext];
+    const pages: Page[] = [];
+
+    for (const ctx of contexts) {
+      for (const candidate of ctx.pages()) {
+        if (!candidate.isClosed()) pages.push(candidate);
+      }
+    }
+
+    return pages;
+  };
+
+  const refreshActivePage = async (reason: string): Promise<boolean> => {
+    if (!activePage.isClosed()) return true;
+
+    const openPages = getAllOpenPages();
+    if (openPages.length === 0) {
+      log(`No open page available after ${reason}`);
+      return false;
+    }
+
+    activePage = openPages[openPages.length - 1];
+    const title = await activePage.title().catch(() => 'Untitled');
+    log(`Active page switched after ${reason} -> "${title}"`);
+    return true;
+  };
+
   const waitStable = async () => {
-    await waitForRoller(page).catch(() => { });
+    await refreshActivePage('waitStable pre-check').catch(() => false);
+    if (!activePage.isClosed()) {
+      await waitForRoller(activePage).catch(() => { });
+    }
   };
 
   // Resolve a raw selector across all frames/pages; return null instead of throwing when absent.
   const tryFind = async (selector: string, timeout: number): Promise<Locator | null> => {
     try {
-      return await resolveElement(page, selector, { ...step, elementText: '' } as testStep, timeout);
+      await refreshActivePage(`finding ${selector}`).catch(() => false);
+      return await resolveElement(activePage, selector, { ...step, elementText: '' } as testStep, timeout);
     } catch {
       return null;
     }
@@ -242,15 +313,107 @@ export async function launchRegistration(page: Page, step: testStep): Promise<Ou
     return null;
   };
 
+  const isClosedTargetError = (error: unknown): boolean => {
+    const message = error instanceof Error ? error.message : String(error);
+    return message.includes('Target page, context or browser has been closed')
+      || message.includes('Target closed')
+      || message.includes('Execution context was destroyed');
+  };
+
+  const clickLocator = async (loc: Locator, reason: string): Promise<void> => {
+    const clickOptions = { timeout: 5000, noWaitAfter: true } as const;
+
+    try {
+      await loc.click(clickOptions);
+      return;
+    } catch (error) {
+      try {
+        await loc.click({ ...clickOptions, force: true });
+        return;
+      } catch (forcedError) {
+        if (isClosedTargetError(forcedError) || isClosedTargetError(error)) {
+          const adopted = await refreshActivePage(reason);
+          if (adopted) {
+            log(`Click source closed during ${reason}; continuing on remaining page`);
+            return;
+          }
+        }
+        throw forcedError;
+      }
+    }
+  };
+
+  const shouldClickStepLauncherFirst = (): boolean => {
+    const elementName = (step.element || '').toLowerCase();
+    return elementName.includes('finishnow')
+      || elementName.includes('bookregistration')
+      || elementName.includes('registrationtemporary')
+      || elementName.includes('admit');
+  };
+
+  const clickStepLauncherIfPresent = async (): Promise<boolean> => {
+    if (!step.page || !step.element || !shouldClickStepLauncherFirst()) {
+      return false;
+    }
+
+    const stepSelector = getLocatorString(step);
+    if (!stepSelector) {
+      return false;
+    }
+
+    const launcher = await resolveElement(activePage, stepSelector, step, 7000).catch(() => null);
+    if (!launcher) {
+      return false;
+    }
+
+    log(`Using step-defined launcher ${step.page}.${step.element}`);
+    await clickLocator(launcher, `clicking ${step.page}.${step.element}`);
+    await waitStable();
+    return true;
+  };
+
   const clickIfFound = async (selectors: string[], timeout: number, reason: string): Promise<boolean> => {
     const loc = await findAny(selectors, timeout);
     if (!loc) return false;
     log(`${reason} → clicking`);
-    await loc.click().catch(async () => {
-      await loc.click({ force: true });
-    });
+    await clickLocator(loc, reason);
     await waitStable();
     return true;
+  };
+
+  // When we can see the prompt but global button selectors miss, search for Yes/No inside
+  // the same dialog/form container first to avoid picking controls from the background page.
+  const findButtonNearPrompt = async (prompt: Locator, relativeSelectors: string[]): Promise<Locator | null> => {
+    const containerSelectors = [
+      "xpath=ancestor::*[@id='frDialog' or @role='dialog' or contains(@class,'dialog') or contains(@class,'modal')][1]",
+      "xpath=ancestor::form[1]",
+      "xpath=ancestor::table[1]"
+    ];
+
+    for (const rel of relativeSelectors) {
+      const direct = prompt.locator(`xpath=${rel}`).first();
+      const directCount = await direct.count().catch(() => 0);
+      if (directCount > 0) {
+        const vis = await direct.isVisible().catch(() => true);
+        if (vis) return direct;
+      }
+    }
+
+    for (const containerSel of containerSelectors) {
+      const container = prompt.locator(containerSel).first();
+      const containerCount = await container.count().catch(() => 0);
+      if (containerCount === 0) continue;
+
+      for (const rel of relativeSelectors) {
+        const candidate = container.locator(`xpath=${rel}`).first();
+        const candidateCount = await candidate.count().catch(() => 0);
+        if (candidateCount === 0) continue;
+        const vis = await candidate.isVisible().catch(() => true);
+        if (vis) return candidate;
+      }
+    }
+
+    return null;
   };
 
   const dismissPdsRetryIfPresent = async (phase: string): Promise<Outcome | null> => {
@@ -261,14 +424,22 @@ export async function launchRegistration(page: Page, step: testStep): Promise<Ou
         if (i === 0) log(`No PDS timeout dialog in ${phase}`);
         return null;
       }
-      const noBtn = await findAny(SEL_BTN_NO, 5000);
+      let noBtn = await findButtonNearPrompt(pdsPrompt, REL_BTN_NO);
       if (!noBtn) {
-        return { code: 1, value: `PDS timeout dialog present in ${phase} but No button was not found` };
+        noBtn = await findAny(SEL_BTN_NO, 5000);
+      }
+      if (!noBtn) {
+        try {
+          await handleDialog(activePage, { ...step, value: '0|no' } as testStep);
+          log(`PDS timeout dialog detected in ${phase} -> handleDialog fallback clicked No`);
+          await waitStable();
+          continue;
+        } catch {
+          return { code: 1, value: `PDS timeout dialog present in ${phase} but No button was not found` };
+        }
       }
       log(`PDS timeout dialog detected in ${phase} → clicking No`);
-      await noBtn.click().catch(async () => {
-        await noBtn.click({ force: true });
-      });
+      await clickLocator(noBtn, `clicking No in ${phase}`);
       await waitStable();
     }
     return null;
@@ -280,15 +451,23 @@ export async function launchRegistration(page: Page, step: testStep): Promise<Ou
       return null;
     }
 
-    const yesBtn = await findAny(SEL_BTN_YES, 5000);
+    let yesBtn = await findButtonNearPrompt(createNewPrompt, REL_BTN_YES);
     if (!yesBtn) {
-      return { code: 1, value: `Create-new-registration prompt present in ${phase} but Yes button was not found` };
+      yesBtn = await findAny(SEL_BTN_YES, 5000);
+    }
+    if (!yesBtn) {
+      try {
+        await handleDialog(activePage, { ...step, value: '0|yes' } as testStep);
+        log(`Create-new-registration prompt detected in ${phase} -> handleDialog fallback clicked Yes`);
+        await waitStable();
+        return null;
+      } catch {
+        return { code: 1, value: `Create-new-registration prompt present in ${phase} but Yes button was not found` };
+      }
     }
 
     log(`Create-new-registration prompt detected in ${phase} → clicking Yes`);
-    await yesBtn.click().catch(async () => {
-      await yesBtn.click({ force: true });
-    });
+    await clickLocator(yesBtn, `clicking Yes in ${phase}`);
     await waitStable();
     return null;
   };
@@ -313,6 +492,8 @@ export async function launchRegistration(page: Page, step: testStep): Promise<Ou
   try {
     await waitStable();
 
+    const launchedFromCurrentStep = await clickStepLauncherIfPresent();
+
     const pdsPre = await dismissPdsRetryIfPresent('pre-launch');
     if (pdsPre) return pdsPre;
 
@@ -320,7 +501,10 @@ export async function launchRegistration(page: Page, step: testStep): Promise<Ou
     if (createNewPre) return createNewPre;
 
     // Prefer the Registration entry from search results (Find/Book/Admit), then sidebar.
-    let opened = await clickIfFound(SEL_REG_RESULTS, 5000, 'Registration link found in results area');
+    let opened = launchedFromCurrentStep;
+    if (!opened) {
+      opened = await clickIfFound(SEL_REG_RESULTS, 5000, 'Registration link found in results area');
+    }
     if (!opened) {
       opened = await clickIfFound(SEL_REG_SIDEBAR, 7000, 'Registration link found in sidebar');
     }
@@ -345,9 +529,7 @@ export async function launchRegistration(page: Page, step: testStep): Promise<Ou
       const consentOk = await findAny(SEL_CONSENT_OK, 5000);
       if (consentOk) {
         log('Explain Consent dialog detected → clicking Ok');
-        await consentOk.click().catch(async () => {
-          await consentOk.click({ force: true });
-        });
+        await clickLocator(consentOk, 'clicking consent Ok');
         await waitStable();
       } else {
         log('Consent text present but Ok button not found (continuing)');
@@ -2865,7 +3047,53 @@ export async function handleDialog(page: Page, step: testStep): Promise<void> {
       // Continue to next strategy
     }
  
-    /* ---------- Strategy 5: Keyboard Fallback ---------- */
+    /* ---------- Strategy 5: Generic visible text click ---------- */
+
+    for (const title of titles) {
+      const escapedTitle = title.replace(/"/g, '\\"');
+
+      for (const frame of dialogFrames) {
+        try {
+          const clicked = await frame.evaluate((targetText: string) => {
+            const candidates = Array.from(document.querySelectorAll('button, a, td, span, li, div')) as HTMLElement[];
+            const match = candidates.find(el => {
+              const text = (el.textContent || '').trim().replace(/\s+/g, ' ');
+              if (!text) return false;
+              const visible = el.offsetParent !== null;
+              return visible && (text === targetText || text.includes(targetText));
+            });
+
+            if (match) {
+              match.click();
+              return true;
+            }
+            return false;
+          }, title);
+
+          if (clicked) {
+            console.log(`✅ Clicked visible text in dialog frame matching "${title}"`);
+            await page.waitForLoadState('networkidle').catch(() => null);
+            return;
+          }
+        } catch {
+          // Continue to main page fallback
+        }
+      }
+
+      try {
+        const visibleTextTarget = page.locator(`xpath=(//*[self::button or self::a or self::td or self::span or self::li or self::div][normalize-space()="${escapedTitle}" or contains(normalize-space(),"${escapedTitle}")])[1]`);
+        if (await visibleTextTarget.count().catch(() => 0)) {
+          await visibleTextTarget.click({ force: true }).catch(() => null);
+          console.log(`✅ Clicked visible text on page matching "${title}"`);
+          await page.waitForLoadState('networkidle').catch(() => null);
+          return;
+        }
+      } catch {
+        // Continue to keyboard fallback
+      }
+    }
+
+    /* ---------- Strategy 6: Keyboard Fallback ---------- */
  
     console.log(`⚠️ No button found by visual search, trying keyboard approach...`);
  

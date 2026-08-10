@@ -1,0 +1,14 @@
+logged in
+city: false
+Next#1: false
+validate dialog present after Next#1: false
+Ok(save anyway): false
+validate dialog still present after Ok: false
+reached social section after Ok: false
+Next#2: false
+validate dialog present after Next#2: false
+reached social section after Next#2: false
+Ok#2: false
+reached social section after Ok#2: false
+Next#3: false
+reached social section after Next#3: false

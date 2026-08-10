@@ -1055,7 +1055,7 @@
   {
     "StepNo": 82,
     "StepDescription": "Click View EPR link to open patient record",
-    "Page": "pagePatientSearchGrid",
+    "Page": "pagePatientSearchResult",
     "Element": "lnkTaskPaneViewEPR",
     "ElementText": "",
     "ActionKeyword": "clickElement",
